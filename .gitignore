@@ -1,0 +1,11 @@
+.idea
+.fleet
+.vscode
+vendor
+*.sqlite
+/.phpunit.result.cache
+/.phpunit.cache
+
+# Jest
+.tmp/
+coverage/
