@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\Demo\App\Unit\Advertisements\User\Domain;
 
+use Demo\App\Advertisements\CivicCenter\Domain\ValueObjects\CivicCenterId;
 use Demo\App\Advertisements\Shared\ValueObjects\Email;
 use Demo\App\Advertisements\Shared\ValueObjects\Password;
 use Demo\App\Advertisements\User\Domain\AdminUser;
@@ -14,16 +15,16 @@ use PHPUnit\Framework\TestCase;
 class AdminUserTest extends TestCase
 {
     private const string ID = '6fa00b21-2930-483e-b610-d6b0e5b19b29';
+    private const string CIVIC_CENTER_ID = '54500b21-2930-483e-b610-d6b0e5b19b29';
     private const string EMAIL = 'test@test.com';
     private const string PASSWORD = 'password';
-
-    private const string SUPERVISOR_ROLE = 'supervisor';
     private const string ADMIN_ROLE = 'admin';
     private const string MEMBER_ROLE = 'member';
 
     public function testShouldCreateAnAdminUser()
     {
         $userId = new UserId(self::ID);
+        $civicCenterId = new CivicCenterId(self::CIVIC_CENTER_ID);
         $email = new Email(self::EMAIL);
         $password = Password::fromPlainPassword(self::PASSWORD);
         $role = Role::fromString(self::ADMIN_ROLE);
@@ -33,6 +34,7 @@ class AdminUserTest extends TestCase
             $email,
             $password,
             $role,
+            $civicCenterId,
         );
 
         self::assertInstanceOf(AdminUser::class, $user);
@@ -44,6 +46,7 @@ class AdminUserTest extends TestCase
     public function testShouldFailCreatingAnAdminUserWithMemberRole()
     {
         $userId = new UserId(self::ID);
+        $civicCenterId = new CivicCenterId(self::CIVIC_CENTER_ID);
         $email = new Email(self::EMAIL);
         $password = Password::fromPlainPassword(self::PASSWORD);
         $role = Role::fromString(self::MEMBER_ROLE);
@@ -55,6 +58,7 @@ class AdminUserTest extends TestCase
             $email,
             $password,
             $role,
+            $civicCenterId,
         );
     }
 }
