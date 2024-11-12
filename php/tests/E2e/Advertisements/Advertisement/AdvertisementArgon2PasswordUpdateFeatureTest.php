@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Demo\App\E2e;
+namespace E2e\Advertisements\Advertisement;
 
 use Demo\App\Framework\Database\DatabaseConnection;
 use Demo\App\Framework\DependencyInjectionResolver;

@@ -14,7 +14,7 @@ abstract class UserBase
         private readonly UserId $id,
         private Email $email,
         private Password $password,
-        private Role $role
+        private Role $role,
     ) {
     }
 

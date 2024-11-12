@@ -1,35 +1,35 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\Demo\App\Unit\Advertisements\Advertisement\Domain\ValueObject;
+namespace Tests\Demo\App\Unit\Advertisements\CivicCenter\ValueObjects;
 
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\DescriptionEmptyException;
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\DescriptionTooLongException;
-use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\Description;
+use Demo\App\Advertisements\CivicCenter\Domain\ValueObjects\CivicCenterName;
 use PHPUnit\Framework\TestCase;
 
-class DescriptionTest extends TestCase
+class CivicCenterNameTest extends TestCase
 {
     private const string DESCRIPTION = 'description';
 
-    public function testShouldCreateADescription()
+    public function testShouldCreateACivicCenterName()
     {
-        $description = new Description(self::DESCRIPTION);
-        $this->assertEquals(self::DESCRIPTION, $description->value());
+        $civicCenterName = new CivicCenterName(self::DESCRIPTION);
+        $this->assertEquals(self::DESCRIPTION, $civicCenterName->value());
     }
 
-    public function testShouldThrowAnExceptionWhenDescriptionHasMoreThan200Characters()
+    public function testShouldThrowAnExceptionWhenCivicCenterNameHasMoreThan200Characters()
     {
         $this->expectException(DescriptionTooLongException::class);
         $this->expectExceptionMessage('Description has more than 200 characters: Has 201 characters');
         $randomString = str_repeat('a', 201);
-        new Description($randomString);
+        new CivicCenterName($randomString);
     }
 
-    public function testShouldThrowAnExceptionWhenDescriptionIsEmpty()
+    public function testShouldThrowAnExceptionWhenCivicCenterNameIsEmpty()
     {
         $this->expectException(DescriptionEmptyException::class);
         $this->expectExceptionMessage('Description empty');
-        new Description('');
+        new CivicCenterName('');
     }
 }

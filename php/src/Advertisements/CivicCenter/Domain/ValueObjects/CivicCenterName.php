@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Demo\App\Advertisements\Advertisement\Domain\ValueObjects;
+namespace Demo\App\Advertisements\CivicCenter\Domain\ValueObjects;
 
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\DescriptionEmptyException;
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\DescriptionTooLongException;
 
-final readonly class Description
+final readonly class CivicCenterName
 {
     /**
      * @throws DescriptionEmptyException
