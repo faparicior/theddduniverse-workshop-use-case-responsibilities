@@ -7,5 +7,8 @@ use Demo\App\Advertisements\User\Domain\ValueObjects\UserId;
 
 interface UserRepository
 {
-    public function findAdminById(UserId $id): ?UserBase;
+    public function findAdminById(UserId $id): ?AdminUser;
+    public function findMemberById(UserId $id): ?MemberUser;
+
+    public function saveMember(MemberUser $member): void;
 }

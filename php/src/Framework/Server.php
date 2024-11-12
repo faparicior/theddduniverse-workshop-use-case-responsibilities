@@ -29,6 +29,7 @@ final class Server
     {
         return match ($request->path()) {
             'advertisement' => $this->resolver->publishAdvertisementController()->request($request),
+            'member/signup' => $this->resolver->signUpMemberController()->request($request),
             default => $this->notFound($request),
         };
     }

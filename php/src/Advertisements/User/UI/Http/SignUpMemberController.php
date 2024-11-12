@@ -18,14 +18,16 @@ final class SignUpMemberController extends CommonController
 
     public function request(FrameworkRequest $request): FrameworkResponse
     {
+        // get role from manager_id request
+
         try {
             $command = new SignUpMemberCommand(
                 ($request->content())['id'],
                 ($request->content())['email'],
                 ($request->content())['password'],
-                ($request->content())['role'],
                 ($request->content())['memberNumber'],
                 ($request->content())['civicCenterId'],
+                ($request->content())['managerId'],
             );
 
             $this->useCase->execute($command);

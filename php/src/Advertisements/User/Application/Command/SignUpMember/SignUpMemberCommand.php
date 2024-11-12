@@ -9,8 +9,8 @@ readonly class SignUpMemberCommand
         public string $id,
         public string $email,
         public string $password,
-        public string $role,
         public string $memberNumber,
-        public string $civicCenterId
+        public string $civicCenterId,
+        public string $managerId,
     ){}
 }
