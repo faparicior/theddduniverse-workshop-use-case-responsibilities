@@ -6,6 +6,9 @@ namespace Demo\App\Advertisements\User\Application\Command\SignUpMember;
 use Demo\App\Advertisements\CivicCenter\Domain\ValueObjects\CivicCenterId;
 use Demo\App\Advertisements\Shared\ValueObjects\Email;
 use Demo\App\Advertisements\Shared\ValueObjects\Password;
+use Demo\App\Advertisements\User\Domain\Exceptions\AdminWithIncorrectCivicCenterException;
+use Demo\App\Advertisements\User\Domain\Exceptions\MemberAlreadyExistsException;
+use Demo\App\Advertisements\User\Domain\Exceptions\UserNotFoundException;
 use Demo\App\Advertisements\User\Domain\MemberUser;
 use Demo\App\Advertisements\User\Domain\UserRepository;
 use Demo\App\Advertisements\User\Domain\ValueObjects\MemberNumber;
@@ -27,16 +30,16 @@ final class SignUpMemberUseCase
     {
         $admin = $this->userRepository->findAdminById(new UserId($command->managerId));
         if (!$admin) {
-            throw new Exception('Admin not found');
+            throw UserNotFoundException::asAdmin();
         }
 
         //TODO: Use equals
-        if ($admin->civicCenterId()->value() !== $command->civicCenterId) {
-            throw new Exception('Admin does not belong to the same civic center');
+        if (!$admin->civicCenterId()->equals(new CivicCenterId($command->civicCenterId))) {
+            throw AdminWithIncorrectCivicCenterException::differentCivicCenterFromMember();
         }
 
         if ($this->userRepository->findMemberById(new UserId($command->id))) {
-            throw new Exception('Member already exists');
+            throw MemberAlreadyExistsException::build();
         }
 
         $member = new MemberUser(
@@ -49,6 +52,5 @@ final class SignUpMemberUseCase
         );
 
         $this->userRepository->saveMember($member);
-
     }
 }

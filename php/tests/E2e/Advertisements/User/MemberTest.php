@@ -14,7 +14,7 @@ final class MemberTest extends TestCase
     private const MEMBER_ID = '6fa00b21-2930-483e-b610-d6b0e5b19b29';
     private const ADMIN_ID = 'e95a8999-cb23-4fa2-9923-e3015ef30411';
     private const CIVIC_CENTER_ID = '0d5a994b-1603-4c87-accc-581a59e4457c';
-    private const CIVIC_CENTER_2_ID = '5rea994b-1603-4c87-accc-581a59e4457c';
+    private const CIVIC_CENTER_2_ID = '5ddd994b-1603-4c87-accc-581a59e4457c';
 
     private DependencyInjectionResolver $resolver;
     private Server $server;
