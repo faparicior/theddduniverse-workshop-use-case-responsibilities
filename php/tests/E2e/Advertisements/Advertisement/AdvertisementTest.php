@@ -260,12 +260,14 @@ final class AdvertisementTest extends TestCase
 
     private function withAnAdvertisementCreated(): void
     {
-        $this->connection->execute(sprintf("INSERT INTO advertisements (id, description, email, password, advertisement_date) VALUES ('%s', '%s', '%s', '%s', '%s')",
+        $this->connection->execute(sprintf("INSERT INTO advertisements (id, description, email, password, advertisement_date, status, approval_status) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s' )",
                 self::ADVERTISEMENT_ID,
                 'Dream advertisement ',
                 'email@test.com',
                 md5('myPassword'),
                 self::ADVERTISEMENT_CREATION_DATE,
+                'active',
+                'approved',
             )
         );
     }

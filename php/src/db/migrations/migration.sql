@@ -4,7 +4,9 @@ create table main.advertisements
     description TEXT,
     password TEXT,
     email TEXT,
-    advertisement_date TEXT
+    advertisement_date TEXT,
+    status TEXT,
+    approval_status TEXT
 );
 
 create table main.users
