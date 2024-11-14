@@ -9,8 +9,10 @@ use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementAlready
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementDate;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\Description;
+use Demo\App\Advertisements\CivicCenter\Domain\ValueObjects\CivicCenterId;
 use Demo\App\Advertisements\Shared\ValueObjects\Email;
 use Demo\App\Advertisements\Shared\ValueObjects\Password;
+use Demo\App\Advertisements\User\Domain\ValueObjects\UserId;
 use Exception;
 
 final class PublishAdvertisementUseCase
@@ -34,6 +36,8 @@ final class PublishAdvertisementUseCase
             new Email($command->email),
             Password::fromPlainPassword($command->password),
             new AdvertisementDate(new \DateTime()),
+            new CivicCenterId($command->civicCenterId),
+            new UserId($command->memberNumber),
         );
 
         $this->advertisementRepository->save($advertisement);

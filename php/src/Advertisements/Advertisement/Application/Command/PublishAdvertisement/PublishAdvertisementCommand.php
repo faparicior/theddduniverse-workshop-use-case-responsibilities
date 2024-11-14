@@ -10,5 +10,7 @@ final readonly class PublishAdvertisementCommand
         public string $description,
         public string $email,
         public string $password,
+        public string $memberNumber,
+        public string $civicCenterId,
     ){}
 }

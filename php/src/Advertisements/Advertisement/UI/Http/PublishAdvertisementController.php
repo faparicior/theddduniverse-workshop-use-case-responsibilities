@@ -24,6 +24,8 @@ final class PublishAdvertisementController extends CommonController
                 ($request->content())['description'],
                 ($request->content())['email'],
                 ($request->content())['password'],
+                ($request->content())['memberId'],
+                ($request->content())['civicCenterId'],
             );
 
             $this->useCase->execute($command);

@@ -9,9 +9,11 @@ use Demo\App\Advertisements\Advertisement\Domain\Exceptions\InvalidEmailExceptio
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementDate;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\Description;
+use Demo\App\Advertisements\CivicCenter\Domain\ValueObjects\CivicCenterId;
 use Demo\App\Advertisements\Shared\Exceptions\InvalidUniqueIdentifierException;
 use Demo\App\Advertisements\Shared\ValueObjects\Email;
 use Demo\App\Advertisements\Shared\ValueObjects\Password;
+use Demo\App\Advertisements\User\Domain\ValueObjects\UserId;
 use Demo\App\Framework\Database\DatabaseConnection;
 use Demo\App\Framework\database\SqliteConnection;
 
@@ -27,12 +29,14 @@ class SqliteAdvertisementRepository implements AdvertisementRepository
     {
         $this->dbConnection->execute(sprintf('
             INSERT INTO advertisements (id, description, email, password, advertisement_date) VALUES (\'%1$s\', \'%2$s\', \'%3$s\', \'%4$s\', \'%5$s\') 
-            ON CONFLICT(id) DO UPDATE SET description = \'%2$s\', email = \'%3$s\', password = \'%4$s\', advertisement_date = \'%5$s\';',
+            ON CONFLICT(id) DO UPDATE SET description = \'%2$s\', email = \'%3$s\', password = \'%4$s\', advertisement_date = \'%5$s\', civic_center_id = \'%6$s\', user_id = \'%7$s\';',
                 $advertisement->id()->value(),
                 $advertisement->description()->value(),
                 $advertisement->email()->value(),
                 $advertisement->password()->value(),
-                $advertisement->date()->value()->format('Y-m-d H:i:s')
+                $advertisement->date()->value()->format('Y-m-d H:i:s'),
+                $advertisement->civicCenterId()->value(),
+                $advertisement->memberId()->value(),
             )
         );
     }
@@ -54,7 +58,9 @@ class SqliteAdvertisementRepository implements AdvertisementRepository
             new Description($row['description']),
             new Email($row['email']),
             Password::fromEncryptedPassword($row['password']),
-            new AdvertisementDate(new \DateTime($row['advertisement_date']))
+            new AdvertisementDate(new \DateTime($row['advertisement_date'])),
+            new CivicCenterId($row['civic_center_id']),
+            new UserId($row['user_id']),
         );
     }
 }

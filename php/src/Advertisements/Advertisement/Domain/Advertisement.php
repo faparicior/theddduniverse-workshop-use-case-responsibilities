@@ -8,8 +8,10 @@ use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementDate;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementStatus;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\Description;
+use Demo\App\Advertisements\CivicCenter\Domain\ValueObjects\CivicCenterId;
 use Demo\App\Advertisements\Shared\ValueObjects\Email;
 use Demo\App\Advertisements\Shared\ValueObjects\Password;
+use Demo\App\Advertisements\User\Domain\ValueObjects\UserId;
 
 final class Advertisement
 {
@@ -18,10 +20,12 @@ final class Advertisement
 
     public function __construct(
         private readonly AdvertisementId $id,
-        private Description $description,
-        private Email $email,
-        private Password $password,
-        private AdvertisementDate $date,
+        private Description              $description,
+        private Email                    $email,
+        private Password                 $password,
+        private AdvertisementDate        $date,
+        private readonly CivicCenterId   $civicCenterId,
+        private readonly UserId          $memberId,
     ){
         $this->status = AdvertisementStatus::ACTIVE;
         $this->approvalStatus = AdvertisementApprovalStatus::PENDING_FOR_APPROVAL;
@@ -79,5 +83,15 @@ final class Advertisement
     public function approvalStatus(): AdvertisementApprovalStatus
     {
         return $this->approvalStatus;
+    }
+
+    public function memberId(): UserId
+    {
+        return $this->memberId;
+    }
+
+    public function civicCenterId(): CivicCenterId
+    {
+        return $this->civicCenterId;
     }
 }

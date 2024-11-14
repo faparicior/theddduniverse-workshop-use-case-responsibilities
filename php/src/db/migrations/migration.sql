@@ -6,7 +6,9 @@ create table main.advertisements
     email TEXT,
     advertisement_date TEXT,
     status TEXT,
-    approval_status TEXT
+    approval_status TEXT,
+    user_id TEXT,
+    civic_center_id TEXT
 );
 
 create table main.users

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace E2e\Advertisements\Advertisement;
 
@@ -13,6 +14,8 @@ final class AdvertisementTest extends TestCase
 {
     private const string ADVERTISEMENT_ID = '6fa00b21-2930-483e-b610-d6b0e5b19b29';
     private const string NON_EXISTENT_ADVERTISEMENT_ID = '99999999-2930-483e-b610-d6b0e5b19b29';
+    private const string CIVIC_CENTER_ID = '0d5a994b-1603-4c87-accc-581a59e4457c';
+    private const string MEMBER_ID = 'e95a8999-cb23-4fa2-9923-e3015ef30411';
     private const string ADVERTISEMENT_CREATION_DATE = '2024-02-03 13:30:23';
     private const string INVALID_EMAIL = 'emailtest.com';
 
@@ -40,6 +43,8 @@ final class AdvertisementTest extends TestCase
                 'description' => 'Dream advertisement ',
                 'password' => 'myPassword',
                 'email' => 'email@test.com',
+                'memberId' => self::MEMBER_ID,
+                'civicCenterId' => self::CIVIC_CENTER_ID,
             ]
         );
 
@@ -66,6 +71,8 @@ final class AdvertisementTest extends TestCase
                 'description' => 'Dream advertisement ',
                 'password' => 'myPassword',
                 'email' => 'email@test.com',
+                'memberId' => self::MEMBER_ID,
+                'civicCenterId' => self::CIVIC_CENTER_ID,
             ]
         );
 
@@ -120,6 +127,8 @@ final class AdvertisementTest extends TestCase
                 'description' => 'Dream advertisement ',
                 'password' => 'myPassword',
                 'email' => self::INVALID_EMAIL,
+                'memberId' => self::MEMBER_ID,
+                'civicCenterId' => self::CIVIC_CENTER_ID,
             ]
         );
 
@@ -170,6 +179,8 @@ final class AdvertisementTest extends TestCase
                 'description' => 'Dream advertisement changed ',
                 'email' => 'email@test.com',
                 'password' => 'myBadPassword',
+                'memberId' => self::MEMBER_ID,
+                'civicCenterId' => self::CIVIC_CENTER_ID,
             ],
         );
 
@@ -260,7 +271,7 @@ final class AdvertisementTest extends TestCase
 
     private function withAnAdvertisementCreated(): void
     {
-        $this->connection->execute(sprintf("INSERT INTO advertisements (id, description, email, password, advertisement_date, status, approval_status) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s' )",
+        $this->connection->execute(sprintf("INSERT INTO advertisements (id, description, email, password, advertisement_date, status, approval_status, user_id, civic_center_id) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )",
                 self::ADVERTISEMENT_ID,
                 'Dream advertisement ',
                 'email@test.com',
@@ -268,6 +279,8 @@ final class AdvertisementTest extends TestCase
                 self::ADVERTISEMENT_CREATION_DATE,
                 'active',
                 'approved',
+                self::MEMBER_ID,
+                self::CIVIC_CENTER_ID,
             )
         );
     }
