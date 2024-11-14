@@ -15,7 +15,6 @@ use Demo\App\Advertisements\User\Domain\ValueObjects\MemberNumber;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
 use Demo\App\Advertisements\User\Domain\ValueObjects\UserId;
 use Exception;
-use const Chemem\Bingo\Functional\equals;
 
 final class SignUpMemberUseCase
 {
