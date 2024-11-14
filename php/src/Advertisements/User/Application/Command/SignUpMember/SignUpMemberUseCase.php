@@ -32,7 +32,6 @@ final class SignUpMemberUseCase
             throw UserNotFoundException::asAdmin();
         }
 
-        //TODO: Use equals
         if (!$admin->civicCenterId()->equals(new CivicCenterId($command->civicCenterId))) {
             throw AdminWithIncorrectCivicCenterException::differentCivicCenterFromMember();
         }
