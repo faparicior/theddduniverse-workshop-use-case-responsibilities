@@ -9,25 +9,33 @@ use Demo\App\Common\Exceptions\BoundedContextException;
 use Demo\App\Common\UI\CommonController;
 use Demo\App\Framework\FrameworkRequest;
 use Demo\App\Framework\FrameworkResponse;
+use Demo\App\Framework\SecurityUser\FrameworkSecurityService;
 
 final class SignUpMemberController extends CommonController
 {
-    public function __construct(private SignUpMemberUseCase $useCase)
-    {
-    }
+    public function __construct(
+        private SignUpMemberUseCase $useCase,
+        private FrameworkSecurityService $securityService,
+    ) {}
 
     public function request(FrameworkRequest $request): FrameworkResponse
     {
         // get role from manager_id request
+        $user = $this->securityService->getSecurityUserFromRequest($request);
+
+        if (null == $user || !$user->role() == 'admin') {
+            return $this->processUnauthorizedResponse();
+        }
 
         try {
             $command = new SignUpMemberCommand(
+                $user->id(),
+                $user->role(),
                 ($request->content())['id'],
                 ($request->content())['email'],
                 ($request->content())['password'],
                 ($request->content())['memberNumber'],
                 ($request->content())['civicCenterId'],
-                ($request->content())['managerId'],
             );
 
             $this->useCase->execute($command);

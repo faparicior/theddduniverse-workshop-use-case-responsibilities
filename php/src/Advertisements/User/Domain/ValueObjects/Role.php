@@ -26,4 +26,9 @@ enum Role
             self::MEMBER => 'member',
         };
     }
+
+    public function isAdmin(): bool
+    {
+        return $this === self::ADMIN;
+    }
 }

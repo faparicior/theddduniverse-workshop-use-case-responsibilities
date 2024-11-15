@@ -3,13 +3,12 @@ declare(strict_types=1);
 
 namespace Tests\Demo\App\Unit\Advertisements\User\Domain;
 
-use Demo\App\Advertisements\CivicCenter\Domain\ValueObjects\CivicCenterId;
+use Demo\App\Advertisements\Shared\ValueObjects\CivicCenterId;
 use Demo\App\Advertisements\Shared\ValueObjects\Email;
-use Demo\App\Advertisements\Shared\ValueObjects\Password;
+use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\AdminUser;
 use Demo\App\Advertisements\User\Domain\Exceptions\InvalidUserException;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
-use Demo\App\Advertisements\User\Domain\ValueObjects\UserId;
 use PHPUnit\Framework\TestCase;
 
 class AdminUserTest extends TestCase
@@ -21,18 +20,16 @@ class AdminUserTest extends TestCase
     private const string ADMIN_ROLE = 'admin';
     private const string MEMBER_ROLE = 'member';
 
-    public function testShouldCreateAnAdminUser()
+    public function testShouldCreateAnAdminUserFromDatabase()
     {
         $userId = new UserId(self::ID);
         $civicCenterId = new CivicCenterId(self::CIVIC_CENTER_ID);
         $email = new Email(self::EMAIL);
-        $password = Password::fromPlainPassword(self::PASSWORD);
         $role = Role::fromString(self::ADMIN_ROLE);
 
-        $user = new AdminUser(
+        $user = AdminUser::fromDatabase(
             $userId,
             $email,
-            $password,
             $role,
             $civicCenterId,
         );
@@ -48,15 +45,13 @@ class AdminUserTest extends TestCase
         $userId = new UserId(self::ID);
         $civicCenterId = new CivicCenterId(self::CIVIC_CENTER_ID);
         $email = new Email(self::EMAIL);
-        $password = Password::fromPlainPassword(self::PASSWORD);
         $role = Role::fromString(self::MEMBER_ROLE);
 
         $this->expectException(InvalidUserException::class);
 
-        new AdminUser(
+        AdminUser::fromDatabase(
             $userId,
             $email,
-            $password,
             $role,
             $civicCenterId,
         );

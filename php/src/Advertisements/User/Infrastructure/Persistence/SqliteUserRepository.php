@@ -4,18 +4,16 @@ declare(strict_types=1);
 namespace Demo\App\Advertisements\User\Infrastructure\Persistence;
 
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\InvalidEmailException;
-use Demo\App\Advertisements\CivicCenter\Domain\ValueObjects\CivicCenterId;
 use Demo\App\Advertisements\Shared\Exceptions\InvalidUniqueIdentifierException;
+use Demo\App\Advertisements\Shared\ValueObjects\CivicCenterId;
 use Demo\App\Advertisements\Shared\ValueObjects\Email;
-use Demo\App\Advertisements\Shared\ValueObjects\Password;
+use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\AdminUser;
 use Demo\App\Advertisements\User\Domain\Exceptions\InvalidUserException;
 use Demo\App\Advertisements\User\Domain\MemberUser;
-use Demo\App\Advertisements\User\Domain\UserBase;
 use Demo\App\Advertisements\User\Domain\UserRepository;
 use Demo\App\Advertisements\User\Domain\ValueObjects\MemberNumber;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
-use Demo\App\Advertisements\User\Domain\ValueObjects\UserId;
 use Demo\App\Framework\Database\DatabaseConnection;
 use Demo\App\Framework\Database\SqliteConnection;
 
@@ -42,10 +40,9 @@ class SqliteUserRepository implements UserRepository
         $row = $result[0];
 
         if ($row['role'] === 'admin') {
-            return new AdminUser(
+            return AdminUser::fromDatabase(
                 new UserId($row['id']),
                 new Email($row['email']),
-                Password::fromEncryptedPassword($row['password']),
                 Role::ADMIN,
                 new CivicCenterId($row['civic_center_id']),
             );
@@ -69,10 +66,9 @@ class SqliteUserRepository implements UserRepository
         $row = $result[0];
 
         if ($row['role'] === 'member') {
-            return new MemberUser(
+            return MemberUser::fromDatabase(
                 new UserId($row['id']),
                 new Email($row['email']),
-                Password::fromEncryptedPassword($row['password']),
                 Role::MEMBER,
                 new MemberNumber($row['member_number']),
                 new CivicCenterId($row['civic_center_id']),
@@ -84,6 +80,20 @@ class SqliteUserRepository implements UserRepository
 
     public function saveMember(MemberUser $member): void
     {
+        if ($this->isASignUp($member)) {
+            $this->dbConnection->execute(sprintf('
+            INSERT INTO users (id, email, password, role, member_number, civic_center_id) VALUES (\'%1$s\', \'%2$s\', \'%3$s\', \'%4$s\', \'%5$s\') 
+            ON CONFLICT(id) DO UPDATE SET email = \'%2$s\', role = \'%3$s\', member_number = \'%4$s\', civic_center_id = \'%5$s\';',
+                    $member->id()->value(),
+                    $member->email()->value(),
+                    $member->role()->value(),
+                    $member->memberNumber()->value(),
+                    $member->civicCenterId()->value(),
+                )
+            );
+
+            return;
+        }
         $this->dbConnection->execute(sprintf('
             INSERT INTO users (id, email, password, role, member_number, civic_center_id) VALUES (\'%1$s\', \'%2$s\', \'%3$s\', \'%4$s\', \'%5$s\', \'%6$s\') 
             ON CONFLICT(id) DO UPDATE SET email = \'%2$s\', password = \'%3$s\', role = \'%4$s\', member_number = \'%5$s\', civic_center_id = \'%6$s\';',
@@ -95,5 +105,10 @@ class SqliteUserRepository implements UserRepository
                 $member->civicCenterId()->value(),
             )
         );
+    }
+
+    private function isASignUp(MemberUser $member): bool
+    {
+        return null == $member->password();
     }
 }

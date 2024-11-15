@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Demo\App\Advertisements\CivicCenter\Domain;
 
-use Demo\App\Advertisements\CivicCenter\Domain\ValueObjects\CivicCenterId;
 use Demo\App\Advertisements\CivicCenter\Domain\ValueObjects\CivicCenterName;
+use Demo\App\Advertisements\Shared\ValueObjects\CivicCenterId;
 
 final class CivicCenter
 {

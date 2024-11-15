@@ -10,7 +10,7 @@ final readonly class FrameworkRequest
     public const string METHOD_PUT = 'PUT';
     public const string METHOD_PATCH = 'PATCH';
 
-    public function __construct(private string $method, private string $path, private array $content)
+    public function __construct(private string $method, private string $path, private array $content, private array $headers = [])
     {
     }
 
@@ -37,5 +37,10 @@ final readonly class FrameworkRequest
     public function content(): array
     {
         return $this->content;
+    }
+
+    public function headers(): array
+    {
+        return $this->headers;
     }
 }

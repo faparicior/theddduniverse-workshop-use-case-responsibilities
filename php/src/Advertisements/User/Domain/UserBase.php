@@ -5,16 +5,17 @@ namespace Demo\App\Advertisements\User\Domain;
 
 use Demo\App\Advertisements\Shared\ValueObjects\Email;
 use Demo\App\Advertisements\Shared\ValueObjects\Password;
+use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
-use Demo\App\Advertisements\User\Domain\ValueObjects\UserId;
 
 abstract class UserBase
 {
-    public function __construct(
-        private readonly UserId $id,
-        private Email $email,
-        private Password $password,
-        private Role $role,
+    protected ?Password $password = null;
+
+    protected function __construct(
+        protected readonly UserId $id,
+        protected Email $email,
+        protected Role $role,
     ) {
     }
 
@@ -28,7 +29,7 @@ abstract class UserBase
         return $this->email;
     }
 
-    public function password(): Password
+    public function password(): ?Password
     {
         return $this->password;
     }

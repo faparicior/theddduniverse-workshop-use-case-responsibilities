@@ -42,7 +42,9 @@ final class MemberTest extends TestCase
                 'password' => 'password',
                 'memberNumber' => '123456',
                 'civicCenterId' => self::CIVIC_CENTER_ID,
-                'managerId' => self::ADMIN_ID,
+            ],
+            [
+                'userSession' => self::ADMIN_ID,
             ]
         );
 
@@ -70,7 +72,9 @@ final class MemberTest extends TestCase
                 'password' => 'password',
                 'memberNumber' => '123456',
                 'civicCenterId' => self::CIVIC_CENTER_2_ID,
-                'managerId' => self::ADMIN_ID,
+            ],
+            [
+                'userSession' => self::ADMIN_ID,
             ]
         );
 

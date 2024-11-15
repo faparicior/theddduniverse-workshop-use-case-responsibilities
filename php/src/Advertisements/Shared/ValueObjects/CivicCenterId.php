@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Demo\App\Advertisements\CivicCenter\Domain\ValueObjects;
+namespace Demo\App\Advertisements\Shared\ValueObjects;
 
 use Demo\App\Advertisements\Shared\Exceptions\InvalidUniqueIdentifierException;
 

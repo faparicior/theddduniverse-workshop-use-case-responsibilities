@@ -61,4 +61,16 @@ abstract class CommonController
             ]
         );
     }
+
+    protected function processUnauthorizedResponse(): FrameworkResponse
+    {
+        return new FrameworkResponse(
+            FrameworkResponse::STATUS_UNAUTHORIZED,
+            [
+                'errors' => '',
+                'code' => FrameworkResponse::STATUS_UNAUTHORIZED,
+                'message' => '',
+            ]
+        );
+    }
 }

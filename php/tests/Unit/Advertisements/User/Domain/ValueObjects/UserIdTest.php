@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Tests\Demo\App\Unit\Advertisements\User\Domain\ValueObjects;
 
 use Demo\App\Advertisements\Shared\Exceptions\InvalidUniqueIdentifierException;
-use Demo\App\Advertisements\User\Domain\ValueObjects\UserId;
+use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use PHPUnit\Framework\TestCase;
 
 class UserIdTest extends TestCase

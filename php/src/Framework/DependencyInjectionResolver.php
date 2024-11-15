@@ -17,6 +17,9 @@ use Demo\App\Advertisements\User\Infrastructure\Persistence\SqliteUserRepository
 use Demo\App\Advertisements\User\UI\Http\SignUpMemberController;
 use Demo\App\Framework\Database\DatabaseConnection;
 use Demo\App\Framework\Database\SqliteConnection;
+use Demo\App\Framework\SecurityUser\FrameworkSecurityService;
+use Demo\App\Framework\SecurityUser\SecurityUserRepository;
+use Demo\App\Framework\SecurityUser\SqliteSecurityUserRepository;
 
 class DependencyInjectionResolver
 {
@@ -57,7 +60,17 @@ class DependencyInjectionResolver
 
     public function signUpMemberController(): SignUpMemberController
     {
-        return new SignUpMemberController($this->signUpMemberUseCase());
+        return new SignUpMemberController($this->signUpMemberUseCase(), $this->frameworkSecurityService());
+    }
+
+    public function frameworkSecurityService(): FrameworkSecurityService
+    {
+        return new FrameworkSecurityService($this->securityUserRepository());
+    }
+
+    public function securityUserRepository(): SecurityUserRepository
+    {
+        return new SqliteSecurityUserRepository(self::connection());
     }
 
     public function signUpMemberUseCase(): SignUpMemberUseCase
