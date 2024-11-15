@@ -8,8 +8,8 @@ use SensitiveParameter;
 readonly class SignUpMemberCommand
 {
     public function __construct(
-        public string $userId,
-        public string $userRole,
+        public string $securityUserId,
+        public string $securityUserRole,
         public string $id,
         public string $email,
         #[SensitiveParameter]

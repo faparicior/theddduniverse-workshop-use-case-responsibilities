@@ -27,12 +27,12 @@ final class SignUpMemberUseCase
      */
     public function execute(SignUpMemberCommand $command): void
     {
-        $admin = $this->userRepository->findAdminById(new UserId($command->userId));
-        if (!$admin) {
+        $adminUser = $this->userRepository->findAdminById(new UserId($command->securityUserId));
+        if (!$adminUser) {
             throw UserNotFoundException::asAdmin();
         }
 
-        if (!$admin->civicCenterId()->equals(new CivicCenterId($command->civicCenterId))) {
+        if (!$adminUser->civicCenterId()->equals(new CivicCenterId($command->civicCenterId))) {
             throw AdminWithIncorrectCivicCenterException::differentCivicCenterFromMember();
         }
 
