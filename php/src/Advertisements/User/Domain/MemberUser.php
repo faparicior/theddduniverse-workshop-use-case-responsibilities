@@ -10,6 +10,7 @@ use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\InvalidUserException;
 use Demo\App\Advertisements\User\Domain\ValueObjects\MemberNumber;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
+use Demo\App\Advertisements\User\Domain\ValueObjects\Status;
 
 class MemberUser extends UserBase
 {
@@ -17,7 +18,7 @@ class MemberUser extends UserBase
     private CivicCenterId $civicCenterId;
 
     /** @throws InvalidUserException */
-    protected function __construct(UserId $id, Email $email, Role $role, MemberNumber $memberNumber, CivicCenterId $civicCenterId)
+    protected function __construct(UserId $id, Email $email, Role $role, MemberNumber $memberNumber, CivicCenterId $civicCenterId, Status $status)
     {
         if ($role !== Role::MEMBER) {
             throw InvalidUserException::build('Invalid role for member user');
@@ -26,7 +27,7 @@ class MemberUser extends UserBase
         $this->memberNumber = $memberNumber;
         $this->civicCenterId = $civicCenterId;
 
-        parent::__construct($id, $email, $role);
+        parent::__construct($id, $email, $role, $status);
     }
 
     /**
@@ -34,18 +35,23 @@ class MemberUser extends UserBase
      */
     public static function signUp(UserId $id, Email $email, Password $password, Role $role, MemberNumber $memberNumber, CivicCenterId $civicCenterId): MemberUser
     {
-        $member = new self($id, $email, $role, $memberNumber, $civicCenterId);
+        $member = new self($id, $email, $role, $memberNumber, $civicCenterId, Status::ACTIVE);
         $member->password = $password;
 
         return $member;
     }
 
+    public function disable(): void
+    {
+        $this->status = Status::INACTIVE;
+    }
+
     /**
      * @throws InvalidUserException
      */
-    public static function fromDatabase(UserId $id, Email $email, Role $role, MemberNumber $memberNumber, CivicCenterId $civicCenterId): MemberUser
+    public static function fromDatabase(UserId $id, Email $email, Role $role, MemberNumber $memberNumber, CivicCenterId $civicCenterId, Status $status): MemberUser
     {
-        return new self($id, $email, $role, $memberNumber, $civicCenterId);
+        return new self($id, $email, $role, $memberNumber, $civicCenterId, $status);
     }
 
     public function memberNumber(): MemberNumber

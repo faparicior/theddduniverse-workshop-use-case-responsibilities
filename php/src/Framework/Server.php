@@ -38,6 +38,7 @@ final class Server
     {
         return match ($request->pathStart()) {
             'advertisements' => $this->resolver->updateAdvertisementController()->request($request),
+            'member' => $this->resolver->disableMemberController()->request($request),
             default => $this->notFound($request),
         };
     }

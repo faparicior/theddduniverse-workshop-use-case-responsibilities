@@ -10,7 +10,7 @@ readonly class SignUpMemberCommand
     public function __construct(
         public string $securityUserId,
         public string $securityUserRole,
-        public string $id,
+        public string $memberId,
         public string $email,
         #[SensitiveParameter]
         public string $password,

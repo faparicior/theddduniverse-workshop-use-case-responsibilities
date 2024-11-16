@@ -3,18 +3,18 @@ declare(strict_types=1);
 
 namespace Demo\App\Advertisements\User\UI\Http;
 
-use Demo\App\Advertisements\User\Application\Command\SignUpMember\SignUpMemberCommand;
-use Demo\App\Advertisements\User\Application\Command\SignUpMember\SignUpMemberUseCase;
+use Demo\App\Advertisements\User\Application\Command\DisableMember\DisableMemberCommand;
+use Demo\App\Advertisements\User\Application\Command\DisableMember\DisableMemberUseCase;
 use Demo\App\Common\Exceptions\BoundedContextException;
 use Demo\App\Common\UI\CommonController;
 use Demo\App\Framework\FrameworkRequest;
 use Demo\App\Framework\FrameworkResponse;
 use Demo\App\Framework\SecurityUser\FrameworkSecurityService;
 
-final class SignUpMemberController extends CommonController
+final class DisableMemberController extends CommonController
 {
     public function __construct(
-        private SignUpMemberUseCase $useCase,
+        private DisableMemberUseCase $useCase,
         private FrameworkSecurityService $securityService,
     ) {}
 
@@ -27,19 +27,15 @@ final class SignUpMemberController extends CommonController
         }
 
         try {
-            $command = new SignUpMemberCommand(
+            $command = new DisableMemberCommand(
                 $user->id(),
                 $user->role(),
                 ($request->content())['id'],
-                ($request->content())['email'],
-                ($request->content())['password'],
-                ($request->content())['memberNumber'],
-                ($request->content())['civicCenterId'],
             );
 
             $this->useCase->execute($command);
 
-            return $this->processSuccessfulCreateCommand();
+            return $this->processSuccessfulCommand();
         } catch (BoundedContextException $exception) {
             return $this->processDomainOrApplicationExceptionResponse($exception);
         } catch (\Throwable $exception) {

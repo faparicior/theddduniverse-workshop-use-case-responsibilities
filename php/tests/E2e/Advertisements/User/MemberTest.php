@@ -59,6 +59,89 @@ final class MemberTest extends TestCase
         self::assertCount(1, $resultSet);
     }
 
+    public function testShouldDisableAMemberThroughAnAdmin(): void
+    {
+        $this->withAdminUser();
+        $this->withMemberUser();
+
+        $request = new FrameworkRequest(
+            FrameworkRequest::METHOD_PUT,
+            'member/disable',
+            [
+                'id' => self::MEMBER_ID,
+            ],
+            [
+                'userSession' => self::ADMIN_ID,
+            ]
+        );
+
+        $response = $this->server->route($request);
+        self::assertEquals(FrameworkResponse::STATUS_OK, $response->statusCode());
+        self::assertEquals(
+            $this->successCommandResponse(FrameworkResponse::STATUS_OK),
+            $response->data(),
+        );
+
+        $resultSet = $this->connection->query('select * from users where id = \'' . self::MEMBER_ID . '\';');
+        self::assertCount(1, $resultSet);
+        self::assertEquals('inactive', $resultSet[0]['status']);
+    }
+
+    public function testShouldFailDisablingAMemberThroughAnAdminWithDifferentCivicCenter(): void
+    {
+        $this->withAdminUser();
+        $this->withMemberUserFomDifferentCivicCenter();
+
+        $request = new FrameworkRequest(
+            FrameworkRequest::METHOD_PUT,
+            'member/disable',
+            [
+                'id' => self::MEMBER_ID,
+            ],
+            [
+                'userSession' => self::ADMIN_ID,
+            ]
+        );
+
+        $response = $this->server->route($request);
+        self::assertEquals(FrameworkResponse::STATUS_BAD_REQUEST, $response->statusCode());
+        self::assertEquals(
+            $this->errorCommandResponse(
+                FrameworkResponse::STATUS_BAD_REQUEST,
+                sprintf('Admin does not belong to the same civic center')
+            ),
+            $response->data(),
+        );
+    }
+
+    public function testShouldEnableADisabledAMemberThroughAnAdmin(): void
+    {
+        $this->withAdminUser();
+        $this->withMemberUser();
+
+        $request = new FrameworkRequest(
+            FrameworkRequest::METHOD_PUT,
+            'member/enable',
+            [
+                'id' => self::MEMBER_ID,
+            ],
+            [
+                'userSession' => self::ADMIN_ID,
+            ]
+        );
+
+        $response = $this->server->route($request);
+        self::assertEquals(FrameworkResponse::STATUS_OK, $response->statusCode());
+        self::assertEquals(
+            $this->successCommandResponse(FrameworkResponse::STATUS_OK),
+            $response->data(),
+        );
+
+        $resultSet = $this->connection->query('select * from users where id = \'' . self::MEMBER_ID . '\';');
+        self::assertCount(1, $resultSet);
+        self::assertEquals('active', $resultSet[0]['status']);
+    }
+
     public function testShouldFailSignUpAMemberThroughAnAdminWithDifferentCivicCenter(): void
     {
         $this->withAdminUser();
@@ -115,13 +198,42 @@ final class MemberTest extends TestCase
 
     private function withAdminUser(): void
     {
-        $this->connection->execute(sprintf("INSERT INTO users (id, email, password, role, member_number, civic_center_id) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')",
+        $this->connection->execute(sprintf("INSERT INTO users (id, email, password, role, member_number, civic_center_id, status) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')",
                 self::ADMIN_ID,
                 'admin@test.com',
                 md5('myPassword'),
                 'admin',
                 '',
                 self::CIVIC_CENTER_ID,
+                'active',
+            )
+        );
+    }
+
+    private function withMemberUser(): void
+    {
+        $this->connection->execute(sprintf("INSERT INTO users (id, email, password, role, member_number, civic_center_id, status) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+                self::MEMBER_ID,
+                'member@test.com',
+                md5('myPassword'),
+                'member',
+                '123456',
+                self::CIVIC_CENTER_ID,
+                'active',
+            )
+        );
+    }
+
+    private function withMemberUserFomDifferentCivicCenter(): void
+    {
+        $this->connection->execute(sprintf("INSERT INTO users (id, email, password, role, member_number, civic_center_id, status) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+                self::MEMBER_ID,
+                'member@test.com',
+                md5('myPassword'),
+                'member',
+                '123456',
+                self::CIVIC_CENTER_2_ID,
+                'active',
             )
         );
     }

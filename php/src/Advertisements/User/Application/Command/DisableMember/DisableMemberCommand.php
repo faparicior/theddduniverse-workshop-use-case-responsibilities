@@ -7,6 +7,7 @@ readonly class DisableMemberCommand
 {
     public function __construct(
         public string $securityUserId,
-        public string $id,
+        public string $securityUserRole,
+        public string $memberId,
     ){}
 }

@@ -11,9 +11,11 @@ use Demo\App\Advertisements\Advertisement\Infrastructure\Persistence\SqliteAdver
 use Demo\App\Advertisements\Advertisement\UI\Http\PublishAdvertisementController;
 use Demo\App\Advertisements\Advertisement\UI\Http\RenewAdvertisementController;
 use Demo\App\Advertisements\Advertisement\UI\Http\UpdateAdvertisementController;
+use Demo\App\Advertisements\User\Application\Command\DisableMember\DisableMemberUseCase;
 use Demo\App\Advertisements\User\Application\Command\SignUpMember\SignUpMemberUseCase;
 use Demo\App\Advertisements\User\Domain\UserRepository;
 use Demo\App\Advertisements\User\Infrastructure\Persistence\SqliteUserRepository;
+use Demo\App\Advertisements\User\UI\Http\DisableMemberController;
 use Demo\App\Advertisements\User\UI\Http\SignUpMemberController;
 use Demo\App\Framework\Database\DatabaseConnection;
 use Demo\App\Framework\Database\SqliteConnection;
@@ -61,6 +63,16 @@ class DependencyInjectionResolver
     public function signUpMemberController(): SignUpMemberController
     {
         return new SignUpMemberController($this->signUpMemberUseCase(), $this->frameworkSecurityService());
+    }
+
+    public function disableMemberController(): DisableMemberController
+    {
+        return new DisableMemberController($this->disableMemberUseCase(), $this->frameworkSecurityService());
+    }
+
+    public function disableMemberUseCase(): DisableMemberUseCase
+    {
+        return new DisableMemberUseCase($this->userRepository());
     }
 
     public function frameworkSecurityService(): FrameworkSecurityService

@@ -14,6 +14,7 @@ use Demo\App\Advertisements\User\Domain\MemberUser;
 use Demo\App\Advertisements\User\Domain\UserRepository;
 use Demo\App\Advertisements\User\Domain\ValueObjects\MemberNumber;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
+use Demo\App\Advertisements\User\Domain\ValueObjects\Status;
 use Demo\App\Framework\Database\DatabaseConnection;
 use Demo\App\Framework\Database\SqliteConnection;
 
@@ -45,6 +46,7 @@ class SqliteUserRepository implements UserRepository
                 new Email($row['email']),
                 Role::ADMIN,
                 new CivicCenterId($row['civic_center_id']),
+                Status::fromString($row['status']),
             );
         }
 
@@ -72,6 +74,7 @@ class SqliteUserRepository implements UserRepository
                 Role::MEMBER,
                 new MemberNumber($row['member_number']),
                 new CivicCenterId($row['civic_center_id']),
+                Status::fromString($row['status']),
             );
         }
 
@@ -82,13 +85,14 @@ class SqliteUserRepository implements UserRepository
     {
         if ($this->isASignUp($member)) {
             $this->dbConnection->execute(sprintf('
-            INSERT INTO users (id, email, password, role, member_number, civic_center_id) VALUES (\'%1$s\', \'%2$s\', \'%3$s\', \'%4$s\', \'%5$s\') 
-            ON CONFLICT(id) DO UPDATE SET email = \'%2$s\', role = \'%3$s\', member_number = \'%4$s\', civic_center_id = \'%5$s\';',
+            INSERT INTO users (id, email, password, role, member_number, civic_center_id) VALUES (\'%1$s\', \'%2$s\', \'%3$s\', \'%4$s\', \'%5$s\', \'%6$s\') 
+            ON CONFLICT(id) DO UPDATE SET email = \'%2$s\', role = \'%3$s\', member_number = \'%4$s\', civic_center_id = \'%5$s\', status = \'%6$s\';',
                     $member->id()->value(),
                     $member->email()->value(),
                     $member->role()->value(),
                     $member->memberNumber()->value(),
                     $member->civicCenterId()->value(),
+                    $member->status()->value(),
                 )
             );
 

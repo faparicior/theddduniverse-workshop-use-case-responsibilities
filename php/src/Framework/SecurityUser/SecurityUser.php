@@ -5,11 +5,15 @@ namespace Demo\App\Framework\SecurityUser;
 
 final class SecurityUser
 {
+    const string STATUS_ACTIVE = 'active';
+    const string STATUS_INACTIVE = 'inactive';
+
     public function __construct(
         private string $id,
         private string $email,
         private string $password,
         private string $role,
+        private string $status,
     ) {
     }
 
@@ -31,5 +35,10 @@ final class SecurityUser
     public function role(): string
     {
         return $this->role;
+    }
+
+    public function status(): string
+    {
+        return $this->status;
     }
 }

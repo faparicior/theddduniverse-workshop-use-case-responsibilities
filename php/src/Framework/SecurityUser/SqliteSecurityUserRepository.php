@@ -24,7 +24,7 @@ final class SqliteSecurityUserRepository implements SecurityUserRepository
         $row = $result[0];
 
         return new SecurityUser(
-            $row['id'], $row['email'], $row['password'], $row['role']
+            $row['id'], $row['email'], $row['password'], $row['role'], $row['status']
         );
     }
 }

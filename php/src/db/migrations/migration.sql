@@ -18,6 +18,7 @@ create table main.users
     password TEXT,
     role TEXT,
     member_number TEXT,
-    civic_center_id TEXT
+    civic_center_id TEXT,
+    status TEXT
 );
 
