@@ -8,6 +8,7 @@ use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\InvalidUserException;
 use Demo\App\Advertisements\User\Domain\SupervisorUser;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
+use Demo\App\Advertisements\User\Domain\ValueObjects\Status;
 use PHPUnit\Framework\TestCase;
 
 class SupervisorUserTest extends TestCase
@@ -22,11 +23,13 @@ class SupervisorUserTest extends TestCase
         $userId = new UserId(self::ID);
         $email = new Email(self::EMAIL);
         $role = Role::fromString(self::SUPERVISOR_ROLE);
+        $status = Status::ACTIVE;
 
         $user = SupervisorUser::fromDatabase(
             $userId,
             $email,
             $role,
+            $status,
         );
 
         self::assertInstanceOf(SupervisorUser::class, $user);
@@ -40,6 +43,7 @@ class SupervisorUserTest extends TestCase
         $userId = new UserId(self::ID);
         $email = new Email(self::EMAIL);
         $role = Role::fromString(self::MEMBER_ROLE);
+        $status = Status::ACTIVE;
 
         $this->expectException(InvalidUserException::class);
 
@@ -47,6 +51,7 @@ class SupervisorUserTest extends TestCase
             $userId,
             $email,
             $role,
+            $status,
         );
     }
 }

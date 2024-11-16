@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Demo\App\Advertisements\User\Application\Command\DisableMember;
+namespace Demo\App\Advertisements\User\Application\Command\EnableMember;
 
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\AdminWithIncorrectCivicCenterException;
@@ -10,7 +10,7 @@ use Demo\App\Advertisements\User\Domain\Exceptions\UserNotFoundException;
 use Demo\App\Advertisements\User\Domain\UserRepository;
 use Exception;
 
-final class DisableMemberUseCase
+final class EnableMemberUseCase
 {
     public function __construct(private UserRepository $userRepository)
     {
@@ -19,7 +19,7 @@ final class DisableMemberUseCase
     /**
      * @throws Exception
      */
-    public function execute(DisableMemberCommand $command): void
+    public function execute(EnableMemberCommand $command): void
     {
         $adminUser = $this->userRepository->findAdminById(new UserId($command->securityUserId));
         if (!$adminUser) {
@@ -35,7 +35,7 @@ final class DisableMemberUseCase
             throw AdminWithIncorrectCivicCenterException::differentCivicCenterFromMember();
         }
 
-        $member->disable();
+        $member->enable();
 
         $this->userRepository->saveMember($member);
     }

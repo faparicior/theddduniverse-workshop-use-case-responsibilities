@@ -12,10 +12,12 @@ use Demo\App\Advertisements\Advertisement\UI\Http\PublishAdvertisementController
 use Demo\App\Advertisements\Advertisement\UI\Http\RenewAdvertisementController;
 use Demo\App\Advertisements\Advertisement\UI\Http\UpdateAdvertisementController;
 use Demo\App\Advertisements\User\Application\Command\DisableMember\DisableMemberUseCase;
+use Demo\App\Advertisements\User\Application\Command\EnableMember\EnableMemberUseCase;
 use Demo\App\Advertisements\User\Application\Command\SignUpMember\SignUpMemberUseCase;
 use Demo\App\Advertisements\User\Domain\UserRepository;
 use Demo\App\Advertisements\User\Infrastructure\Persistence\SqliteUserRepository;
 use Demo\App\Advertisements\User\UI\Http\DisableMemberController;
+use Demo\App\Advertisements\User\UI\Http\EnableMemberController;
 use Demo\App\Advertisements\User\UI\Http\SignUpMemberController;
 use Demo\App\Framework\Database\DatabaseConnection;
 use Demo\App\Framework\Database\SqliteConnection;
@@ -73,6 +75,16 @@ class DependencyInjectionResolver
     public function disableMemberUseCase(): DisableMemberUseCase
     {
         return new DisableMemberUseCase($this->userRepository());
+    }
+
+    public function enableMemberController(): EnableMemberController
+    {
+        return new EnableMemberController($this->enableMemberUseCase(), $this->frameworkSecurityService());
+    }
+
+    public function enableMemberUseCase(): EnableMemberUseCase
+    {
+        return new EnableMemberUseCase($this->userRepository());
     }
 
     public function frameworkSecurityService(): FrameworkSecurityService

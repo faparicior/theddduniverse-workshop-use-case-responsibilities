@@ -18,7 +18,7 @@ final class DisableMemberController extends CommonController
         private FrameworkSecurityService $securityService,
     ) {}
 
-    public function request(FrameworkRequest $request): FrameworkResponse
+    public function request(FrameworkRequest $request, array $pathValues = []): FrameworkResponse
     {
         $user = $this->securityService->getSecurityUserFromRequest($request);
 
@@ -30,7 +30,7 @@ final class DisableMemberController extends CommonController
             $command = new DisableMemberCommand(
                 $user->id(),
                 $user->role(),
-                ($request->content())['id'],
+                $pathValues['memberId'],
             );
 
             $this->useCase->execute($command);

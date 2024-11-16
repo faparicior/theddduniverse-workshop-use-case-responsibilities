@@ -36,11 +36,28 @@ final class Server
 
     public function put(FrameworkRequest $request): FrameworkResponse
     {
-        return match ($request->pathStart()) {
+        $match = match ($request->pathStart()) {
             'advertisements' => $this->resolver->updateAdvertisementController()->request($request),
-            'member' => $this->resolver->disableMemberController()->request($request),
-            default => $this->notFound($request),
+            default => null,
         };
+
+        if($match instanceof FrameworkResponse) {
+            return $match;
+        }
+
+        $match = match (1) {
+            preg_match('/^member\/([0-9a-fA-F\-]+)\/disable$/', $request->path(), $matches) =>
+                $this->resolver->disableMemberController()->request($request, ['memberId' => $matches[1]]),
+            preg_match('/^member\/([0-9a-fA-F\-]+)\/enable$/', $request->path(), $matches) =>
+                $this->resolver->enableMemberController()->request($request, ['memberId' => $matches[1]]),
+            default => null,
+        };
+
+        if($match instanceof FrameworkResponse) {
+            return $match;
+        }
+
+        return $this->notFound($request);
     }
 
     public function patch(FrameworkRequest $request): FrameworkResponse

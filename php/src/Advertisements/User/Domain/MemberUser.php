@@ -46,6 +46,11 @@ class MemberUser extends UserBase
         $this->status = Status::INACTIVE;
     }
 
+    public function enable(): void
+    {
+        $this->status = Status::ACTIVE;
+    }
+
     /**
      * @throws InvalidUserException
      */

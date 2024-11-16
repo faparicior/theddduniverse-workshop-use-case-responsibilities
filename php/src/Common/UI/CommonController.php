@@ -11,7 +11,7 @@ use Exception;
 
 abstract class CommonController
 {
-    public abstract function request(FrameworkRequest $request): FrameworkResponse;
+    public abstract function request(FrameworkRequest $request, array $pathValues = []): FrameworkResponse;
 
     protected function processDomainOrApplicationExceptionResponse(ApplicationException|DomainException|Exception $e): FrameworkResponse
     {

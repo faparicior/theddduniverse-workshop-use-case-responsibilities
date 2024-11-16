@@ -7,23 +7,24 @@ use Demo\App\Advertisements\Shared\ValueObjects\Email;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\InvalidUserException;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
+use Demo\App\Advertisements\User\Domain\ValueObjects\Status;
 
 class SupervisorUser extends UserBase
 {
     /** @throws InvalidUserException */
-    protected function __construct(UserId $id, Email $email, Role $role)
+    protected function __construct(UserId $id, Email $email, Role $role, Status $status)
     {
         if ($role !== Role::SUPERVISOR) {
             throw InvalidUserException::build('Invalid role for supervisor user');
         }
-        parent::__construct($id, $email, $role);
+        parent::__construct($id, $email, $role, $status);
     }
 
     /**
      * @throws InvalidUserException
      */
-    public static function fromDatabase(UserId $id, Email $email, Role $role): SupervisorUser
+    public static function fromDatabase(UserId $id, Email $email, Role $role, Status $status): SupervisorUser
     {
-        return new self($id, $email, $role);
+        return new self($id, $email, $role, $status);
     }
 }

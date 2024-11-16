@@ -16,7 +16,7 @@ final class RenewAdvertisementController extends CommonController
     {
     }
 
-    public function request(FrameworkRequest $request): FrameworkResponse
+    public function request(FrameworkRequest $request, array $pathValues = []): FrameworkResponse
     {
         try {
             $command = new RenewAdvertisementCommand(

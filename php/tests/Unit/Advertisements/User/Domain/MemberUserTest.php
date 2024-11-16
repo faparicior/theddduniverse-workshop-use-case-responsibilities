@@ -11,6 +11,7 @@ use Demo\App\Advertisements\User\Domain\Exceptions\InvalidUserException;
 use Demo\App\Advertisements\User\Domain\MemberUser;
 use Demo\App\Advertisements\User\Domain\ValueObjects\MemberNumber;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
+use Demo\App\Advertisements\User\Domain\ValueObjects\Status;
 use PHPUnit\Framework\TestCase;
 
 class MemberUserTest extends TestCase
@@ -30,6 +31,7 @@ class MemberUserTest extends TestCase
         $email = new Email(self::EMAIL);
         $role = Role::fromString(self::MEMBER_ROLE);
         $memberNumber = new MemberNumber(self::MEMBER_NUMBER);
+        $status = Status::ACTIVE;
 
         $user = MemberUser::fromDatabase(
             $userId,
@@ -37,6 +39,7 @@ class MemberUserTest extends TestCase
             $role,
             $memberNumber,
             $civicCenterId,
+            $status,
         );
 
         self::assertInstanceOf(MemberUser::class, $user);

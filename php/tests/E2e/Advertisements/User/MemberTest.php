@@ -62,14 +62,12 @@ final class MemberTest extends TestCase
     public function testShouldDisableAMemberThroughAnAdmin(): void
     {
         $this->withAdminUser();
-        $this->withMemberUser();
+        $this->withMemberUser('active');
 
         $request = new FrameworkRequest(
             FrameworkRequest::METHOD_PUT,
-            'member/disable',
-            [
-                'id' => self::MEMBER_ID,
-            ],
+            'member/' . self::MEMBER_ID . '/disable',
+            [],
             [
                 'userSession' => self::ADMIN_ID,
             ]
@@ -94,10 +92,8 @@ final class MemberTest extends TestCase
 
         $request = new FrameworkRequest(
             FrameworkRequest::METHOD_PUT,
-            'member/disable',
-            [
-                'id' => self::MEMBER_ID,
-            ],
+            'member/' . self::MEMBER_ID . '/disable',
+            [],
             [
                 'userSession' => self::ADMIN_ID,
             ]
@@ -117,14 +113,12 @@ final class MemberTest extends TestCase
     public function testShouldEnableADisabledAMemberThroughAnAdmin(): void
     {
         $this->withAdminUser();
-        $this->withMemberUser();
+        $this->withMemberUser('inactive');
 
         $request = new FrameworkRequest(
             FrameworkRequest::METHOD_PUT,
-            'member/enable',
-            [
-                'id' => self::MEMBER_ID,
-            ],
+            'member/' . self::MEMBER_ID . '/enable',
+            [],
             [
                 'userSession' => self::ADMIN_ID,
             ]
@@ -210,7 +204,7 @@ final class MemberTest extends TestCase
         );
     }
 
-    private function withMemberUser(): void
+    private function withMemberUser(string $status): void
     {
         $this->connection->execute(sprintf("INSERT INTO users (id, email, password, role, member_number, civic_center_id, status) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')",
                 self::MEMBER_ID,
@@ -219,7 +213,7 @@ final class MemberTest extends TestCase
                 'member',
                 '123456',
                 self::CIVIC_CENTER_ID,
-                'active',
+                $status,
             )
         );
     }
