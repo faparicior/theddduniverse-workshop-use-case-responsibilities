@@ -20,7 +20,7 @@ final class UpdateAdvertisementController extends CommonController
     {
         try {
             $command = new UpdateAdvertisementCommand(
-                $request->getIdPath(),
+                $pathValues['advertisementId'],
                 ($request->content())['description'],
                 ($request->content())['email'],
                 ($request->content())['password'],

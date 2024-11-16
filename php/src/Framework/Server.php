@@ -37,7 +37,7 @@ final class Server
     public function put(FrameworkRequest $request): FrameworkResponse
     {
         $match = match ($request->pathStart()) {
-            'advertisements' => $this->resolver->updateAdvertisementController()->request($request),
+            'advertisements' => $this->resolver->updateAdvertisementController()->request($request, ['advertisementId' => $request->getIdPath()]),
             default => null,
         };
 
