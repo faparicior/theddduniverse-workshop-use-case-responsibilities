@@ -167,6 +167,29 @@ final class AdvertisementTest extends TestCase
         self::assertGreaterThan(0, $diff->days);
     }
 
+    public function testShouldDisableAnAdvertisement(): void
+    {
+        $this->withAnAdvertisementCreated();
+
+        $request = new FrameworkRequest(
+            FrameworkRequest::METHOD_PUT,
+            'advertisements/' . self::ADVERTISEMENT_ID . '/disable',
+            [
+                'password' => 'myPassword',
+            ]
+        );
+        $response = $this->server->route($request);
+
+        self::assertEquals(FrameworkResponse::STATUS_OK, $response->statusCode());
+        self::assertEquals(
+            $this->successCommandResponse(),
+            $response->data(),
+        );
+
+        $resultSet = $this->connection->query('select * from advertisements;');
+        self::assertEquals('disabled', $resultSet[0]['status']);
+    }
+
     public function testShouldNotChangeAnAdvertisementWithIncorrectPassword(): void
     {
         $this->withAnAdvertisementCreated();

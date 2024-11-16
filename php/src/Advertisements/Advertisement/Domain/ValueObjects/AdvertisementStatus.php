@@ -5,13 +5,13 @@ namespace Demo\App\Advertisements\Advertisement\Domain\ValueObjects;
 
 enum AdvertisementStatus
 {
-    case ACTIVE;
+    case ENABLED;
     case DISABLED;
 
     public static function fromString(string $role): self
     {
         return match ($role) {
-            'active' => self::ACTIVE,
+            'enabled' => self::ENABLED,
             'disabled' => self::DISABLED,
         };
     }
@@ -19,7 +19,7 @@ enum AdvertisementStatus
     public function value(): string
     {
         return match ($this) {
-            self::ACTIVE => 'active',
+            self::ENABLED => 'enabled',
             self::DISABLED => 'disabled',
         };
     }

@@ -23,7 +23,7 @@ class SupervisorUserTest extends TestCase
         $userId = new UserId(self::ID);
         $email = new Email(self::EMAIL);
         $role = Role::fromString(self::SUPERVISOR_ROLE);
-        $status = UserStatus::ACTIVE;
+        $status = UserStatus::ENABLED;
 
         $user = SupervisorUser::fromDatabase(
             $userId,
@@ -43,7 +43,7 @@ class SupervisorUserTest extends TestCase
         $userId = new UserId(self::ID);
         $email = new Email(self::EMAIL);
         $role = Role::fromString(self::MEMBER_ROLE);
-        $status = UserStatus::ACTIVE;
+        $status = UserStatus::ENABLED;
 
         $this->expectException(InvalidUserException::class);
 

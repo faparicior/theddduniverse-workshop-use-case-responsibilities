@@ -50,6 +50,8 @@ final class Server
                 $this->resolver->disableMemberController()->request($request, ['memberId' => $matches[1]]),
             preg_match('/^member\/([0-9a-fA-F\-]+)\/enable$/', $request->path(), $matches) =>
                 $this->resolver->enableMemberController()->request($request, ['memberId' => $matches[1]]),
+            preg_match('/^advertisements\/([0-9a-fA-F\-]+)\/disable$/', $request->path(), $matches) =>
+                $this->resolver->disableAdvertisementController()->request($request, ['advertisementId' => $matches[1]]),
             default => null,
         };
 
@@ -63,7 +65,7 @@ final class Server
     public function patch(FrameworkRequest $request): FrameworkResponse
     {
         return match ($request->pathStart()) {
-            'advertisements' => $this->resolver->renewAdvertisementController()->request($request),
+            'advertisements' => $this->resolver->renewAdvertisementController()->request($request, ['advertisementId' => $request->getIdPath()]),
             default => $this->notFound($request),
         };
     }

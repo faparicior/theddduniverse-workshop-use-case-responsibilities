@@ -27,7 +27,7 @@ class AdminUserTest extends TestCase
         $civicCenterId = new CivicCenterId(self::CIVIC_CENTER_ID);
         $email = new Email(self::EMAIL);
         $role = Role::fromString(self::ADMIN_ROLE);
-        $status = UserStatus::ACTIVE;
+        $status = UserStatus::ENABLED;
 
         $user = AdminUser::fromDatabase(
             $userId,
@@ -49,7 +49,7 @@ class AdminUserTest extends TestCase
         $civicCenterId = new CivicCenterId(self::CIVIC_CENTER_ID);
         $email = new Email(self::EMAIL);
         $role = Role::fromString(self::MEMBER_ROLE);
-        $status = UserStatus::ACTIVE;
+        $status = UserStatus::ENABLED;
 
         $this->expectException(InvalidUserException::class);
 

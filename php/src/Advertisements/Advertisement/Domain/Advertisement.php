@@ -27,7 +27,7 @@ final class Advertisement
         private readonly CivicCenterId   $civicCenterId,
         private readonly UserId          $memberId,
     ){
-        $this->status = AdvertisementStatus::ACTIVE;
+        $this->status = AdvertisementStatus::ENABLED;
         $this->approvalStatus = AdvertisementApprovalStatus::PENDING_FOR_APPROVAL;
     }
 
@@ -93,5 +93,10 @@ final class Advertisement
     public function civicCenterId(): CivicCenterId
     {
         return $this->civicCenterId;
+    }
+
+    public function disable(): void
+    {
+        $this->status = AdvertisementStatus::DISABLED;
     }
 }

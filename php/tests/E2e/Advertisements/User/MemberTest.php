@@ -62,7 +62,7 @@ final class MemberTest extends TestCase
     public function testShouldDisableAMemberThroughAnAdmin(): void
     {
         $this->withAdminUser();
-        $this->withMemberUser('active');
+        $this->withMemberUser('enabled');
 
         $request = new FrameworkRequest(
             FrameworkRequest::METHOD_PUT,
@@ -82,7 +82,7 @@ final class MemberTest extends TestCase
 
         $resultSet = $this->connection->query('select * from users where id = \'' . self::MEMBER_ID . '\';');
         self::assertCount(1, $resultSet);
-        self::assertEquals('inactive', $resultSet[0]['status']);
+        self::assertEquals('disabled', $resultSet[0]['status']);
     }
 
     public function testShouldFailDisablingAMemberThroughAnAdminWithDifferentCivicCenter(): void
@@ -113,7 +113,7 @@ final class MemberTest extends TestCase
     public function testShouldEnableADisabledAMemberThroughAnAdmin(): void
     {
         $this->withAdminUser();
-        $this->withMemberUser('inactive');
+        $this->withMemberUser('disabled');
 
         $request = new FrameworkRequest(
             FrameworkRequest::METHOD_PUT,
@@ -133,7 +133,7 @@ final class MemberTest extends TestCase
 
         $resultSet = $this->connection->query('select * from users where id = \'' . self::MEMBER_ID . '\';');
         self::assertCount(1, $resultSet);
-        self::assertEquals('active', $resultSet[0]['status']);
+        self::assertEquals('enabled', $resultSet[0]['status']);
     }
 
     public function testShouldFailSignUpAMemberThroughAnAdminWithDifferentCivicCenter(): void
@@ -199,7 +199,7 @@ final class MemberTest extends TestCase
                 'admin',
                 '',
                 self::CIVIC_CENTER_ID,
-                'active',
+                'enabled',
             )
         );
     }
@@ -227,7 +227,7 @@ final class MemberTest extends TestCase
                 'member',
                 '123456',
                 self::CIVIC_CENTER_2_ID,
-                'active',
+                'enabled',
             )
         );
     }

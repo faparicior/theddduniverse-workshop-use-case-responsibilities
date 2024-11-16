@@ -28,8 +28,8 @@ class SqliteAdvertisementRepository implements AdvertisementRepository
     public function save(Advertisement $advertisement): void
     {
         $this->dbConnection->execute(sprintf('
-            INSERT INTO advertisements (id, description, email, password, advertisement_date) VALUES (\'%1$s\', \'%2$s\', \'%3$s\', \'%4$s\', \'%5$s\') 
-            ON CONFLICT(id) DO UPDATE SET description = \'%2$s\', email = \'%3$s\', password = \'%4$s\', advertisement_date = \'%5$s\', civic_center_id = \'%6$s\', user_id = \'%7$s\';',
+            INSERT INTO advertisements (id, description, email, password, advertisement_date, civic_center_id, user_id, status, approval_status) VALUES (\'%1$s\', \'%2$s\', \'%3$s\', \'%4$s\', \'%5$s\', \'%6$s\', \'%7$s\', \'%8$s\', \'%9$s\') 
+            ON CONFLICT(id) DO UPDATE SET description = \'%2$s\', email = \'%3$s\', password = \'%4$s\', advertisement_date = \'%5$s\', civic_center_id = \'%6$s\', user_id = \'%7$s\', status = \'%8$s\', approval_status = \'%9$s\';',
                 $advertisement->id()->value(),
                 $advertisement->description()->value(),
                 $advertisement->email()->value(),
@@ -37,6 +37,8 @@ class SqliteAdvertisementRepository implements AdvertisementRepository
                 $advertisement->date()->value()->format('Y-m-d H:i:s'),
                 $advertisement->civicCenterId()->value(),
                 $advertisement->memberId()->value(),
+                $advertisement->status()->value(),
+                $advertisement->approvalStatus()->value(),
             )
         );
     }

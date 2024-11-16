@@ -31,7 +31,7 @@ class MemberUserTest extends TestCase
         $email = new Email(self::EMAIL);
         $role = Role::fromString(self::MEMBER_ROLE);
         $memberNumber = new MemberNumber(self::MEMBER_NUMBER);
-        $status = UserStatus::ACTIVE;
+        $status = UserStatus::ENABLED;
 
         $user = MemberUser::fromDatabase(
             $userId,

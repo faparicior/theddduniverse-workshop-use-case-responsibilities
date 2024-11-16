@@ -35,7 +35,7 @@ class MemberUser extends UserBase
      */
     public static function signUp(UserId $id, Email $email, Password $password, Role $role, MemberNumber $memberNumber, CivicCenterId $civicCenterId): MemberUser
     {
-        $member = new self($id, $email, $role, $memberNumber, $civicCenterId, UserStatus::ACTIVE);
+        $member = new self($id, $email, $role, $memberNumber, $civicCenterId, UserStatus::ENABLED);
         $member->password = $password;
 
         return $member;
@@ -43,12 +43,12 @@ class MemberUser extends UserBase
 
     public function disable(): void
     {
-        $this->status = UserStatus::INACTIVE;
+        $this->status = UserStatus::DISABLED;
     }
 
     public function enable(): void
     {
-        $this->status = UserStatus::ACTIVE;
+        $this->status = UserStatus::ENABLED;
     }
 
     /**

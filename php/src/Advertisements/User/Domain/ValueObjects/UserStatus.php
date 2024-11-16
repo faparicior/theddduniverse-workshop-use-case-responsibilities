@@ -5,14 +5,14 @@ namespace Demo\App\Advertisements\User\Domain\ValueObjects;
 
 enum UserStatus
 {
-    case ACTIVE;
-    case INACTIVE;
+    case ENABLED;
+    case DISABLED;
 
     public static function fromString(string $status): self
     {
         return match ($status) {
-            'active' => self::ACTIVE,
-            'inactive' => self::INACTIVE,
+            'enabled' => self::ENABLED,
+            'disabled' => self::DISABLED,
             default => throw new \InvalidArgumentException("Invalid status: $status"),
         };
     }
@@ -20,13 +20,13 @@ enum UserStatus
     public function value(): string
     {
         return match ($this) {
-            self::ACTIVE => 'active',
-            self::INACTIVE => 'inactive',
+            self::ENABLED => 'enabled',
+            self::DISABLED => 'disabled',
         };
     }
 
-    public function isActive(): bool
+    public function isEnabled(): bool
     {
-        return $this === self::ACTIVE;
+        return $this === self::ENABLED;
     }
 }
