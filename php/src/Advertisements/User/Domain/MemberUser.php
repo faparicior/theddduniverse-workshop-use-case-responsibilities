@@ -10,7 +10,7 @@ use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\InvalidUserException;
 use Demo\App\Advertisements\User\Domain\ValueObjects\MemberNumber;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
-use Demo\App\Advertisements\User\Domain\ValueObjects\Status;
+use Demo\App\Advertisements\User\Domain\ValueObjects\UserStatus;
 
 class MemberUser extends UserBase
 {
@@ -18,7 +18,7 @@ class MemberUser extends UserBase
     private CivicCenterId $civicCenterId;
 
     /** @throws InvalidUserException */
-    protected function __construct(UserId $id, Email $email, Role $role, MemberNumber $memberNumber, CivicCenterId $civicCenterId, Status $status)
+    protected function __construct(UserId $id, Email $email, Role $role, MemberNumber $memberNumber, CivicCenterId $civicCenterId, UserStatus $status)
     {
         if ($role !== Role::MEMBER) {
             throw InvalidUserException::build('Invalid role for member user');
@@ -35,7 +35,7 @@ class MemberUser extends UserBase
      */
     public static function signUp(UserId $id, Email $email, Password $password, Role $role, MemberNumber $memberNumber, CivicCenterId $civicCenterId): MemberUser
     {
-        $member = new self($id, $email, $role, $memberNumber, $civicCenterId, Status::ACTIVE);
+        $member = new self($id, $email, $role, $memberNumber, $civicCenterId, UserStatus::ACTIVE);
         $member->password = $password;
 
         return $member;
@@ -43,18 +43,18 @@ class MemberUser extends UserBase
 
     public function disable(): void
     {
-        $this->status = Status::INACTIVE;
+        $this->status = UserStatus::INACTIVE;
     }
 
     public function enable(): void
     {
-        $this->status = Status::ACTIVE;
+        $this->status = UserStatus::ACTIVE;
     }
 
     /**
      * @throws InvalidUserException
      */
-    public static function fromDatabase(UserId $id, Email $email, Role $role, MemberNumber $memberNumber, CivicCenterId $civicCenterId, Status $status): MemberUser
+    public static function fromDatabase(UserId $id, Email $email, Role $role, MemberNumber $memberNumber, CivicCenterId $civicCenterId, UserStatus $status): MemberUser
     {
         return new self($id, $email, $role, $memberNumber, $civicCenterId, $status);
     }

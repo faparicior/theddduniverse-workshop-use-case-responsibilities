@@ -14,7 +14,7 @@ use Demo\App\Advertisements\User\Domain\MemberUser;
 use Demo\App\Advertisements\User\Domain\UserRepository;
 use Demo\App\Advertisements\User\Domain\ValueObjects\MemberNumber;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
-use Demo\App\Advertisements\User\Domain\ValueObjects\Status;
+use Demo\App\Advertisements\User\Domain\ValueObjects\UserStatus;
 use Demo\App\Framework\Database\DatabaseConnection;
 use Demo\App\Framework\Database\SqliteConnection;
 
@@ -46,7 +46,7 @@ class SqliteUserRepository implements UserRepository
                 new Email($row['email']),
                 Role::ADMIN,
                 new CivicCenterId($row['civic_center_id']),
-                Status::fromString($row['status']),
+                UserStatus::fromString($row['status']),
             );
         }
 
@@ -74,7 +74,7 @@ class SqliteUserRepository implements UserRepository
                 Role::MEMBER,
                 new MemberNumber($row['member_number']),
                 new CivicCenterId($row['civic_center_id']),
-                Status::fromString($row['status']),
+                UserStatus::fromString($row['status']),
             );
         }
 

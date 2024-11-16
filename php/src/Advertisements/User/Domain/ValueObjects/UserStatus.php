@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Demo\App\Advertisements\User\Domain\ValueObjects;
 
-enum Status
+enum UserStatus
 {
     case ACTIVE;
     case INACTIVE;

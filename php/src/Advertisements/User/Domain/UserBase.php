@@ -7,7 +7,7 @@ use Demo\App\Advertisements\Shared\ValueObjects\Email;
 use Demo\App\Advertisements\Shared\ValueObjects\Password;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
-use Demo\App\Advertisements\User\Domain\ValueObjects\Status;
+use Demo\App\Advertisements\User\Domain\ValueObjects\UserStatus;
 
 abstract class UserBase
 {
@@ -15,9 +15,9 @@ abstract class UserBase
 
     protected function __construct(
         protected readonly UserId $id,
-        protected Email $email,
-        protected Role $role,
-        protected Status $status,
+        protected Email           $email,
+        protected Role            $role,
+        protected UserStatus      $status,
     ) {
     }
 
@@ -41,7 +41,7 @@ abstract class UserBase
         return $this->role;
     }
 
-    public function status(): Status
+    public function status(): UserStatus
     {
         return $this->status;
     }

@@ -9,7 +9,7 @@ use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\AdminUser;
 use Demo\App\Advertisements\User\Domain\Exceptions\InvalidUserException;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
-use Demo\App\Advertisements\User\Domain\ValueObjects\Status;
+use Demo\App\Advertisements\User\Domain\ValueObjects\UserStatus;
 use PHPUnit\Framework\TestCase;
 
 class AdminUserTest extends TestCase
@@ -27,7 +27,7 @@ class AdminUserTest extends TestCase
         $civicCenterId = new CivicCenterId(self::CIVIC_CENTER_ID);
         $email = new Email(self::EMAIL);
         $role = Role::fromString(self::ADMIN_ROLE);
-        $status = Status::ACTIVE;
+        $status = UserStatus::ACTIVE;
 
         $user = AdminUser::fromDatabase(
             $userId,
@@ -49,7 +49,7 @@ class AdminUserTest extends TestCase
         $civicCenterId = new CivicCenterId(self::CIVIC_CENTER_ID);
         $email = new Email(self::EMAIL);
         $role = Role::fromString(self::MEMBER_ROLE);
-        $status = Status::ACTIVE;
+        $status = UserStatus::ACTIVE;
 
         $this->expectException(InvalidUserException::class);
 

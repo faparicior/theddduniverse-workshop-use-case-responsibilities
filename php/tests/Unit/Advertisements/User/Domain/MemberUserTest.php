@@ -11,7 +11,7 @@ use Demo\App\Advertisements\User\Domain\Exceptions\InvalidUserException;
 use Demo\App\Advertisements\User\Domain\MemberUser;
 use Demo\App\Advertisements\User\Domain\ValueObjects\MemberNumber;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
-use Demo\App\Advertisements\User\Domain\ValueObjects\Status;
+use Demo\App\Advertisements\User\Domain\ValueObjects\UserStatus;
 use PHPUnit\Framework\TestCase;
 
 class MemberUserTest extends TestCase
@@ -31,7 +31,7 @@ class MemberUserTest extends TestCase
         $email = new Email(self::EMAIL);
         $role = Role::fromString(self::MEMBER_ROLE);
         $memberNumber = new MemberNumber(self::MEMBER_NUMBER);
-        $status = Status::ACTIVE;
+        $status = UserStatus::ACTIVE;
 
         $user = MemberUser::fromDatabase(
             $userId,

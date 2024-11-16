@@ -8,7 +8,7 @@ use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\InvalidUserException;
 use Demo\App\Advertisements\User\Domain\SupervisorUser;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
-use Demo\App\Advertisements\User\Domain\ValueObjects\Status;
+use Demo\App\Advertisements\User\Domain\ValueObjects\UserStatus;
 use PHPUnit\Framework\TestCase;
 
 class SupervisorUserTest extends TestCase
@@ -23,7 +23,7 @@ class SupervisorUserTest extends TestCase
         $userId = new UserId(self::ID);
         $email = new Email(self::EMAIL);
         $role = Role::fromString(self::SUPERVISOR_ROLE);
-        $status = Status::ACTIVE;
+        $status = UserStatus::ACTIVE;
 
         $user = SupervisorUser::fromDatabase(
             $userId,
@@ -43,7 +43,7 @@ class SupervisorUserTest extends TestCase
         $userId = new UserId(self::ID);
         $email = new Email(self::EMAIL);
         $role = Role::fromString(self::MEMBER_ROLE);
-        $status = Status::ACTIVE;
+        $status = UserStatus::ACTIVE;
 
         $this->expectException(InvalidUserException::class);
 
