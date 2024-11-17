@@ -23,6 +23,8 @@ final class EnableAdvertisementUseCase
     {
         // TODO: Implement user security
 
+        // TODO:Revise if the member has 3 active advertisements
+
         $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->id));
 
         if (!$advertisement) {

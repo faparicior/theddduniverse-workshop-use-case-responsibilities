@@ -26,6 +26,8 @@ final class PublishAdvertisementUseCase
      */
     public function execute(PublishAdvertisementCommand $command): void
     {
+        // TODO:Revise if the member has 3 active advertisements
+
         if ($this->advertisementRepository->findById(new AdvertisementId($command->id))) {
             throw AdvertisementAlreadyExistsException::withId($command->id);
         }
