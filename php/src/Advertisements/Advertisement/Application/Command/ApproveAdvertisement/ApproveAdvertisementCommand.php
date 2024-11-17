@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Demo\App\Advertisements\Advertisement\Application\Command\DisableAdvertisement;
+namespace Demo\App\Advertisements\Advertisement\Application\Command\ApproveAdvertisement;
 
-final readonly class DisableAdvertisementCommand
+final readonly class ApproveAdvertisementCommand
 {
     public function __construct(
         public string $securityUserId,

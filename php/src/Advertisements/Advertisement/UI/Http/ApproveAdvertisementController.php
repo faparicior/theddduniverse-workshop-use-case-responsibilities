@@ -3,18 +3,18 @@ declare(strict_types=1);
 
 namespace Demo\App\Advertisements\Advertisement\UI\Http;
 
-use Demo\App\Advertisements\Advertisement\Application\Command\EnableAdvertisement\EnableAdvertisementCommand;
-use Demo\App\Advertisements\Advertisement\Application\Command\EnableAdvertisement\EnableAdvertisementUseCase;
+use Demo\App\Advertisements\Advertisement\Application\Command\ApproveAdvertisement\ApproveAdvertisementCommand;
+use Demo\App\Advertisements\Advertisement\Application\Command\ApproveAdvertisement\ApproveAdvertisementUseCase;
 use Demo\App\Common\Exceptions\BoundedContextException;
 use Demo\App\Common\UI\CommonController;
 use Demo\App\Framework\FrameworkRequest;
 use Demo\App\Framework\FrameworkResponse;
 use Demo\App\Framework\SecurityUser\FrameworkSecurityService;
 
-final class EnableAdvertisementController extends CommonController
+final class ApproveAdvertisementController extends CommonController
 {
     public function __construct(
-        private EnableAdvertisementUseCase $useCase,
+        private ApproveAdvertisementUseCase $useCase,
         private FrameworkSecurityService $securityService,
     ) {}
 
@@ -27,7 +27,7 @@ final class EnableAdvertisementController extends CommonController
                 return $this->processUnauthorizedResponse();
             }
 
-            $command = new EnableAdvertisementCommand(
+            $command = new ApproveAdvertisementCommand(
                 $user->id(),
                 $user->role(),
                 $pathValues['advertisementId'],

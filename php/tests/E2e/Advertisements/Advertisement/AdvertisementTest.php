@@ -18,6 +18,7 @@ final class AdvertisementTest extends TestCase
     private const string MEMBER_ID = 'e95a8999-cb23-4fa2-9923-e3015ef30411';
     private const string ADVERTISEMENT_CREATION_DATE = '2024-02-03 13:30:23';
     private const string INVALID_EMAIL = 'emailtest.com';
+    private const string ADMIN_ID = '91b5fa8c-6212-4c0f-862f-4dc1cb0472c4';
 
     private DependencyInjectionResolver $resolver;
     private Server $server;
@@ -167,8 +168,9 @@ final class AdvertisementTest extends TestCase
         self::assertGreaterThan(0, $diff->days);
     }
 
-    public function testShouldDisableAnAdvertisement(): void
+    public function testShouldDisableAnAdvertisementAsAdmin(): void
     {
+        $this->withAdminUser();
         $this->withAnAdvertisementCreated();
 
         $request = new FrameworkRequest(
@@ -176,6 +178,9 @@ final class AdvertisementTest extends TestCase
             'advertisements/' . self::ADVERTISEMENT_ID . '/disable',
             [
                 'password' => 'myPassword',
+            ],
+            [
+                'userSession' => self::ADMIN_ID,
             ]
         );
         $response = $this->server->route($request);
@@ -190,8 +195,9 @@ final class AdvertisementTest extends TestCase
         self::assertEquals('disabled', $resultSet[0]['status']);
     }
 
-    public function testShouldEnableAnAdvertisement(): void
+    public function testShouldEnableAnAdvertisementAsAdmin(): void
     {
+        $this->withAdminUser();
         $this->withAnAdvertisementCreated('disabled');
 
         $request = new FrameworkRequest(
@@ -199,6 +205,9 @@ final class AdvertisementTest extends TestCase
             'advertisements/' . self::ADVERTISEMENT_ID . '/enable',
             [
                 'password' => 'myPassword',
+            ],
+            [
+                'userSession' => self::ADMIN_ID,
             ]
         );
         $response = $this->server->route($request);
@@ -211,6 +220,33 @@ final class AdvertisementTest extends TestCase
 
         $resultSet = $this->connection->query('select * from advertisements;');
         self::assertEquals('enabled', $resultSet[0]['status']);
+    }
+
+    public function testShouldApproveAnAdvertisementAsAdmin(): void
+    {
+        $this->withAdminUser();
+        $this->withAnAdvertisementCreated('disabled', 'pending_for_approval');
+
+        $request = new FrameworkRequest(
+            FrameworkRequest::METHOD_PUT,
+            'advertisements/' . self::ADVERTISEMENT_ID . '/approve',
+            [
+                'password' => 'myPassword',
+            ],
+            [
+                'userSession' => self::ADMIN_ID,
+            ]
+        );
+        $response = $this->server->route($request);
+
+        self::assertEquals(FrameworkResponse::STATUS_OK, $response->statusCode());
+        self::assertEquals(
+            $this->successCommandResponse(),
+            $response->data(),
+        );
+
+        $resultSet = $this->connection->query('select * from advertisements;');
+        self::assertEquals('approved', $resultSet[0]['approval_status']);
     }
 
     public function testShouldNotChangeAnAdvertisementWithIncorrectPassword(): void
@@ -313,9 +349,25 @@ final class AdvertisementTest extends TestCase
     private function emptyDatabase(): void
     {
         $this->connection->execute('delete from advertisements;');
+        $this->connection->execute('delete from users;');
     }
 
-    private function withAnAdvertisementCreated(string $status = 'enabled'): void
+
+    private function withAdminUser(): void
+    {
+        $this->connection->execute(sprintf("INSERT INTO users (id, email, password, role, member_number, civic_center_id, status) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+                self::ADMIN_ID,
+                'admin@test.com',
+                md5('myPassword'),
+                'admin',
+                '',
+                self::CIVIC_CENTER_ID,
+                'enabled',
+            )
+        );
+    }
+
+    private function withAnAdvertisementCreated(string $status = 'enabled', string $approvalStatus = 'approved'): void
     {
         $this->connection->execute(sprintf("INSERT INTO advertisements (id, description, email, password, advertisement_date, status, approval_status, user_id, civic_center_id) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )",
                 self::ADVERTISEMENT_ID,
@@ -324,7 +376,7 @@ final class AdvertisementTest extends TestCase
                 md5('myPassword'),
                 self::ADVERTISEMENT_CREATION_DATE,
                 $status,
-                'approved',
+                $approvalStatus,
                 self::MEMBER_ID,
                 self::CIVIC_CENTER_ID,
             )

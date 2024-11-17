@@ -104,4 +104,9 @@ final class Advertisement
     {
         $this->status = AdvertisementStatus::ENABLED;
     }
+
+    public function approve(): void
+    {
+        $this->approvalStatus = AdvertisementApprovalStatus::APPROVED;
+    }
 }

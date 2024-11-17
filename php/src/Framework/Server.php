@@ -54,6 +54,8 @@ final class Server
                 $this->resolver->disableAdvertisementController()->request($request, ['advertisementId' => $matches[1]]),
             preg_match('/^advertisements\/([0-9a-fA-F\-]+)\/enable$/', $request->path(), $matches) =>
                 $this->resolver->enableAdvertisementController()->request($request, ['advertisementId' => $matches[1]]),
+            preg_match('/^advertisements\/([0-9a-fA-F\-]+)\/approve$/', $request->path(), $matches) =>
+                $this->resolver->approveAdvertisementController()->request($request, ['advertisementId' => $matches[1]]),
             default => null,
         };
 

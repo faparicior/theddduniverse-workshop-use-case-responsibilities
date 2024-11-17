@@ -25,14 +25,10 @@ final class EnableAdvertisementUseCase
 
         // TODO:Revise if the member has 3 active advertisements
 
-        $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->id));
+        $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->advertisementId));
 
         if (!$advertisement) {
-            throw AdvertisementNotFoundException::withId($command->id);
-        }
-
-        if (!$advertisement->password()->isValidatedWith($command->password)) {
-            throw InvalidPasswordException::build();
+            throw AdvertisementNotFoundException::withId($command->advertisementId);
         }
 
         $advertisement->enable();

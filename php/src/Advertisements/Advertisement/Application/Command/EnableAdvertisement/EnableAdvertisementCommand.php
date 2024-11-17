@@ -6,7 +6,8 @@ namespace Demo\App\Advertisements\Advertisement\Application\Command\EnableAdvert
 final readonly class EnableAdvertisementCommand
 {
     public function __construct(
-        public string $id,
-        public string $password,
+        public string $securityUserId,
+        public string $securityUserRole,
+        public string $advertisementId,
     ){}
 }
