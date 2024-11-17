@@ -4,12 +4,14 @@ declare(strict_types=1);
 namespace Demo\App\Framework;
 
 use Demo\App\Advertisements\Advertisement\Application\Command\DisableAdvertisement\DisableAdvertisementUseCase;
+use Demo\App\Advertisements\Advertisement\Application\Command\EnableAdvertisement\EnableAdvertisementUseCase;
 use Demo\App\Advertisements\Advertisement\Application\Command\PublishAdvertisement\PublishAdvertisementUseCase;
 use Demo\App\Advertisements\Advertisement\Application\Command\RenewAdvertisement\RenewAdvertisementUseCase;
 use Demo\App\Advertisements\Advertisement\Application\Command\UpdateAdvertisement\UpdateAdvertisementUseCase;
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Infrastructure\Persistence\SqliteAdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\UI\Http\DisableAdvertisementController;
+use Demo\App\Advertisements\Advertisement\UI\Http\EnableAdvertisementController;
 use Demo\App\Advertisements\Advertisement\UI\Http\PublishAdvertisementController;
 use Demo\App\Advertisements\Advertisement\UI\Http\RenewAdvertisementController;
 use Demo\App\Advertisements\Advertisement\UI\Http\UpdateAdvertisementController;
@@ -52,6 +54,16 @@ class DependencyInjectionResolver
     public function disableAdvertisementUseCase(): DisableAdvertisementUseCase
     {
         return new DisableAdvertisementUseCase($this->advertisementRepository());
+    }
+
+    public function enableAdvertisementController(): EnableAdvertisementController
+    {
+        return new EnableAdvertisementController($this->enableAdvertisementUseCase());
+    }
+
+    public function enableAdvertisementUseCase(): EnableAdvertisementUseCase
+    {
+        return new EnableAdvertisementUseCase($this->advertisementRepository());
     }
 
     public function publishAdvertisementUseCase(): PublishAdvertisementUseCase

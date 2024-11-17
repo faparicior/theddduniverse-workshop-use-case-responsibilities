@@ -1,15 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace Demo\App\Advertisements\Advertisement\Application\Command\DisableAdvertisement;
+namespace Demo\App\Advertisements\Advertisement\Application\Command\EnableAdvertisement;
 
+use Demo\App\Advertisements\Advertisement\Application\Command\DisableAdvertisement\DisableAdvertisementCommand;
 use Demo\App\Advertisements\Advertisement\Application\Exceptions\InvalidPasswordException;
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementNotFoundException;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Exception;
 
-final class DisableAdvertisementUseCase
+final class EnableAdvertisementUseCase
 {
     public function __construct(private AdvertisementRepository $advertisementRepository)
     {
@@ -18,7 +19,7 @@ final class DisableAdvertisementUseCase
     /**
      * @throws Exception
      */
-    public function execute(DisableAdvertisementCommand $command): void
+    public function execute(EnableAdvertisementCommand $command): void
     {
         // TODO: Implement user security
 
@@ -32,7 +33,7 @@ final class DisableAdvertisementUseCase
             throw InvalidPasswordException::build();
         }
 
-        $advertisement->disable();
+        $advertisement->enable();
 
         $this->advertisementRepository->save($advertisement);
     }

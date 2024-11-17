@@ -190,6 +190,29 @@ final class AdvertisementTest extends TestCase
         self::assertEquals('disabled', $resultSet[0]['status']);
     }
 
+    public function testShouldEnableAnAdvertisement(): void
+    {
+        $this->withAnAdvertisementCreated('disabled');
+
+        $request = new FrameworkRequest(
+            FrameworkRequest::METHOD_PUT,
+            'advertisements/' . self::ADVERTISEMENT_ID . '/enable',
+            [
+                'password' => 'myPassword',
+            ]
+        );
+        $response = $this->server->route($request);
+
+        self::assertEquals(FrameworkResponse::STATUS_OK, $response->statusCode());
+        self::assertEquals(
+            $this->successCommandResponse(),
+            $response->data(),
+        );
+
+        $resultSet = $this->connection->query('select * from advertisements;');
+        self::assertEquals('enabled', $resultSet[0]['status']);
+    }
+
     public function testShouldNotChangeAnAdvertisementWithIncorrectPassword(): void
     {
         $this->withAnAdvertisementCreated();
@@ -292,7 +315,7 @@ final class AdvertisementTest extends TestCase
         $this->connection->execute('delete from advertisements;');
     }
 
-    private function withAnAdvertisementCreated(): void
+    private function withAnAdvertisementCreated(string $status = 'enabled'): void
     {
         $this->connection->execute(sprintf("INSERT INTO advertisements (id, description, email, password, advertisement_date, status, approval_status, user_id, civic_center_id) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )",
                 self::ADVERTISEMENT_ID,
@@ -300,7 +323,7 @@ final class AdvertisementTest extends TestCase
                 'email@test.com',
                 md5('myPassword'),
                 self::ADVERTISEMENT_CREATION_DATE,
-                'active',
+                $status,
                 'approved',
                 self::MEMBER_ID,
                 self::CIVIC_CENTER_ID,

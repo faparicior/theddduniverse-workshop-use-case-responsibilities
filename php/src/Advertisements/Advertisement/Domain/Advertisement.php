@@ -99,4 +99,9 @@ final class Advertisement
     {
         $this->status = AdvertisementStatus::DISABLED;
     }
+
+    public function enable(): void
+    {
+        $this->status = AdvertisementStatus::ENABLED;
+    }
 }
