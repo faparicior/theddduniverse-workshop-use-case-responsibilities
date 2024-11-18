@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Demo\App\Advertisements\Advertisement\Application\Command\DisableAdvertisement;
 
-use Demo\App\Advertisements\Advertisement\Application\Exceptions\InvalidPasswordException;
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementNotFoundException;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
