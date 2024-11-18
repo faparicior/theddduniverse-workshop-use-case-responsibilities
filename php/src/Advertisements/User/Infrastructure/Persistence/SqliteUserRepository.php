@@ -81,6 +81,44 @@ class SqliteUserRepository implements UserRepository
         return null;
     }
 
+    /**
+     * @throws InvalidEmailException
+     * @throws InvalidUniqueIdentifierException
+     * @throws InvalidUserException
+     */
+    public function findAdminOrMemberById(UserId $id): AdminUser | MemberUser | null
+    {
+        $result = $this->dbConnection->query(sprintf('SELECT * FROM users WHERE id = \'%s\'', $id->value()));
+        if(!$result) {
+            return null;
+        }
+
+        $row = $result[0];
+
+        if ($row['role'] === 'admin') {
+            return AdminUser::fromDatabase(
+                new UserId($row['id']),
+                new Email($row['email']),
+                Role::ADMIN,
+                new CivicCenterId($row['civic_center_id']),
+                UserStatus::fromString($row['status']),
+            );
+        }
+
+        if ($row['role'] === 'member') {
+            return MemberUser::fromDatabase(
+                new UserId($row['id']),
+                new Email($row['email']),
+                Role::MEMBER,
+                new MemberNumber($row['member_number']),
+                new CivicCenterId($row['civic_center_id']),
+                UserStatus::fromString($row['status']),
+            );
+        }
+
+        return null;
+    }
+
     public function saveMember(MemberUser $member): void
     {
         if ($this->isASignUp($member)) {

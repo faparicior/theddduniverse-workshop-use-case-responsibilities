@@ -34,8 +34,10 @@ final class AdvertisementTest extends TestCase
         parent::setUp();
     }
 
-    public function testShouldPublishAnAdvertisement(): void
+    public function testShouldPublishAnAdvertisementAsMember(): void
     {
+        $this->withMemberUser('enabled');
+
         $request = new FrameworkRequest(
             FrameworkRequest::METHOD_POST,
             'advertisement',
@@ -46,6 +48,9 @@ final class AdvertisementTest extends TestCase
                 'email' => 'email@test.com',
                 'memberId' => self::MEMBER_ID,
                 'civicCenterId' => self::CIVIC_CENTER_ID,
+            ],
+            [
+                'userSession' => self::MEMBER_ID,
             ]
         );
 
@@ -62,6 +67,7 @@ final class AdvertisementTest extends TestCase
 
     public function testShouldFailPublishingAnAdvertisementWithSameId(): void
     {
+        $this->withMemberUser('enabled');
         $this->withAnAdvertisementCreated();
 
         $request = new FrameworkRequest(
@@ -74,6 +80,9 @@ final class AdvertisementTest extends TestCase
                 'email' => 'email@test.com',
                 'memberId' => self::MEMBER_ID,
                 'civicCenterId' => self::CIVIC_CENTER_ID,
+            ],
+            [
+                'userSession' => self::MEMBER_ID,
             ]
         );
 
@@ -93,6 +102,7 @@ final class AdvertisementTest extends TestCase
 
     public function testShouldChangeAnAdvertisement(): void
     {
+        $this->withMemberUser('enabled');
         $this->withAnAdvertisementCreated();
 
         $request = new FrameworkRequest(
@@ -102,6 +112,9 @@ final class AdvertisementTest extends TestCase
                 'description' => 'Dream advertisement changed ',
                 'email' => 'email@test.com',
                 'password' => 'myPassword',
+            ],
+            [
+                'userSession' => self::MEMBER_ID,
             ]
         );
         $response = $this->server->route($request);
@@ -120,6 +133,8 @@ final class AdvertisementTest extends TestCase
 
     public function testShouldFailPublishingAnAdvertisementWithInvalidEmail(): void
     {
+        $this->withMemberUser('enabled');
+
         $request = new FrameworkRequest(
             FrameworkRequest::METHOD_POST,
             'advertisement',
@@ -130,6 +145,9 @@ final class AdvertisementTest extends TestCase
                 'email' => self::INVALID_EMAIL,
                 'memberId' => self::MEMBER_ID,
                 'civicCenterId' => self::CIVIC_CENTER_ID,
+            ],
+            [
+                'userSession' => self::MEMBER_ID,
             ]
         );
 
@@ -197,6 +215,7 @@ final class AdvertisementTest extends TestCase
 
     public function testShouldEnableAnAdvertisementAsAdmin(): void
     {
+        $this->withMemberUser('enabled');
         $this->withAdminUser();
         $this->withAnAdvertisementCreated('disabled');
 
@@ -251,6 +270,7 @@ final class AdvertisementTest extends TestCase
 
     public function testShouldNotChangeAnAdvertisementWithIncorrectPassword(): void
     {
+        $this->withMemberUser('enabled');
         $this->withAnAdvertisementCreated();
 
         $request = new FrameworkRequest(
@@ -264,6 +284,9 @@ final class AdvertisementTest extends TestCase
                 'memberId' => self::MEMBER_ID,
                 'civicCenterId' => self::CIVIC_CENTER_ID,
             ],
+            [
+                'userSession' => self::MEMBER_ID,
+            ]
         );
 
         $response = $this->server->route($request);
@@ -326,6 +349,7 @@ final class AdvertisementTest extends TestCase
 
     public function testShouldFailChangingNonExistentAdvertisement(): void
     {
+        $this->withMemberUser('enabled');
         $this->withAnAdvertisementCreated();
 
         $request = new FrameworkRequest(
@@ -335,6 +359,9 @@ final class AdvertisementTest extends TestCase
                 'description' => 'Dream advertisement changed ',
                 'email' => 'email@test.com',
                 'password' => 'myPassword',
+            ],
+            [
+                'userSession' => self::MEMBER_ID,
             ]
         );
         $response = $this->server->route($request);
@@ -352,6 +379,19 @@ final class AdvertisementTest extends TestCase
         $this->connection->execute('delete from users;');
     }
 
+    private function withMemberUser(string $status): void
+    {
+        $this->connection->execute(sprintf("INSERT INTO users (id, email, password, role, member_number, civic_center_id, status) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+                self::MEMBER_ID,
+                'member@test.com',
+                md5('myPassword'),
+                'member',
+                '123456',
+                self::CIVIC_CENTER_ID,
+                $status,
+            )
+        );
+    }
 
     private function withAdminUser(): void
     {

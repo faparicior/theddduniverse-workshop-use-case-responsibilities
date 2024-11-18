@@ -13,25 +13,35 @@ use Demo\App\Advertisements\Shared\ValueObjects\CivicCenterId;
 use Demo\App\Advertisements\Shared\ValueObjects\Email;
 use Demo\App\Advertisements\Shared\ValueObjects\Password;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
+use Demo\App\Advertisements\User\Domain\Exceptions\UserNotFoundException;
+use Demo\App\Advertisements\User\Domain\UserRepository;
 use Exception;
 
 final class PublishAdvertisementUseCase
 {
-    public function __construct(private AdvertisementRepository $advertisementRepository)
-    {
-    }
+    public function __construct(
+        private AdvertisementRepository $advertisementRepository,
+        private UserRepository $userRepository
+    ) {}
 
     /**
      * @throws Exception
      */
     public function execute(PublishAdvertisementCommand $command): void
     {
-        // TODO: Implement user security
-
-        // TODO:Revise if the member has 3 active advertisements
+        $memberUser = $this->userRepository->findMemberById(new UserId($command->securityUserId));
+        if (!$memberUser) {
+            throw UserNotFoundException::asMember();
+        }
 
         if ($this->advertisementRepository->findById(new AdvertisementId($command->id))) {
             throw AdvertisementAlreadyExistsException::withId($command->id);
+        }
+
+        $activeAdvertisements = $this->advertisementRepository->activeAdvertisementsByMember($memberUser);
+
+        if ($activeAdvertisements->value() >= 3) {
+            throw new Exception('Member has 3 active advertisements');
         }
 
         $advertisement = new Advertisement(

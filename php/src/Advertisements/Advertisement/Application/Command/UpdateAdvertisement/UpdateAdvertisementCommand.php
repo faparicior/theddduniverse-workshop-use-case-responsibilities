@@ -6,6 +6,8 @@ namespace Demo\App\Advertisements\Advertisement\Application\Command\UpdateAdvert
 final readonly class UpdateAdvertisementCommand
 {
     public function __construct(
+        public string $securityUserId,
+        public string $securityUserRole,
         public string $id,
         public string $description,
         public string $email,

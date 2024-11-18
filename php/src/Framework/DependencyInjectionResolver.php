@@ -35,12 +35,12 @@ class DependencyInjectionResolver
 {
     public function publishAdvertisementController(): PublishAdvertisementController
     {
-        return new PublishAdvertisementController($this->publishAdvertisementUseCase());
+        return new PublishAdvertisementController($this->publishAdvertisementUseCase(), $this->frameworkSecurityService());
     }
 
     public function updateAdvertisementController(): UpdateAdvertisementController
     {
-        return new UpdateAdvertisementController($this->updateAdvertisementUseCase());
+        return new UpdateAdvertisementController($this->updateAdvertisementUseCase(), $this->frameworkSecurityService());
     }
 
     public function renewAdvertisementController(): RenewAdvertisementController
@@ -75,12 +75,12 @@ class DependencyInjectionResolver
 
     public function enableAdvertisementUseCase(): EnableAdvertisementUseCase
     {
-        return new EnableAdvertisementUseCase($this->advertisementRepository());
+        return new EnableAdvertisementUseCase($this->advertisementRepository(), $this->userRepository());
     }
 
     public function publishAdvertisementUseCase(): PublishAdvertisementUseCase
     {
-        return new PublishAdvertisementUseCase($this->advertisementRepository());
+        return new PublishAdvertisementUseCase($this->advertisementRepository(), $this->userRepository());
     }
 
      public function renewAdvertisementUseCase(): RenewAdvertisementUseCase
@@ -90,7 +90,7 @@ class DependencyInjectionResolver
 
     public function updateAdvertisementUseCase(): UpdateAdvertisementUseCase
     {
-        return new UpdateAdvertisementUseCase($this->advertisementRepository());
+        return new UpdateAdvertisementUseCase($this->advertisementRepository(), $this->userRepository());
     }
 
     public function advertisementRepository(): AdvertisementRepository

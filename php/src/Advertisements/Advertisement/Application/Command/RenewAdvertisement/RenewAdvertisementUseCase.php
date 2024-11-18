@@ -21,6 +21,8 @@ final class RenewAdvertisementUseCase
      */
     public function execute(RenewAdvertisementCommand $command): void
     {
+        // TODO: Implement user security
+
         $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->id));
 
         if (!$advertisement) {

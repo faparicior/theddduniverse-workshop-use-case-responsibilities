@@ -6,6 +6,7 @@ namespace Demo\App\Advertisements\Advertisement\Infrastructure\Persistence;
 use Demo\App\Advertisements\Advertisement\Domain\Advertisement;
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\InvalidEmailException;
+use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\ActiveAdvertisements;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementDate;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\Description;
@@ -14,6 +15,7 @@ use Demo\App\Advertisements\Shared\ValueObjects\CivicCenterId;
 use Demo\App\Advertisements\Shared\ValueObjects\Email;
 use Demo\App\Advertisements\Shared\ValueObjects\Password;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
+use Demo\App\Advertisements\User\Domain\MemberUser;
 use Demo\App\Framework\Database\DatabaseConnection;
 use Demo\App\Framework\database\SqliteConnection;
 
@@ -64,5 +66,12 @@ class SqliteAdvertisementRepository implements AdvertisementRepository
             new CivicCenterId($row['civic_center_id']),
             new UserId($row['user_id']),
         );
+    }
+
+    public function activeAdvertisementsByMember(MemberUser $member): ActiveAdvertisements
+    {
+        $result = $this->dbConnection->query(sprintf('SELECT COUNT(*) as active FROM advertisements WHERE user_id = \'%s\' AND status = \'active\'', $member->id()->value()));
+
+        return ActiveAdvertisements::fromInt((int) $result[0]['active']);
     }
 }
