@@ -243,6 +243,7 @@ final class AdvertisementTest extends TestCase
 
     public function testShouldApproveAnAdvertisementAsAdmin(): void
     {
+        $this->withMemberUser('enabled');
         $this->withAdminUser();
         $this->withAnAdvertisementCreated('disabled', 'pending_for_approval');
 
@@ -371,6 +372,31 @@ final class AdvertisementTest extends TestCase
             $this->notFoundCommandResponse(),
             $response->data(),
         );
+    }
+
+    public function testShouldDeleteAnAdvertisementAsMember(): void
+    {
+        $this->withMemberUser('enabled');
+        $this->withAnAdvertisementCreated('disabled');
+
+        $request = new FrameworkRequest(
+            FrameworkRequest::METHOD_DELETE,
+            'advertisements/' . self::ADVERTISEMENT_ID,
+            [],
+            [
+                'userSession' => self::MEMBER_ID,
+            ]
+        );
+        $response = $this->server->route($request);
+
+        self::assertEquals(FrameworkResponse::STATUS_OK, $response->statusCode());
+        self::assertEquals(
+            $this->successCommandResponse(),
+            $response->data(),
+        );
+
+        $resultSet = $this->connection->query('select * from advertisements;');
+        self::assertCount(0, $resultSet);
     }
 
     private function emptyDatabase(): void

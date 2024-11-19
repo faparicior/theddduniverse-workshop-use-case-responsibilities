@@ -27,6 +27,11 @@ class SqliteAdvertisementRepository implements AdvertisementRepository
         $this->dbConnection = $connection;
     }
 
+    public function delete(Advertisement $advertisement): void
+    {
+        $this->dbConnection->execute(sprintf('DELETE FROM advertisements WHERE id = \'%s\'', $advertisement->id()->value()));
+    }
+
     public function save(Advertisement $advertisement): void
     {
         $this->dbConnection->execute(sprintf('

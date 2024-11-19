@@ -15,4 +15,6 @@ interface AdvertisementRepository
     public function findById(AdvertisementId $id): ?Advertisement;
 
     public function activeAdvertisementsByMember(MemberUser $member): ActiveAdvertisements;
+
+    public function delete(Advertisement $advertisement): void;
 }

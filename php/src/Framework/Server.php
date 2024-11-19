@@ -16,6 +16,7 @@ final class Server
             FrameworkRequest::METHOD_POST => $this->post($request),
             FrameworkRequest::METHOD_PUT => $this->put($request),
             FrameworkRequest::METHOD_PATCH => $this->patch($request),
+            FrameworkRequest::METHOD_DELETE => $this->delete($request),
             default => $this->notFound($request),
         };
     }
@@ -70,6 +71,14 @@ final class Server
     {
         return match ($request->pathStart()) {
             'advertisements' => $this->resolver->renewAdvertisementController()->request($request, ['advertisementId' => $request->getIdPath()]),
+            default => $this->notFound($request),
+        };
+    }
+
+    public function delete(FrameworkRequest $request): FrameworkResponse
+    {
+        return match ($request->pathStart()) {
+            'advertisements' => $this->resolver->deleteAdvertisementController()->request($request, ['advertisementId' => $request->getIdPath()]),
             default => $this->notFound($request),
         };
     }

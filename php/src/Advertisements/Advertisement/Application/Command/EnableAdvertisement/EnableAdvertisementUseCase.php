@@ -27,9 +27,12 @@ final class EnableAdvertisementUseCase
      */
     public function execute(EnableAdvertisementCommand $command): void
     {
-        $adminUser = $this->userRepository->findAdminById(new UserId($command->securityUserId));
-        if (!$adminUser) {
-            throw UserNotFoundException::asAdmin();
+        $adminUser = null;
+        if ($command->securityUserRole === 'admin') {
+            $adminUser = $this->userRepository->findAdminById(new UserId($command->securityUserId));
+            if (!$adminUser) {
+                throw UserNotFoundException::asAdmin();
+            }
         }
 
         $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->advertisementId));
@@ -44,7 +47,7 @@ final class EnableAdvertisementUseCase
             throw MemberDoesNotExistsException::build();
         }
 
-        if (!$adminUser->civicCenterId()->equals($member->civicCenterId())) {
+        if ($adminUser && !$adminUser->civicCenterId()->equals($member->civicCenterId())) {
             throw AdminWithIncorrectCivicCenterException::differentCivicCenterFromMember();
         }
 

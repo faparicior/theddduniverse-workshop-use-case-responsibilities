@@ -9,6 +9,7 @@ final readonly class FrameworkRequest
     public const string METHOD_POST = 'POST';
     public const string METHOD_PUT = 'PUT';
     public const string METHOD_PATCH = 'PATCH';
+    public const string METHOD_DELETE = 'DELETE';
 
     public function __construct(private string $method, private string $path, private array $content, private array $headers = [])
     {

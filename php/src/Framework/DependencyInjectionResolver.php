@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Demo\App\Framework;
 
 use Demo\App\Advertisements\Advertisement\Application\Command\ApproveAdvertisement\ApproveAdvertisementUseCase;
+use Demo\App\Advertisements\Advertisement\Application\Command\DeleteAdvertisement\DeleteAdvertisementUseCase;
 use Demo\App\Advertisements\Advertisement\Application\Command\DisableAdvertisement\DisableAdvertisementUseCase;
 use Demo\App\Advertisements\Advertisement\Application\Command\EnableAdvertisement\EnableAdvertisementUseCase;
 use Demo\App\Advertisements\Advertisement\Application\Command\PublishAdvertisement\PublishAdvertisementUseCase;
@@ -12,6 +13,7 @@ use Demo\App\Advertisements\Advertisement\Application\Command\UpdateAdvertisemen
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Infrastructure\Persistence\SqliteAdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\UI\Http\ApproveAdvertisementController;
+use Demo\App\Advertisements\Advertisement\UI\Http\DeleteAdvertisementController;
 use Demo\App\Advertisements\Advertisement\UI\Http\DisableAdvertisementController;
 use Demo\App\Advertisements\Advertisement\UI\Http\EnableAdvertisementController;
 use Demo\App\Advertisements\Advertisement\UI\Http\PublishAdvertisementController;
@@ -55,7 +57,17 @@ class DependencyInjectionResolver
 
     public function disableAdvertisementUseCase(): DisableAdvertisementUseCase
     {
-        return new DisableAdvertisementUseCase($this->advertisementRepository());
+        return new DisableAdvertisementUseCase($this->advertisementRepository(), $this->userRepository());
+    }
+
+    public function deleteAdvertisementUseCase(): DeleteAdvertisementUseCase
+    {
+        return new DeleteAdvertisementUseCase($this->advertisementRepository(), $this->userRepository());
+    }
+
+    public function deleteAdvertisementController(): DeleteAdvertisementController
+    {
+        return new DeleteAdvertisementController($this->deleteAdvertisementUseCase(), $this->frameworkSecurityService());
     }
 
     public function approveAdvertisementController(): ApproveAdvertisementController
@@ -65,7 +77,7 @@ class DependencyInjectionResolver
 
     public function approveAdvertisementUseCase(): ApproveAdvertisementUseCase
     {
-        return new ApproveAdvertisementUseCase($this->advertisementRepository());
+        return new ApproveAdvertisementUseCase($this->advertisementRepository(), $this->userRepository());
     }
 
     public function enableAdvertisementController(): EnableAdvertisementController
