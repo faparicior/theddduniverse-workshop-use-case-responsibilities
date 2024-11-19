@@ -10,7 +10,7 @@ use Demo\App\Framework\FrameworkResponse;
 use Demo\App\Framework\Server;
 use PHPUnit\Framework\TestCase;
 
-final class AdvertisementTest extends TestCase
+final class AdvertisementAsMemberTest extends TestCase
 {
     private const string ADVERTISEMENT_ID = '6fa00b21-2930-483e-b610-d6b0e5b19b29';
     private const string NON_EXISTENT_ADVERTISEMENT_ID = '99999999-2930-483e-b610-d6b0e5b19b29';
@@ -184,89 +184,6 @@ final class AdvertisementTest extends TestCase
         $resultSet = $this->connection->query('select * from advertisements;');
         $diff = date_diff(new \DateTime($resultSet[0]['advertisement_date']), new \DateTime(self::ADVERTISEMENT_CREATION_DATE));
         self::assertGreaterThan(0, $diff->days);
-    }
-
-    public function testShouldDisableAnAdvertisementAsAdmin(): void
-    {
-        $this->withAdminUser();
-        $this->withAnAdvertisementCreated();
-
-        $request = new FrameworkRequest(
-            FrameworkRequest::METHOD_PUT,
-            'advertisements/' . self::ADVERTISEMENT_ID . '/disable',
-            [
-                'password' => 'myPassword',
-            ],
-            [
-                'userSession' => self::ADMIN_ID,
-            ]
-        );
-        $response = $this->server->route($request);
-
-        self::assertEquals(FrameworkResponse::STATUS_OK, $response->statusCode());
-        self::assertEquals(
-            $this->successCommandResponse(),
-            $response->data(),
-        );
-
-        $resultSet = $this->connection->query('select * from advertisements;');
-        self::assertEquals('disabled', $resultSet[0]['status']);
-    }
-
-    public function testShouldEnableAnAdvertisementAsAdmin(): void
-    {
-        $this->withMemberUser('enabled');
-        $this->withAdminUser();
-        $this->withAnAdvertisementCreated('disabled');
-
-        $request = new FrameworkRequest(
-            FrameworkRequest::METHOD_PUT,
-            'advertisements/' . self::ADVERTISEMENT_ID . '/enable',
-            [
-                'password' => 'myPassword',
-            ],
-            [
-                'userSession' => self::ADMIN_ID,
-            ]
-        );
-        $response = $this->server->route($request);
-
-        self::assertEquals(FrameworkResponse::STATUS_OK, $response->statusCode());
-        self::assertEquals(
-            $this->successCommandResponse(),
-            $response->data(),
-        );
-
-        $resultSet = $this->connection->query('select * from advertisements;');
-        self::assertEquals('enabled', $resultSet[0]['status']);
-    }
-
-    public function testShouldApproveAnAdvertisementAsAdmin(): void
-    {
-        $this->withMemberUser('enabled');
-        $this->withAdminUser();
-        $this->withAnAdvertisementCreated('disabled', 'pending_for_approval');
-
-        $request = new FrameworkRequest(
-            FrameworkRequest::METHOD_PUT,
-            'advertisements/' . self::ADVERTISEMENT_ID . '/approve',
-            [
-                'password' => 'myPassword',
-            ],
-            [
-                'userSession' => self::ADMIN_ID,
-            ]
-        );
-        $response = $this->server->route($request);
-
-        self::assertEquals(FrameworkResponse::STATUS_OK, $response->statusCode());
-        self::assertEquals(
-            $this->successCommandResponse(),
-            $response->data(),
-        );
-
-        $resultSet = $this->connection->query('select * from advertisements;');
-        self::assertEquals('approved', $resultSet[0]['approval_status']);
     }
 
     public function testShouldNotChangeAnAdvertisementWithIncorrectPassword(): void
