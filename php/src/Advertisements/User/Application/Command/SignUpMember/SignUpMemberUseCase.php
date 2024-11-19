@@ -27,6 +27,7 @@ final class SignUpMemberUseCase
      */
     public function execute(SignUpMemberCommand $command): void
     {
+        // TODO: Use security service
         $adminUser = $this->userRepository->findAdminById(new UserId($command->securityUserId));
         if (!$adminUser) {
             throw UserNotFoundException::asAdmin();

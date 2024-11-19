@@ -11,6 +11,7 @@ use Demo\App\Advertisements\Advertisement\Application\Command\PublishAdvertiseme
 use Demo\App\Advertisements\Advertisement\Application\Command\RenewAdvertisement\RenewAdvertisementUseCase;
 use Demo\App\Advertisements\Advertisement\Application\Command\UpdateAdvertisement\UpdateAdvertisementUseCase;
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
+use Demo\App\Advertisements\Advertisement\Domain\Services\SecurityService;
 use Demo\App\Advertisements\Advertisement\Infrastructure\Persistence\SqliteAdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\UI\Http\ApproveAdvertisementController;
 use Demo\App\Advertisements\Advertisement\UI\Http\DeleteAdvertisementController;
@@ -57,7 +58,7 @@ class DependencyInjectionResolver
 
     public function disableAdvertisementUseCase(): DisableAdvertisementUseCase
     {
-        return new DisableAdvertisementUseCase($this->advertisementRepository(), $this->userRepository());
+        return new DisableAdvertisementUseCase($this->advertisementRepository(), $this->userRepository(), $this->securityService());
     }
 
     public function deleteAdvertisementUseCase(): DeleteAdvertisementUseCase
@@ -70,6 +71,11 @@ class DependencyInjectionResolver
         return new DeleteAdvertisementController($this->deleteAdvertisementUseCase(), $this->frameworkSecurityService());
     }
 
+    public function securityService(): SecurityService
+    {
+        return new SecurityService($this->userRepository());
+    }
+
     public function approveAdvertisementController(): ApproveAdvertisementController
     {
         return new ApproveAdvertisementController($this->approveAdvertisementUseCase(), $this->frameworkSecurityService());
@@ -77,17 +83,17 @@ class DependencyInjectionResolver
 
     public function approveAdvertisementUseCase(): ApproveAdvertisementUseCase
     {
-        return new ApproveAdvertisementUseCase($this->advertisementRepository(), $this->userRepository());
+        return new ApproveAdvertisementUseCase($this->advertisementRepository(), $this->userRepository(), $this->securityService());
     }
 
     public function enableAdvertisementController(): EnableAdvertisementController
     {
-        return new EnableAdvertisementController($this->enableAdvertisementUseCase(), $this->frameworkSecurityService());
+        return new EnableAdvertisementController($this->enableAdvertisementUseCase(), $this->frameworkSecurityService(), $this->securityService());
     }
 
     public function enableAdvertisementUseCase(): EnableAdvertisementUseCase
     {
-        return new EnableAdvertisementUseCase($this->advertisementRepository(), $this->userRepository());
+        return new EnableAdvertisementUseCase($this->advertisementRepository(), $this->userRepository(), $this->securityService());
     }
 
     public function publishAdvertisementUseCase(): PublishAdvertisementUseCase

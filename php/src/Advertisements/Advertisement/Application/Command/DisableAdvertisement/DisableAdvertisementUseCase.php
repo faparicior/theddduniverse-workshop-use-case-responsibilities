@@ -5,9 +5,9 @@ namespace Demo\App\Advertisements\Advertisement\Application\Command\DisableAdver
 
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementNotFoundException;
+use Demo\App\Advertisements\Advertisement\Domain\Services\SecurityService;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
-use Demo\App\Advertisements\User\Domain\Exceptions\UserNotFoundException;
 use Demo\App\Advertisements\User\Domain\UserRepository;
 use Exception;
 
@@ -15,7 +15,8 @@ final class DisableAdvertisementUseCase
 {
     public function __construct(
         private AdvertisementRepository $advertisementRepository,
-        private UserRepository $userRepository
+        private UserRepository $userRepository,
+        private SecurityService $securityService,
     ) {}
 
     /**
@@ -23,18 +24,16 @@ final class DisableAdvertisementUseCase
      */
     public function execute(DisableAdvertisementCommand $command): void
     {
-        // TODO: Implement user security
-        $adminUser = $this->userRepository->findAdminById(new UserId($command->securityUserId));
-        if (!$adminUser) {
-            throw UserNotFoundException::asAdmin();
-        }
-
-
         $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->advertisementId));
 
         if (!$advertisement) {
             throw AdvertisementNotFoundException::withId($command->advertisementId);
         }
+
+        $this->securityService->verifyAdminUserCanManageAdvertisement(
+            new UserId($command->securityUserId),
+            $advertisement,
+        );
 
         $advertisement->disable();
 
