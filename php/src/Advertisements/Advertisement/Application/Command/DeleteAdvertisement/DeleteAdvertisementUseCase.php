@@ -25,14 +25,6 @@ final class DeleteAdvertisementUseCase
      */
     public function execute(DeleteAdvertisementCommand $command): void
     {
-        $adminUser = null;
-        if ($command->securityUserRole === 'admin') {
-            $adminUser = $this->userRepository->findAdminById(new UserId($command->securityUserId));
-            if (!$adminUser) {
-                throw UserNotFoundException::asAdmin();
-            }
-        }
-
         $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->advertisementId));
 
         if (!$advertisement) {
@@ -43,10 +35,6 @@ final class DeleteAdvertisementUseCase
 
         if (null === $member) {
             throw MemberDoesNotExistsException::build();
-        }
-
-        if ($adminUser && !$adminUser->civicCenterId()->equals($member->civicCenterId())) {
-            throw AdminWithIncorrectCivicCenterException::differentCivicCenterFromMember();
         }
 
         $activeAdvertisements = $this->advertisementRepository->activeAdvertisementsByMember($member);
