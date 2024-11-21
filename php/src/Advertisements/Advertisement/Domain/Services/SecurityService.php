@@ -6,6 +6,7 @@ namespace Demo\App\Advertisements\Advertisement\Domain\Services;
 use Demo\App\Advertisements\Advertisement\Domain\Advertisement;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\AdminWithIncorrectCivicCenterException;
+use Demo\App\Advertisements\User\Domain\Exceptions\UnauthorizedUserException;
 use Demo\App\Advertisements\User\Domain\Exceptions\UserNotFoundException;
 use Demo\App\Advertisements\User\Domain\UserRepository;
 
@@ -28,6 +29,22 @@ class SecurityService
 
         if (!$adminUser->civicCenterId()->equals($advertisement->civicCenterId())) {
             throw AdminWithIncorrectCivicCenterException::differentCivicCenterFromMember();
+        }
+    }
+
+    /**
+     * @throws UnauthorizedUserException
+     * @throws UserNotFoundException
+     */
+    public function verifyMemberUserCanManageAdvertisement(UserId $securityUserId, Advertisement $advertisement): void
+    {
+        $memberUser = $this->userRepository->findMemberById($securityUserId);
+        if (!$memberUser) {
+            throw UserNotFoundException::asMember();
+        }
+
+        if (!$advertisement->memberId()->equals($securityUserId)) {
+            throw UnauthorizedUserException::build();
         }
     }
 }

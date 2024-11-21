@@ -21,7 +21,7 @@ final class PublishAdvertisementUseCase
 {
     public function __construct(
         private AdvertisementRepository $advertisementRepository,
-        private UserRepository $userRepository
+        private UserRepository $userRepository,
     ) {}
 
     /**
@@ -38,7 +38,7 @@ final class PublishAdvertisementUseCase
             throw AdvertisementAlreadyExistsException::withId($command->id);
         }
 
-        $activeAdvertisements = $this->advertisementRepository->activeAdvertisementsByMember($memberUser);
+        $activeAdvertisements = $this->advertisementRepository->activeAdvertisementsByMemberId($memberUser->id());
 
         if ($activeAdvertisements->value() >= 3) {
             throw new Exception('Member has 3 active advertisements');

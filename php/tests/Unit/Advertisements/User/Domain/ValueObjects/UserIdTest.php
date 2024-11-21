@@ -24,4 +24,11 @@ class UserIdTest extends TestCase
         $this->expectExceptionMessage('Invalid unique identifier format for ' . self::INVALID_ID);
         new UserId(self::INVALID_ID);
     }
+
+    public function testShouldBeAbleToCompare()
+    {
+        $userId = new UserId(self::ID);
+        $userId2 = new UserId(self::ID);
+        $this->assertTrue($userId->equals($userId2));
+    }
 }

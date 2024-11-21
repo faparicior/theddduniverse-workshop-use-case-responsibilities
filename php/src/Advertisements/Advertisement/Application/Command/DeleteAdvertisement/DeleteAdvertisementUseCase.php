@@ -5,19 +5,16 @@ namespace Demo\App\Advertisements\Advertisement\Application\Command\DeleteAdvert
 
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementNotFoundException;
+use Demo\App\Advertisements\Advertisement\Domain\Services\SecurityService;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
-use Demo\App\Advertisements\User\Domain\Exceptions\AdminWithIncorrectCivicCenterException;
-use Demo\App\Advertisements\User\Domain\Exceptions\MemberDoesNotExistsException;
-use Demo\App\Advertisements\User\Domain\Exceptions\UserNotFoundException;
-use Demo\App\Advertisements\User\Domain\UserRepository;
 use Exception;
 
 final class DeleteAdvertisementUseCase
 {
     public function __construct(
         private AdvertisementRepository $advertisementRepository,
-        private UserRepository $userRepository
+        private SecurityService $securityService,
     ) {}
 
     /**
@@ -25,35 +22,18 @@ final class DeleteAdvertisementUseCase
      */
     public function execute(DeleteAdvertisementCommand $command): void
     {
-        $adminUser = null;
-        if ($command->securityUserRole === 'admin') {
-            $adminUser = $this->userRepository->findAdminById(new UserId($command->securityUserId));
-            if (!$adminUser) {
-                throw UserNotFoundException::asAdmin();
-            }
-        }
-
         $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->advertisementId));
 
         if (!$advertisement) {
             throw AdvertisementNotFoundException::withId($command->advertisementId);
         }
 
-        $member = $this->userRepository->findMemberById($advertisement->memberId());
+        $memberId = new UserId($command->securityUserId);
 
-        if (null === $member) {
-            throw MemberDoesNotExistsException::build();
-        }
-
-        if ($adminUser && !$adminUser->civicCenterId()->equals($member->civicCenterId())) {
-            throw AdminWithIncorrectCivicCenterException::differentCivicCenterFromMember();
-        }
-
-        $activeAdvertisements = $this->advertisementRepository->activeAdvertisementsByMember($member);
-
-        if ($activeAdvertisements->value() >= 3) {
-            throw new Exception('Member has 3 active advertisements');
-        }
+        $this->securityService->verifyMemberUserCanManageAdvertisement(
+            $memberId,
+            $advertisement,
+        );
 
         $this->advertisementRepository->delete($advertisement);
     }

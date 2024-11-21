@@ -73,9 +73,9 @@ class SqliteAdvertisementRepository implements AdvertisementRepository
         );
     }
 
-    public function activeAdvertisementsByMember(MemberUser $member): ActiveAdvertisements
+    public function activeAdvertisementsByMemberId(UserId $member): ActiveAdvertisements
     {
-        $result = $this->dbConnection->query(sprintf('SELECT COUNT(*) as active FROM advertisements WHERE user_id = \'%s\' AND status = \'active\'', $member->id()->value()));
+        $result = $this->dbConnection->query(sprintf('SELECT COUNT(*) as active FROM advertisements WHERE user_id = \'%s\' AND status = \'active\'', $member->value()));
 
         return ActiveAdvertisements::fromInt((int) $result[0]['active']);
     }

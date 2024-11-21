@@ -6,6 +6,7 @@ namespace Demo\App\Advertisements\Advertisement\Application\Command\UpdateAdvert
 use Demo\App\Advertisements\Advertisement\Application\Exceptions\InvalidPasswordException;
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementNotFoundException;
+use Demo\App\Advertisements\Advertisement\Domain\Services\SecurityService;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\Description;
 use Demo\App\Advertisements\Shared\ValueObjects\Email;
@@ -19,7 +20,7 @@ final class UpdateAdvertisementUseCase
 {
     public function __construct(
         private AdvertisementRepository $advertisementRepository,
-        private UserRepository $userRepository
+        private SecurityService $securityService,
     ) {}
 
     /**
@@ -27,16 +28,16 @@ final class UpdateAdvertisementUseCase
      */
     public function execute(UpdateAdvertisementCommand $command): void
     {
-        $memberUser = $this->userRepository->findMemberById(new UserId($command->securityUserId));
-        if (!$memberUser) {
-            throw UserNotFoundException::asMember();
-        }
-
         $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->id));
 
         if (!$advertisement) {
             throw AdvertisementNotFoundException::withId($command->id);
         }
+
+        $this->securityService->verifyMemberUserCanManageAdvertisement(
+            new UserId($command->securityUserId),
+            $advertisement,
+        );
 
         if (!$advertisement->password()->isValidatedWith($command->password)) {
             throw InvalidPasswordException::build();

@@ -8,14 +8,12 @@ use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementNotFoun
 use Demo\App\Advertisements\Advertisement\Domain\Services\SecurityService;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
-use Demo\App\Advertisements\User\Domain\UserRepository;
 use Exception;
 
 final class DisableAdvertisementUseCase
 {
     public function __construct(
         private AdvertisementRepository $advertisementRepository,
-        private UserRepository $userRepository,
         private SecurityService $securityService,
     ) {}
 
@@ -30,10 +28,19 @@ final class DisableAdvertisementUseCase
             throw AdvertisementNotFoundException::withId($command->advertisementId);
         }
 
-        $this->securityService->verifyAdminUserCanManageAdvertisement(
-            new UserId($command->securityUserId),
-            $advertisement,
-        );
+        if ('admin' === $command->securityUserRole) {
+            $this->securityService->verifyAdminUserCanManageAdvertisement(
+                new UserId($command->securityUserId),
+                $advertisement,
+            );
+        }
+
+        if ('user' === $command->securityUserRole) {
+            $this->securityService->verifyMemberUserCanManageAdvertisement(
+                new UserId($command->securityUserId),
+                $advertisement,
+            );
+        }
 
         $advertisement->disable();
 

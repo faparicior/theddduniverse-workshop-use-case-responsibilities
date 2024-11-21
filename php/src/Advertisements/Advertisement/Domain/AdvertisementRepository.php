@@ -6,6 +6,7 @@ namespace Demo\App\Advertisements\Advertisement\Domain;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\ActiveAdvertisements;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Advertisement\Infrastructure\Persistence\SqliteAdvertisementRepository;
+use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\MemberUser;
 
 interface AdvertisementRepository
@@ -14,7 +15,7 @@ interface AdvertisementRepository
 
     public function findById(AdvertisementId $id): ?Advertisement;
 
-    public function activeAdvertisementsByMember(MemberUser $member): ActiveAdvertisements;
+    public function activeAdvertisementsByMemberId(UserId $member): ActiveAdvertisements;
 
     public function delete(Advertisement $advertisement): void;
 }

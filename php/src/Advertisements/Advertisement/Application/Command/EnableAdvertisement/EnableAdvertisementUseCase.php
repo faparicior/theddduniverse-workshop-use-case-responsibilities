@@ -42,7 +42,7 @@ final class EnableAdvertisementUseCase
             throw MemberDoesNotExistsException::build();
         }
 
-        $activeAdvertisements = $this->advertisementRepository->activeAdvertisementsByMember($member);
+        $activeAdvertisements = $this->advertisementRepository->activeAdvertisementsByMemberId($member->id());
 
         if ($activeAdvertisements->value() >= 3) {
             throw new Exception('Member has 3 active advertisements');

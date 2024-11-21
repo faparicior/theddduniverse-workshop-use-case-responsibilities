@@ -58,12 +58,12 @@ class DependencyInjectionResolver
 
     public function disableAdvertisementUseCase(): DisableAdvertisementUseCase
     {
-        return new DisableAdvertisementUseCase($this->advertisementRepository(), $this->userRepository(), $this->securityService());
+        return new DisableAdvertisementUseCase($this->advertisementRepository(), $this->securityService());
     }
 
     public function deleteAdvertisementUseCase(): DeleteAdvertisementUseCase
     {
-        return new DeleteAdvertisementUseCase($this->advertisementRepository(), $this->userRepository());
+        return new DeleteAdvertisementUseCase($this->advertisementRepository(), $this->securityService());
     }
 
     public function deleteAdvertisementController(): DeleteAdvertisementController
@@ -108,7 +108,7 @@ class DependencyInjectionResolver
 
     public function updateAdvertisementUseCase(): UpdateAdvertisementUseCase
     {
-        return new UpdateAdvertisementUseCase($this->advertisementRepository(), $this->userRepository());
+        return new UpdateAdvertisementUseCase($this->advertisementRepository(), $this->securityService());
     }
 
     public function advertisementRepository(): AdvertisementRepository

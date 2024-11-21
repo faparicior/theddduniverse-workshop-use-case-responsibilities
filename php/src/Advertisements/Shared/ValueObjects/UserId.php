@@ -22,6 +22,11 @@ final readonly class UserId
         return $this->value;
     }
 
+    public function equals(UserId $userId): bool
+    {
+        return $this->value === $userId->value;
+    }
+
     private function validate(string $value): bool
     {
         return preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i', $value) != 0;
