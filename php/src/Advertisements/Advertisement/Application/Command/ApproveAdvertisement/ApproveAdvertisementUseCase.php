@@ -7,6 +7,7 @@ use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Domain\Services\SecurityService;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
+use Demo\App\Framework\Database\TransactionManager;
 use Exception;
 
 final class ApproveAdvertisementUseCase
@@ -14,6 +15,7 @@ final class ApproveAdvertisementUseCase
     public function __construct(
         private AdvertisementRepository $advertisementRepository,
         private SecurityService $securityService,
+        private TransactionManager $transactionManager,
     ) {}
 
     /**
@@ -21,15 +23,24 @@ final class ApproveAdvertisementUseCase
      */
     public function execute(ApproveAdvertisementCommand $command): void
     {
-        $advertisement = $this->advertisementRepository->findByIdOrFail(new AdvertisementId($command->advertisementId));
+        $this->transactionManager->beginTransaction();
 
-        $this->securityService->verifyAdminUserCanManageAdvertisement(
-            new UserId($command->securityUserId),
-            $advertisement,
-        );
+        try {
+            $advertisement = $this->advertisementRepository->findByIdOrFail(new AdvertisementId($command->advertisementId));
 
-        $advertisement->approve();
+            $this->securityService->verifyAdminUserCanManageAdvertisement(
+                new UserId($command->securityUserId),
+                $advertisement,
+            );
 
-        $this->advertisementRepository->save($advertisement);
+            $advertisement->approve();
+
+            $this->advertisementRepository->save($advertisement);
+
+            $this->transactionManager->commit();
+        } catch (Exception $exception) {
+            $this->transactionManager->rollback();
+            throw $exception;
+        }
     }
 }

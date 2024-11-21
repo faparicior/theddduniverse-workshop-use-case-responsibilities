@@ -85,7 +85,7 @@ class DependencyInjectionResolver
 
     public function approveAdvertisementUseCase(): ApproveAdvertisementUseCase
     {
-        return new ApproveAdvertisementUseCase($this->advertisementRepository(), $this->securityService());
+        return new ApproveAdvertisementUseCase($this->advertisementRepository(), $this->securityService(), $this->transactionManager());
     }
 
     public function enableAdvertisementController(): EnableAdvertisementController
