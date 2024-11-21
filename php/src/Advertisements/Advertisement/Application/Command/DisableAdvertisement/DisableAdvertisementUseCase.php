@@ -23,11 +23,19 @@ final class DisableAdvertisementUseCase
      */
     public function execute(DisableAdvertisementCommand $command): void
     {
-        $adminUser = $this->userRepository->findAdminById(new UserId($command->securityUserId));
-        if (!$adminUser) {
-            throw UserNotFoundException::asAdmin();
+        if ('admin' === $command->securityUserRole) {
+            $adminUser = $this->userRepository->findAdminById(new UserId($command->securityUserId));
+            if (!$adminUser) {
+                throw UserNotFoundException::asAdmin();
+            }
         }
-        // TODO: Member can disable also his own advertisement
+
+        if ('member' === $command->securityUserRole) {
+            $member = $this->userRepository->findMemberById(new UserId($command->securityUserId));
+            if (!$member) {
+                throw UserNotFoundException::asMember();
+            }
+        }
 
         $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->advertisementId));
 
