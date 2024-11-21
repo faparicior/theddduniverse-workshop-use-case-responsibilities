@@ -5,7 +5,6 @@ namespace Demo\App\Advertisements\Advertisement\Application\Command\RenewAdverti
 
 use Demo\App\Advertisements\Advertisement\Application\Exceptions\InvalidPasswordException;
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
-use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementNotFoundException;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Shared\ValueObjects\Password;
 use Exception;

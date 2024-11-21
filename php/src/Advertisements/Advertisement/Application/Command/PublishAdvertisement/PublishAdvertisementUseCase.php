@@ -13,7 +13,6 @@ use Demo\App\Advertisements\Shared\ValueObjects\CivicCenterId;
 use Demo\App\Advertisements\Shared\ValueObjects\Email;
 use Demo\App\Advertisements\Shared\ValueObjects\Password;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
-use Demo\App\Advertisements\User\Domain\Exceptions\UserNotFoundException;
 use Demo\App\Advertisements\User\Domain\UserRepository;
 use Exception;
 
