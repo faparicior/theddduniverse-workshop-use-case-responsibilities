@@ -30,6 +30,8 @@ use Demo\App\Advertisements\User\UI\Http\EnableMemberController;
 use Demo\App\Advertisements\User\UI\Http\SignUpMemberController;
 use Demo\App\Framework\Database\DatabaseConnection;
 use Demo\App\Framework\Database\SqliteConnection;
+use Demo\App\Framework\Database\SqliteTransactionManager;
+use Demo\App\Framework\Database\TransactionManager;
 use Demo\App\Framework\SecurityUser\FrameworkSecurityService;
 use Demo\App\Framework\SecurityUser\SecurityUserRepository;
 use Demo\App\Framework\SecurityUser\SqliteSecurityUserRepository;
@@ -83,7 +85,7 @@ class DependencyInjectionResolver
 
     public function approveAdvertisementUseCase(): ApproveAdvertisementUseCase
     {
-        return new ApproveAdvertisementUseCase($this->advertisementRepository(), $this->userRepository(), $this->securityService());
+        return new ApproveAdvertisementUseCase($this->advertisementRepository(), $this->securityService());
     }
 
     public function enableAdvertisementController(): EnableAdvertisementController
@@ -164,5 +166,10 @@ class DependencyInjectionResolver
     public function connection(): DatabaseConnection
     {
         return new SqliteConnection();
+    }
+
+    public function transactionManager(): TransactionManager
+    {
+        return new SqliteTransactionManager(self::connection());
     }
 }
