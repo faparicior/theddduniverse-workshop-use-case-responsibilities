@@ -38,7 +38,7 @@ class SecurityService
      */
     public function verifyMemberUserCanManageAdvertisement(UserId $securityUserId, Advertisement $advertisement): void
     {
-        $memberUser = $this->userRepository->findMemberById($securityUserId);
+        $memberUser = $this->userRepository->findMemberByIdOrFail($securityUserId);
         if (!$memberUser) {
             throw UserNotFoundException::asMember();
         }

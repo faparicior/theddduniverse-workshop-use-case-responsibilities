@@ -5,6 +5,7 @@ namespace Demo\App\Advertisements\Advertisement\Infrastructure\Persistence;
 
 use Demo\App\Advertisements\Advertisement\Domain\Advertisement;
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
+use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementNotFoundException;
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\InvalidEmailException;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\ActiveAdvertisements;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementDate;
@@ -53,8 +54,19 @@ class SqliteAdvertisementRepository implements AdvertisementRepository
     /**
      * @throws InvalidEmailException
      * @throws InvalidUniqueIdentifierException
+     * @throws AdvertisementNotFoundException
      */
-    public function findById(AdvertisementId $id): ?Advertisement
+    public function findByIdOrFail(AdvertisementId $id): Advertisement
+    {
+        $advertisement = $this->findByIdOrNull($id);
+        if (!$advertisement) {
+            throw AdvertisementNotFoundException::withId($id->value());
+        }
+
+        return $advertisement;
+    }
+
+    public function findByIdOrNull(AdvertisementId $id): ?Advertisement
     {
         $result = $this->dbConnection->query(sprintf('SELECT * FROM advertisements WHERE id = \'%s\'', $id->value()));
         if(!$result) {

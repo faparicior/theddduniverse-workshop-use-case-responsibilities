@@ -13,7 +13,9 @@ interface AdvertisementRepository
 {
     public function save(Advertisement $advertisement): void;
 
-    public function findById(AdvertisementId $id): ?Advertisement;
+    public function findByIdOrFail(AdvertisementId $id): Advertisement;
+
+    public function findByIdOrNull(AdvertisementId $id): ?Advertisement;
 
     public function activeAdvertisementsByMemberId(UserId $member): ActiveAdvertisements;
 

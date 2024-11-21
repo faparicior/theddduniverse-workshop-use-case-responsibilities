@@ -25,22 +25,14 @@ final class EnableAdvertisementUseCase
      */
     public function execute(EnableAdvertisementCommand $command): void
     {
-        $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->advertisementId));
-
-        if (!$advertisement) {
-            throw AdvertisementNotFoundException::withId($command->advertisementId);
-        }
+        $advertisement = $this->advertisementRepository->findByIdOrFail(new AdvertisementId($command->advertisementId));
 
         $this->securityService->verifyAdminUserCanManageAdvertisement(
             new UserId($command->securityUserId),
             $advertisement,
         );
 
-        $member = $this->userRepository->findMemberById($advertisement->memberId());
-
-        if (null === $member) {
-            throw MemberDoesNotExistsException::build();
-        }
+        $member = $this->userRepository->findMemberByIdOrFail($advertisement->memberId());
 
         $activeAdvertisements = $this->advertisementRepository->activeAdvertisementsByMemberId($member->id());
 

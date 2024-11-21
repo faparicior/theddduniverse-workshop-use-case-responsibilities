@@ -37,7 +37,7 @@ final class SignUpMemberUseCase
             throw AdminWithIncorrectCivicCenterException::differentCivicCenterFromMember();
         }
 
-        if ($this->userRepository->findMemberById(new UserId($command->memberId))) {
+        if ($this->userRepository->findMemberByIdOrNull(new UserId($command->memberId))) {
             throw MemberAlreadyExistsException::build();
         }
 

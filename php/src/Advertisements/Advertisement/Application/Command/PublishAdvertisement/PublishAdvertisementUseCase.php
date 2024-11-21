@@ -29,12 +29,9 @@ final class PublishAdvertisementUseCase
      */
     public function execute(PublishAdvertisementCommand $command): void
     {
-        $memberUser = $this->userRepository->findMemberById(new UserId($command->securityUserId));
-        if (!$memberUser) {
-            throw UserNotFoundException::asMember();
-        }
+        $memberUser = $this->userRepository->findMemberByIdOrFail(new UserId($command->securityUserId));
 
-        if ($this->advertisementRepository->findById(new AdvertisementId($command->id))) {
+        if ($this->advertisementRepository->findByIdOrNull(new AdvertisementId($command->id))) {
             throw AdvertisementAlreadyExistsException::withId($command->id);
         }
 

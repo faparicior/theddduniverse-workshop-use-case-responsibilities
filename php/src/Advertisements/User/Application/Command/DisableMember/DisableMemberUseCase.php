@@ -25,7 +25,7 @@ final class DisableMemberUseCase
         if (!$adminUser) {
             throw UserNotFoundException::asAdmin();
         }
-        $member = $this->userRepository->findMemberById(new UserId($command->memberId));
+        $member = $this->userRepository->findMemberByIdOrFail(new UserId($command->memberId));
 
         if (null === $member) {
             throw MemberDoesNotExistsException::build();

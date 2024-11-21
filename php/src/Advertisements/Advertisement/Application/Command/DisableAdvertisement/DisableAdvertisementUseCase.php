@@ -22,11 +22,7 @@ final class DisableAdvertisementUseCase
      */
     public function execute(DisableAdvertisementCommand $command): void
     {
-        $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->advertisementId));
-
-        if (!$advertisement) {
-            throw AdvertisementNotFoundException::withId($command->advertisementId);
-        }
+        $advertisement = $this->advertisementRepository->findByIdOrFail(new AdvertisementId($command->advertisementId));
 
         if ('admin' === $command->securityUserRole) {
             $this->securityService->verifyAdminUserCanManageAdvertisement(

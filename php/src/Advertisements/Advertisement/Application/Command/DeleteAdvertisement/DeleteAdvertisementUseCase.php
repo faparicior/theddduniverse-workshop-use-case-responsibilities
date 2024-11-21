@@ -22,11 +22,7 @@ final class DeleteAdvertisementUseCase
      */
     public function execute(DeleteAdvertisementCommand $command): void
     {
-        $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->advertisementId));
-
-        if (!$advertisement) {
-            throw AdvertisementNotFoundException::withId($command->advertisementId);
-        }
+        $advertisement = $this->advertisementRepository->findByIdOrFail(new AdvertisementId($command->advertisementId));
 
         $memberId = new UserId($command->securityUserId);
 

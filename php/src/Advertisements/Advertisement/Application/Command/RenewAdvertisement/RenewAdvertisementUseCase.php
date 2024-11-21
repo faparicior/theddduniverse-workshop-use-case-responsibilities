@@ -23,11 +23,7 @@ final class RenewAdvertisementUseCase
     {
         // TODO: Implement user security
 
-        $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->id));
-
-        if (!$advertisement) {
-            throw AdvertisementNotFoundException::withId($command->id);
-        }
+        $advertisement = $this->advertisementRepository->findByIdOrFail(new AdvertisementId($command->id));
 
         if (!$advertisement->password()->isValidatedWith($command->password)) {
             throw InvalidPasswordException::build();

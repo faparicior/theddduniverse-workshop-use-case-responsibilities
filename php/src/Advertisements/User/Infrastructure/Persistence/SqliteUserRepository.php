@@ -10,6 +10,7 @@ use Demo\App\Advertisements\Shared\ValueObjects\Email;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\AdminUser;
 use Demo\App\Advertisements\User\Domain\Exceptions\InvalidUserException;
+use Demo\App\Advertisements\User\Domain\Exceptions\MemberDoesNotExistsException;
 use Demo\App\Advertisements\User\Domain\MemberUser;
 use Demo\App\Advertisements\User\Domain\UserRepository;
 use Demo\App\Advertisements\User\Domain\ValueObjects\MemberNumber;
@@ -57,8 +58,9 @@ class SqliteUserRepository implements UserRepository
      * @throws InvalidEmailException
      * @throws InvalidUniqueIdentifierException
      * @throws InvalidUserException
+     * @throws MemberDoesNotExistsException
      */
-    public function findMemberById(UserId $id): ?MemberUser
+    public function findMemberByIdOrNull(UserId $id): ?MemberUser
     {
         $result = $this->dbConnection->query(sprintf('SELECT * FROM users WHERE id = \'%s\'', $id->value()));
         if(!$result) {
@@ -79,6 +81,22 @@ class SqliteUserRepository implements UserRepository
         }
 
         return null;
+    }
+
+    /**
+     * @throws InvalidEmailException
+     * @throws InvalidUniqueIdentifierException
+     * @throws InvalidUserException
+     * @throws MemberDoesNotExistsException
+     */
+    public function findMemberByIdOrFail(UserId $id): MemberUser
+    {
+        $member = $this->findMemberByIdOrNull($id);
+        if (!$member) {
+            throw MemberDoesNotExistsException::build();
+        }
+
+        return $member;
     }
 
     /**

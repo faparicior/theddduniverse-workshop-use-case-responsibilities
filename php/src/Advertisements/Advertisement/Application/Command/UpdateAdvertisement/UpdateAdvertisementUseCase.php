@@ -28,11 +28,7 @@ final class UpdateAdvertisementUseCase
      */
     public function execute(UpdateAdvertisementCommand $command): void
     {
-        $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->id));
-
-        if (!$advertisement) {
-            throw AdvertisementNotFoundException::withId($command->id);
-        }
+        $advertisement = $this->advertisementRepository->findByIdOrFail(new AdvertisementId($command->id));
 
         $this->securityService->verifyMemberUserCanManageAdvertisement(
             new UserId($command->securityUserId),
