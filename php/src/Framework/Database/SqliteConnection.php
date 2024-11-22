@@ -22,6 +22,11 @@ final class SqliteConnection implements DatabaseConnection
         return $this->connect()->query($sql)->fetchAll();
     }
 
+    public function close(): void
+    {
+        $this->dbConnection = null;
+    }
+
     private function connect(): PDO
     {
         $createDatabase = false;

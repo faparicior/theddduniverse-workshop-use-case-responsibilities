@@ -34,6 +34,11 @@ final class AdvertisementAsMemberTest extends TestCase
         parent::setUp();
     }
 
+    protected function tearDown(): void
+    {
+        $this->connection->close();
+    }
+
     public function testShouldPublishAnAdvertisementAsMember(): void
     {
         $this->withMemberUser('enabled');

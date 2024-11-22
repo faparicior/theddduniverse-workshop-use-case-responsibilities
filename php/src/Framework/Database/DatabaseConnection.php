@@ -9,4 +9,5 @@ interface DatabaseConnection
 {
     public function execute(string $sql): void;
     public function query(string $sql): array;
+    public function close(): void;
 }

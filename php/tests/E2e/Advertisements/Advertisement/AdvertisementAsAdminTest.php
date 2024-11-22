@@ -34,6 +34,11 @@ final class AdvertisementAsAdminTest extends TestCase
         parent::setUp();
     }
 
+    protected function tearDown(): void
+    {
+        $this->connection->close();
+    }
+
     public function testShouldDisableAnAdvertisementAsAdmin(): void
     {
         $this->withAdminUser();

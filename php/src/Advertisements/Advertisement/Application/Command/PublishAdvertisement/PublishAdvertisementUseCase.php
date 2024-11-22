@@ -14,6 +14,7 @@ use Demo\App\Advertisements\Shared\ValueObjects\Email;
 use Demo\App\Advertisements\Shared\ValueObjects\Password;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\UserRepository;
+use Demo\App\Framework\Database\TransactionManager;
 use Exception;
 
 final class PublishAdvertisementUseCase
@@ -21,6 +22,7 @@ final class PublishAdvertisementUseCase
     public function __construct(
         private AdvertisementRepository $advertisementRepository,
         private UserRepository $userRepository,
+        private TransactionManager $transactionManager,
     ) {}
 
     /**
@@ -28,28 +30,35 @@ final class PublishAdvertisementUseCase
      */
     public function execute(PublishAdvertisementCommand $command): void
     {
-        $memberUser = $this->userRepository->findMemberByIdOrFail(new UserId($command->securityUserId));
+        $this->transactionManager->beginTransaction();
 
-        if ($this->advertisementRepository->findByIdOrNull(new AdvertisementId($command->id))) {
-            throw AdvertisementAlreadyExistsException::withId($command->id);
+        try {
+            $memberUser = $this->userRepository->findMemberByIdOrFail(new UserId($command->securityUserId));
+
+            if ($this->advertisementRepository->findByIdOrNull(new AdvertisementId($command->id))) {
+                throw AdvertisementAlreadyExistsException::withId($command->id);
+            }
+
+            $activeAdvertisements = $this->advertisementRepository->activeAdvertisementsByMemberId($memberUser->id());
+
+            if ($activeAdvertisements->value() >= 3) {
+                throw new Exception('Member has 3 active advertisements');
+            }
+
+            $advertisement = new Advertisement(
+                new AdvertisementId($command->id),
+                new Description($command->description),
+                new Email($command->email),
+                Password::fromPlainPassword($command->password),
+                new AdvertisementDate(new \DateTime()),
+                new CivicCenterId($command->civicCenterId),
+                new UserId($command->memberNumber),
+            );
+
+            $this->advertisementRepository->save($advertisement);
+        } catch (Exception $exception) {
+            $this->transactionManager->rollback();
+            throw $exception;
         }
-
-        $activeAdvertisements = $this->advertisementRepository->activeAdvertisementsByMemberId($memberUser->id());
-
-        if ($activeAdvertisements->value() >= 3) {
-            throw new Exception('Member has 3 active advertisements');
-        }
-
-        $advertisement = new Advertisement(
-            new AdvertisementId($command->id),
-            new Description($command->description),
-            new Email($command->email),
-            Password::fromPlainPassword($command->password),
-            new AdvertisementDate(new \DateTime()),
-            new CivicCenterId($command->civicCenterId),
-            new UserId($command->memberNumber),
-        );
-
-        $this->advertisementRepository->save($advertisement);
     }
 }

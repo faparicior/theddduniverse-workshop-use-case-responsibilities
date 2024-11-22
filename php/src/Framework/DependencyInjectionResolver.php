@@ -38,6 +38,8 @@ use Demo\App\Framework\SecurityUser\SqliteSecurityUserRepository;
 
 class DependencyInjectionResolver
 {
+    private ?DatabaseConnection $connection = null;
+
     public function publishAdvertisementController(): PublishAdvertisementController
     {
         return new PublishAdvertisementController($this->publishAdvertisementUseCase(), $this->frameworkSecurityService());
@@ -60,12 +62,12 @@ class DependencyInjectionResolver
 
     public function disableAdvertisementUseCase(): DisableAdvertisementUseCase
     {
-        return new DisableAdvertisementUseCase($this->advertisementRepository(), $this->securityService());
+        return new DisableAdvertisementUseCase($this->advertisementRepository(), $this->securityService(), $this->transactionManager());
     }
 
     public function deleteAdvertisementUseCase(): DeleteAdvertisementUseCase
     {
-        return new DeleteAdvertisementUseCase($this->advertisementRepository(), $this->securityService());
+        return new DeleteAdvertisementUseCase($this->advertisementRepository(), $this->securityService(), $this->transactionManager());
     }
 
     public function deleteAdvertisementController(): DeleteAdvertisementController
@@ -95,12 +97,12 @@ class DependencyInjectionResolver
 
     public function enableAdvertisementUseCase(): EnableAdvertisementUseCase
     {
-        return new EnableAdvertisementUseCase($this->advertisementRepository(), $this->userRepository(), $this->securityService());
+        return new EnableAdvertisementUseCase($this->advertisementRepository(), $this->userRepository(), $this->securityService(), $this->transactionManager());
     }
 
     public function publishAdvertisementUseCase(): PublishAdvertisementUseCase
     {
-        return new PublishAdvertisementUseCase($this->advertisementRepository(), $this->userRepository());
+        return new PublishAdvertisementUseCase($this->advertisementRepository(), $this->userRepository(), $this->transactionManager());
     }
 
      public function renewAdvertisementUseCase(): RenewAdvertisementUseCase
@@ -110,12 +112,12 @@ class DependencyInjectionResolver
 
     public function updateAdvertisementUseCase(): UpdateAdvertisementUseCase
     {
-        return new UpdateAdvertisementUseCase($this->advertisementRepository(), $this->securityService());
+        return new UpdateAdvertisementUseCase($this->advertisementRepository(), $this->securityService(), $this->transactionManager());
     }
 
     public function advertisementRepository(): AdvertisementRepository
     {
-        return new SqliteAdvertisementRepository(self::connection());
+        return new SqliteAdvertisementRepository($this->connection());
     }
 
     public function signUpMemberController(): SignUpMemberController
@@ -150,7 +152,7 @@ class DependencyInjectionResolver
 
     public function securityUserRepository(): SecurityUserRepository
     {
-        return new SqliteSecurityUserRepository(self::connection());
+        return new SqliteSecurityUserRepository($this->connection());
     }
 
     public function signUpMemberUseCase(): SignUpMemberUseCase
@@ -160,16 +162,19 @@ class DependencyInjectionResolver
 
     public function userRepository(): UserRepository
     {
-        return new SqliteUserRepository(self::connection());
+        return new SqliteUserRepository($this->connection());
     }
 
     public function connection(): DatabaseConnection
     {
-        return new SqliteConnection();
+        if ($this->connection === null) {
+            $this->connection = new SqliteConnection();
+        }
+        return $this->connection;
     }
 
     public function transactionManager(): TransactionManager
     {
-        return new SqliteTransactionManager(self::connection());
+        return new SqliteTransactionManager($this->connection());
     }
 }

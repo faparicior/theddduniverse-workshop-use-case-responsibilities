@@ -7,6 +7,7 @@ use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Domain\Services\SecurityService;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
+use Demo\App\Framework\Database\TransactionManager;
 use Exception;
 
 final class DeleteAdvertisementUseCase
@@ -14,6 +15,7 @@ final class DeleteAdvertisementUseCase
     public function __construct(
         private AdvertisementRepository $advertisementRepository,
         private SecurityService $securityService,
+        private TransactionManager $transactionManager,
     ) {}
 
     /**
@@ -21,15 +23,22 @@ final class DeleteAdvertisementUseCase
      */
     public function execute(DeleteAdvertisementCommand $command): void
     {
-        $advertisement = $this->advertisementRepository->findByIdOrFail(new AdvertisementId($command->advertisementId));
+        $this->transactionManager->beginTransaction();
 
-        $memberId = new UserId($command->securityUserId);
+        try{
+            $advertisement = $this->advertisementRepository->findByIdOrFail(new AdvertisementId($command->advertisementId));
 
-        $this->securityService->verifyMemberUserCanManageAdvertisement(
-            $memberId,
-            $advertisement,
-        );
+            $memberId = new UserId($command->securityUserId);
 
-        $this->advertisementRepository->delete($advertisement);
+            $this->securityService->verifyMemberUserCanManageAdvertisement(
+                $memberId,
+                $advertisement,
+            );
+
+            $this->advertisementRepository->delete($advertisement);
+        } catch (Exception $exception) {
+            $this->transactionManager->rollback();
+            throw $exception;
+        }
     }
 }

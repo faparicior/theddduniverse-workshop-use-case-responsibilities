@@ -8,6 +8,7 @@ use Demo\App\Advertisements\Advertisement\Domain\Services\SecurityService;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\UserRepository;
+use Demo\App\Framework\Database\TransactionManager;
 use Exception;
 
 final class EnableAdvertisementUseCase
@@ -16,6 +17,7 @@ final class EnableAdvertisementUseCase
         private AdvertisementRepository $advertisementRepository,
         private UserRepository $userRepository,
         private SecurityService $securityService,
+        private TransactionManager $transactionManager,
     ) {}
 
     /**
@@ -23,23 +25,30 @@ final class EnableAdvertisementUseCase
      */
     public function execute(EnableAdvertisementCommand $command): void
     {
-        $advertisement = $this->advertisementRepository->findByIdOrFail(new AdvertisementId($command->advertisementId));
+        $this->transactionManager->beginTransaction();
 
-        $this->securityService->verifyAdminUserCanManageAdvertisement(
-            new UserId($command->securityUserId),
-            $advertisement,
-        );
+        try {
+            $advertisement = $this->advertisementRepository->findByIdOrFail(new AdvertisementId($command->advertisementId));
 
-        $member = $this->userRepository->findMemberByIdOrFail($advertisement->memberId());
+            $this->securityService->verifyAdminUserCanManageAdvertisement(
+                new UserId($command->securityUserId),
+                $advertisement,
+            );
 
-        $activeAdvertisements = $this->advertisementRepository->activeAdvertisementsByMemberId($member->id());
+            $member = $this->userRepository->findMemberByIdOrFail($advertisement->memberId());
 
-        if ($activeAdvertisements->value() >= 3) {
-            throw new Exception('Member has 3 active advertisements');
+            $activeAdvertisements = $this->advertisementRepository->activeAdvertisementsByMemberId($member->id());
+
+            if ($activeAdvertisements->value() >= 3) {
+                throw new Exception('Member has 3 active advertisements');
+            }
+
+            $advertisement->enable();
+
+            $this->advertisementRepository->save($advertisement);
+        } catch (Exception $exception) {
+            $this->transactionManager->rollback();
+            throw $exception;
         }
-
-        $advertisement->enable();
-
-        $this->advertisementRepository->save($advertisement);
     }
 }

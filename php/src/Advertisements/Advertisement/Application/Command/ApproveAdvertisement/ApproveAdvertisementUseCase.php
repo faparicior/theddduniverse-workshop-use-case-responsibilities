@@ -36,7 +36,7 @@ final class ApproveAdvertisementUseCase
             $advertisement->approve();
 
             $this->advertisementRepository->save($advertisement);
-
+            
             $this->transactionManager->commit();
         } catch (Exception $exception) {
             $this->transactionManager->rollback();

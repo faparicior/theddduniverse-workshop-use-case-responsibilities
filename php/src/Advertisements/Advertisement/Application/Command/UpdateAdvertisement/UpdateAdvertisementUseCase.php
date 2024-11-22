@@ -11,6 +11,7 @@ use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\Description;
 use Demo\App\Advertisements\Shared\ValueObjects\Email;
 use Demo\App\Advertisements\Shared\ValueObjects\Password;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
+use Demo\App\Framework\Database\TransactionManager;
 use Exception;
 
 final class UpdateAdvertisementUseCase
@@ -18,6 +19,7 @@ final class UpdateAdvertisementUseCase
     public function __construct(
         private AdvertisementRepository $advertisementRepository,
         private SecurityService $securityService,
+        private TransactionManager $transactionManager,
     ) {}
 
     /**
@@ -25,23 +27,30 @@ final class UpdateAdvertisementUseCase
      */
     public function execute(UpdateAdvertisementCommand $command): void
     {
-        $advertisement = $this->advertisementRepository->findByIdOrFail(new AdvertisementId($command->id));
+        $this->transactionManager->beginTransaction();
 
-        $this->securityService->verifyMemberUserCanManageAdvertisement(
-            new UserId($command->securityUserId),
-            $advertisement,
-        );
+        try {
+            $advertisement = $this->advertisementRepository->findByIdOrFail(new AdvertisementId($command->id));
 
-        if (!$advertisement->password()->isValidatedWith($command->password)) {
-            throw InvalidPasswordException::build();
+            $this->securityService->verifyMemberUserCanManageAdvertisement(
+                new UserId($command->securityUserId),
+                $advertisement,
+            );
+
+            if (!$advertisement->password()->isValidatedWith($command->password)) {
+                throw InvalidPasswordException::build();
+            }
+
+            $advertisement->update(
+                new Description($command->description),
+                new Email($command->email),
+                Password::fromPlainPassword($command->password),
+            );
+
+            $this->advertisementRepository->save($advertisement);
+        } catch (Exception $exception) {
+            $this->transactionManager->rollback();
+            throw $exception;
         }
-
-        $advertisement->update(
-            new Description($command->description),
-            new Email($command->email),
-            Password::fromPlainPassword($command->password),
-        );
-
-        $this->advertisementRepository->save($advertisement);
     }
 }

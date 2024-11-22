@@ -29,6 +29,11 @@ final class AdvertisementArgon2PasswordUpdateFeatureTest extends TestCase
         parent::setUp();
     }
 
+    protected function tearDown(): void
+    {
+        $this->connection->close();
+    }
+
     ////////////////////////////////////////////////////////////
     // Use this help
     // https://www.php.net/manual/es/function.password-hash.php
