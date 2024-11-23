@@ -1,14 +1,14 @@
 package advertisements.advertisement.ui.http
 
-import advertisements.advertisement.application.renewAdvertisement.RenewAdvertisementCommand
-import advertisements.advertisement.application.renewAdvertisement.RenewAdvertisementUseCase
+import advertisements.advertisement.application.command.renewAdvertisement.RenewAdvertisementCommand
+import advertisements.advertisement.application.command.renewAdvertisement.RenewAdvertisementUseCase
 import common.application.ElementNotFoundException
 import common.exceptions.BoundedContextException
 import common.ui.http.CommonController
 import framework.FrameworkRequest
 import framework.FrameworkResponse
 
-class RenewAdvertisementController(private val useCase: advertisements.advertisement.application.renewAdvertisement.RenewAdvertisementUseCase): CommonController() {
+class RenewAdvertisementController(private val useCase: RenewAdvertisementUseCase): CommonController() {
 
     fun execute(request: FrameworkRequest): FrameworkResponse {
         try {

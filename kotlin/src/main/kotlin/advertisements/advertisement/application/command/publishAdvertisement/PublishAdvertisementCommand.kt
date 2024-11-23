@@ -1,4 +1,4 @@
-package advertisements.advertisement.application.publishAdvertisement
+package advertisements.advertisement.application.command.publishAdvertisement
 
 data class PublishAdvertisementCommand(
     val securityUserId: String,

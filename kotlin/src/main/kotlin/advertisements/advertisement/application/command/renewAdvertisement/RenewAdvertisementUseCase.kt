@@ -1,4 +1,4 @@
-package advertisements.advertisement.application.renewAdvertisement
+package advertisements.advertisement.application.command.renewAdvertisement
 
 import advertisements.advertisement.domain.exceptions.AdvertisementNotFoundException
 import advertisements.advertisement.application.exceptions.PasswordDoesNotMatchException
@@ -6,7 +6,7 @@ import advertisements.advertisement.domain.value_object.AdvertisementId
 import advertisements.shared.value_object.Password
 
 class RenewAdvertisementUseCase(private val advertisementRepository: advertisements.advertisement.domain.AdvertisementRepository) {
-    fun execute(renewAdvertisementCommand: advertisements.advertisement.application.renewAdvertisement.RenewAdvertisementCommand) {
+    fun execute(renewAdvertisementCommand: RenewAdvertisementCommand) {
         val advertisementId = AdvertisementId(renewAdvertisementCommand.id)
         val advertisement = advertisementRepository.findById(advertisementId)
 

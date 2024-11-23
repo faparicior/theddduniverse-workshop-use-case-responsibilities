@@ -1,7 +1,7 @@
 package advertisements.advertisement.ui.http
 
-import advertisements.advertisement.application.publishAdvertisement.PublishAdvertisementCommand
-import advertisements.advertisement.application.publishAdvertisement.PublishAdvertisementUseCase
+import advertisements.advertisement.application.command.publishAdvertisement.PublishAdvertisementCommand
+import advertisements.advertisement.application.command.publishAdvertisement.PublishAdvertisementUseCase
 import common.exceptions.BoundedContextException
 import common.ui.http.CommonController
 import framework.FrameworkRequest
@@ -12,10 +12,13 @@ class PublishAdvertisementController(private val useCase: PublishAdvertisementUs
     fun execute(request: FrameworkRequest): FrameworkResponse {
         try {
             useCase.execute(
-                advertisements.advertisement.application.publishAdvertisement.PublishAdvertisementCommand(
+                PublishAdvertisementCommand(
                     request.content["id"]!!,
                     request.content["description"]!!,
+                    request.content["email"]!!,
                     request.content["password"]!!,
+                    request.content["memberId"]!!,
+                    request.content["civicCenterId"]!!
                 )
             )
 

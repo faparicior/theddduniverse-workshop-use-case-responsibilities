@@ -1,8 +1,8 @@
 package framework
 
-import advertisements.advertisement.application.publishAdvertisement.PublishAdvertisementUseCase
-import advertisements.advertisement.application.renewAdvertisement.RenewAdvertisementUseCase
-import advertisements.advertisement.application.updateAdvertisement.UpdateAdvertisementUseCase
+import advertisements.advertisement.application.command.publishAdvertisement.PublishAdvertisementUseCase
+import advertisements.advertisement.application.command.renewAdvertisement.RenewAdvertisementUseCase
+import advertisements.advertisement.application.command.updateAdvertisement.UpdateAdvertisementUseCase
 import advertisements.advertisement.domain.AdvertisementRepository
 import advertisements.advertisement.infrastructure.persistence.SqLiteAdvertisementRepository
 import advertisements.advertisement.ui.http.PublishAdvertisementController
@@ -30,7 +30,7 @@ class DependencyInjectionResolver {
 
     fun renewAdvertisementController(): advertisements.advertisement.ui.http.RenewAdvertisementController {
         return advertisements.advertisement.ui.http.RenewAdvertisementController(
-            advertisements.advertisement.application.renewAdvertisement.RenewAdvertisementUseCase(
+            RenewAdvertisementUseCase(
                 this.advertisementRepository()
             )
         )

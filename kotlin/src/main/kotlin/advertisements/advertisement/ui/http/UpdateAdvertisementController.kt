@@ -1,7 +1,7 @@
 package advertisements.advertisement.ui.http
 
-import advertisements.advertisement.application.updateAdvertisement.UpdateAdvertisementCommand
-import advertisements.advertisement.application.updateAdvertisement.UpdateAdvertisementUseCase
+import advertisements.advertisement.application.command.updateAdvertisement.UpdateAdvertisementCommand
+import advertisements.advertisement.application.command.updateAdvertisement.UpdateAdvertisementUseCase
 import common.application.ElementNotFoundException
 import common.exceptions.BoundedContextException
 import common.ui.http.CommonController

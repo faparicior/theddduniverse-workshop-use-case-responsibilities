@@ -1,10 +1,15 @@
 package advertisements.advertisement.infrastructure.persistence
 
 import advertisements.advertisement.domain.Advertisement
+import advertisements.advertisement.domain.value_object.ActiveAdvertisements
 import advertisements.advertisement.domain.value_object.AdvertisementDate
 import advertisements.advertisement.domain.value_object.AdvertisementId
 import advertisements.advertisement.domain.value_object.Description
+import advertisements.shared.value_object.CivicCenterId
+import advertisements.shared.value_object.Email
 import advertisements.shared.value_object.Password
+import advertisements.shared.value_object.UserId
+import advertisements.user.domain.MemberUser
 import framework.database.DatabaseConnection
 import java.time.LocalDateTime
 
@@ -31,8 +36,20 @@ class SqLiteAdvertisementRepository(private val connection: DatabaseConnection):
         return Advertisement(
             AdvertisementId(result.getString("id")),
             Description(result.getString("description")),
+            Email(result.getString("email")),
             Password.fromEncryptedPassword(result.getString("password")),
             AdvertisementDate(LocalDateTime.parse(result.getString("advertisement_date"))),
+            CivicCenterId.create(result.getString("civic_center_id")),
+            UserId(result.getString("member_id"))
         )
+    }
+
+    override fun activeAdvertisementsByMember(member: MemberUser): ActiveAdvertisements {
+        val result = connection.query("SELECT COUNT(*) as active FROM advertisements WHERE user_id = '${member.id().value()}' AND status = 'active'")
+        return ActiveAdvertisements.fromInt(result.getInt("active"))
+    }
+
+    override fun delete(advertisement: Advertisement) {
+        connection.execute("DELETE FROM advertisements WHERE id = '${advertisement.id.value()}'")
     }
 }
