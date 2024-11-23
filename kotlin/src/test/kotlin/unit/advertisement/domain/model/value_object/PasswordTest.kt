@@ -1,6 +1,6 @@
 package unit.advertisement.domain.model.value_object
 
-import advertisement.domain.model.value_object.Password
+import advertisements.shared.value_object.Password
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.lang.reflect.Modifier

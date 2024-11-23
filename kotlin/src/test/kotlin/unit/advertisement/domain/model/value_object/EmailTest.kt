@@ -1,7 +1,7 @@
 package unit.advertisement.domain.model.value_object
 
-import advertisement.domain.exceptions.InvalidEmailException
-import advertisement.domain.model.value_object.Email
+import advertisements.advertisement.domain.exceptions.InvalidEmailException
+import advertisements.shared.value_object.Email
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

@@ -1,13 +1,13 @@
 package framework
 
-import advertisement.application.publishAdvertisement.PublishAdvertisementUseCase
-import advertisement.application.renewAdvertisement.RenewAdvertisementUseCase
-import advertisement.application.updateAdvertisement.UpdateAdvertisementUseCase
-import advertisement.domain.AdvertisementRepository
-import advertisement.infrastructure.persistence.SqLiteAdvertisementRepository
-import advertisement.ui.http.PublishAdvertisementController
-import advertisement.ui.http.RenewAdvertisementController
-import advertisement.ui.http.UpdateAdvertisementController
+import advertisements.advertisement.application.publishAdvertisement.PublishAdvertisementUseCase
+import advertisements.advertisement.application.renewAdvertisement.RenewAdvertisementUseCase
+import advertisements.advertisement.application.updateAdvertisement.UpdateAdvertisementUseCase
+import advertisements.advertisement.domain.AdvertisementRepository
+import advertisements.advertisement.infrastructure.persistence.SqLiteAdvertisementRepository
+import advertisements.advertisement.ui.http.PublishAdvertisementController
+import advertisements.advertisement.ui.http.RenewAdvertisementController
+import advertisements.advertisement.ui.http.UpdateAdvertisementController
 import framework.database.DatabaseConnection
 import framework.database.SqliteConnection
 
@@ -28,15 +28,15 @@ class DependencyInjectionResolver {
         )
     }
 
-    fun renewAdvertisementController(): RenewAdvertisementController {
-        return RenewAdvertisementController(
-            RenewAdvertisementUseCase(
+    fun renewAdvertisementController(): advertisements.advertisement.ui.http.RenewAdvertisementController {
+        return advertisements.advertisement.ui.http.RenewAdvertisementController(
+            advertisements.advertisement.application.renewAdvertisement.RenewAdvertisementUseCase(
                 this.advertisementRepository()
             )
         )
     }
 
-    fun advertisementRepository(): AdvertisementRepository {
+    fun advertisementRepository(): advertisements.advertisement.domain.AdvertisementRepository {
         return SqLiteAdvertisementRepository(
             this.connection()
         )

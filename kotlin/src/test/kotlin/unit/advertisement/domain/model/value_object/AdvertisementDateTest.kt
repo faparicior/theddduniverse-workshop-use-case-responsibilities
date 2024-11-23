@@ -1,6 +1,6 @@
 package unit.advertisement.domain.model.value_object
 
-import advertisement.domain.model.value_object.AdvertisementDate
+import advertisements.advertisement.domain.value_object.AdvertisementDate
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
