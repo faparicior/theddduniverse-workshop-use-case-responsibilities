@@ -1,0 +1,29 @@
+package unit.advertisement.domain.model.value_object
+
+import advertisement.domain.exceptions.InvalidUniqueIdentifierException
+import advertisement.domain.model.value_object.AdvertisementId
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+
+
+class AdvertisementIdTest
+{
+    companion object {
+        private const val ID = "6fa00b21-2930-483e-b610-d6b0e5b19b29"
+        private const val INVALID_ID = "6fa00b21-2930-983e-b610-d6b0e5b19b29"
+    }
+
+    @Test
+    fun testShouldCreateADescription() {
+        val description = AdvertisementId(ID)
+
+        Assertions.assertEquals(ID, description.value())
+    }
+
+    @Test
+    fun testShouldThrowAnExceptionWhenIdHasNotUuidV4Standards() {
+        Assertions.assertThrows(InvalidUniqueIdentifierException::class.java) {
+            AdvertisementId(INVALID_ID)
+        }
+    }
+}
