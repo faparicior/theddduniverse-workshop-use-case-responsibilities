@@ -18,6 +18,7 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
         private const val NEW_DESCRIPTION = "Dream advertisement changed"
         private const val ID = "6fa00b21-2930-483e-b610-d6b0e5b19b29"
         private const val PASSWORD = "myPassword"
+        private const val MEMBER_ID = "e95a8999-cb23-4fa2-9923-e3015ef30411"
     }
 
     private lateinit var connection: DatabaseConnection
@@ -44,6 +45,9 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
                     "id" to ID,
                     "description" to DESCRIPTION,
                     "password" to PASSWORD,
+                ),
+                mapOf(
+                    "userSession" to MEMBER_ID
                 )
             )
         )
@@ -71,6 +75,9 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
                     mapOf(
                         "description" to NEW_DESCRIPTION,
                         "password" to PASSWORD,
+                    ),
+                    mapOf(
+                        "userSession" to MEMBER_ID
                     )
                 )
             )
@@ -98,6 +105,9 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
                     "advertisement/${ID}",
                     mapOf(
                         "password" to PASSWORD,
+                    ),
+                    mapOf(
+                        "userSession" to MEMBER_ID
                     )
                 )
             )

@@ -7,15 +7,28 @@ import common.exceptions.BoundedContextException
 import common.ui.http.CommonController
 import framework.FrameworkRequest
 import framework.FrameworkResponse
+import framework.securityuser.FrameworkSecurityService
 
-class UpdateAdvertisementController(private val useCase: UpdateAdvertisementUseCase): CommonController(){
+class UpdateAdvertisementController(
+    private val useCase: UpdateAdvertisementUseCase,
+    private val securityService: FrameworkSecurityService,
+): CommonController(){
 
     fun execute(request: FrameworkRequest): FrameworkResponse {
         try {
+            val user = securityService.getSecurityUserFromRequest(request)
+
+            if (user?.role != "ADMIN") {
+                return processForbiddenException()
+            }
+
             useCase.execute(
                 UpdateAdvertisementCommand(
+                    user.id,
+                    user.role,
                     request.getIdPath(),
                     request.content["description"]!!,
+                    request.content["email"]!!,
                     request.content["password"]!!,
                 )
             )

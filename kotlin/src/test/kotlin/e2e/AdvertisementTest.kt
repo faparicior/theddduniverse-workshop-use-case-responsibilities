@@ -22,6 +22,9 @@ class AdvertisementTest {
         private const val PASSWORD = "myPassword"
         private const val INCORRECT_PASSWORD = "myBadPassword"
 
+        private const val CIVIC_CENTER_ID = "0d5a994b-1603-4c87-accc-581a59e4457c";
+        private const val MEMBER_ID = "e95a8999-cb23-4fa2-9923-e3015ef30411";
+
         private const val HTTP_CREATED = "201"
         private const val HTTP_OK = "200"
         private const val HTTP_BAD_REQUEST = "400"
@@ -36,16 +39,23 @@ class AdvertisementTest {
     }
 
     @Test
-    fun `should publish an advertisement`() {
+    fun `should publish an advertisement as member`() {
         val server = Server(DependencyInjectionResolver())
 
-        val result = server.route(FrameworkRequest(
+        val result = server.route(
+            FrameworkRequest(
                 FrameworkRequest.METHOD_POST,
                 "advertisement",
                 mapOf(
                     "id" to ID,
                     "description" to DESCRIPTION,
                     "password" to PASSWORD,
+                    "email" to "email@test.com",
+                    "memberId" to MEMBER_ID,
+                    "civicCenterId" to CIVIC_CENTER_ID
+                ),
+                mapOf(
+                    "userSession" to MEMBER_ID
                 )
             )
         )
@@ -68,15 +78,22 @@ class AdvertisementTest {
         withAnAdvertisementCreated {
             val server = Server(DependencyInjectionResolver())
 
-            val result = server.route(FrameworkRequest(
-                FrameworkRequest.METHOD_POST,
-                "advertisement",
-                mapOf(
-                    "id" to ID,
-                    "description" to DESCRIPTION,
-                    "password" to PASSWORD,
+            val result = server.route(
+                FrameworkRequest(
+                    FrameworkRequest.METHOD_POST,
+                    "advertisement",
+                    mapOf(
+                        "id" to ID,
+                        "description" to DESCRIPTION,
+                        "password" to PASSWORD,
+                        "email" to "email@test.com",
+                        "memberId" to MEMBER_ID,
+                        "civicCenterId" to CIVIC_CENTER_ID
+                    ),
+                    mapOf(
+                        "userSession" to MEMBER_ID
+                    )
                 )
-            )
             )
 
             Assertions.assertEquals(FrameworkResponse.STATUS_BAD_REQUEST, result.statusCode)
@@ -100,8 +117,15 @@ class AdvertisementTest {
                     FrameworkRequest.METHOD_PUT,
                     "advertisement/$ID",
                     mapOf(
+                        "id" to ID,
                         "description" to NEW_DESCRIPTION,
                         "password" to PASSWORD,
+                        "email" to "email@test.com",
+                        "memberId" to MEMBER_ID,
+                        "civicCenterId" to CIVIC_CENTER_ID
+                    ),
+                    mapOf(
+                        "userSession" to MEMBER_ID
                     )
                 )
             )
@@ -135,7 +159,8 @@ class AdvertisementTest {
                     "advertisement/$ID",
                     mapOf(
                         "password" to PASSWORD,
-                    )
+                    ),
+                    mapOf()
                 )
             )
 
@@ -165,8 +190,15 @@ class AdvertisementTest {
                     FrameworkRequest.METHOD_PUT,
                     "advertisement/$ID",
                     mapOf(
+                        "id" to ID,
                         "description" to NEW_DESCRIPTION,
                         "password" to INCORRECT_PASSWORD,
+                        "email" to "email@test.com",
+                        "memberId" to MEMBER_ID,
+                        "civicCenterId" to CIVIC_CENTER_ID
+                    ),
+                    mapOf(
+                        "userSession" to MEMBER_ID
                     )
                 )
             )
@@ -199,7 +231,8 @@ class AdvertisementTest {
                     "advertisement/$ID",
                     mapOf(
                         "password" to INCORRECT_PASSWORD,
-                    )
+                    ),
+                    mapOf()
                 )
             )
 
@@ -226,7 +259,8 @@ class AdvertisementTest {
             "advertisement/$NON_EXISTENT_ADVERTISEMENT_ID",
             mapOf(
                 "password" to PASSWORD,
-            )
+            ),
+            mapOf()
         )
         )
 
@@ -243,7 +277,11 @@ class AdvertisementTest {
             "advertisement/$NON_EXISTENT_ADVERTISEMENT_ID",
             mapOf(
                 "description" to DESCRIPTION,
+                "email" to "email@test.com",
                 "password" to PASSWORD,
+            ),
+            mapOf(
+                "userSession" to MEMBER_ID
             )
         )
         )
@@ -284,12 +322,20 @@ class AdvertisementTest {
         )
     }
 
-    private fun withAnAdvertisementCreated(block: () -> Unit)
-    {
+    private fun withAnAdvertisementCreated(block: () -> Unit) {
         val password = PASSWORD.md5()
         val creationDate = LocalDateTime.parse(ADVERTISEMENT_CREATION_DATE).toString()
-        this.connection.execute("INSERT INTO advertisements (id, description, password, advertisement_date)" +
-                " VALUES ('$ID', '$DESCRIPTION', '$password', '$creationDate')")
+        val status = "active"
+        val approvalStatus = "approved"
+        this.connection.execute(
+            """
+            INSERT INTO advertisements (
+                id, description, email, password, advertisement_date, status, approval_status, user_id, civic_center_id
+            ) VALUES (
+                '$ID', '$DESCRIPTION', 'email@test.com', '$password', '$creationDate', '$status', '$approvalStatus', '$MEMBER_ID', '$CIVIC_CENTER_ID'
+            )
+            """
+        )
 
         block()
     }

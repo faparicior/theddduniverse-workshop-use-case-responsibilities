@@ -1,7 +1,7 @@
 package unit.advertisement.domain.model.value_object
 
-import advertisements.advertisement.domain.exceptions.InvalidUniqueIdentifierException
 import advertisements.advertisement.domain.value_object.AdvertisementId
+import advertisements.shared.exceptions.InvalidUniqueIdentifierException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

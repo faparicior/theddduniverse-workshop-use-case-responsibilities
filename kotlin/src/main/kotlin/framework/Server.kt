@@ -15,6 +15,9 @@ class Server(private val resolver: DependencyInjectionResolver){
             FrameworkRequest.METHOD_PATCH -> {
                 this.patch(request)
             }
+//            FrameworkRequest.METHOD_DELETE -> {
+//                this.delete(request)
+//            }
             else -> {
                return this.notFound()
             }
@@ -27,24 +30,36 @@ class Server(private val resolver: DependencyInjectionResolver){
 
     private fun post(request: FrameworkRequest): FrameworkResponse {
         return when (request.path) {
-            "advertisement" -> {
-                resolver.publishAdvertisementController().execute(request)
-            }
-            else -> {
-                this.notFound()
-            }
+            "advertisement" -> resolver.publishAdvertisementController().execute(request)
+//            "member/signup" -> resolver.signUpMemberController().execute(request)
+            else -> this.notFound()
         }
     }
 
     private fun put(request: FrameworkRequest): FrameworkResponse {
-        return when (request.pathStart()) {
-            "advertisement" -> {
-                resolver.updateAdvertisementController().execute(request)
-            }
-            else -> {
-                this.notFound()
-            }
+        var match = when (request.pathStart()) {
+            "advertisements" -> resolver.updateAdvertisementController().execute(request, mapOf("advertisementId" to request.getIdPath()))
+            else -> null
         }
+
+        if (match is FrameworkResponse) {
+            return match
+        }
+
+        match = when {
+//            Regex("^member/([0-9a-fA-F\\-]+)/disable$").find(request.path)?.let { resolver.disableMemberController().execute(request, mapOf("memberId" to it.groupValues[1])) } != null -> match
+//            Regex("^member/([0-9a-fA-F\\-]+)/enable$").find(request.path)?.let { resolver.enableMemberController().execute(request, mapOf("memberId" to it.groupValues[1])) } != null -> match
+//            Regex("^advertisements/([0-9a-fA-F\\-]+)/disable$").find(request.path)?.let { resolver.disableAdvertisementController().execute(request, mapOf("advertisementId" to it.groupValues[1])) } != null -> match
+//            Regex("^advertisements/([0-9a-fA-F\\-]+)/enable$").find(request.path)?.let { resolver.enableAdvertisementController().execute(request, mapOf("advertisementId" to it.groupValues[1])) } != null -> match
+//            Regex("^advertisements/([0-9a-fA-F\\-]+)/approve$").find(request.path)?.let { resolver.approveAdvertisementController().execute(request, mapOf("advertisementId" to it.groupValues[1])) } != null -> match
+            else -> null
+        }
+
+        if (match is FrameworkResponse) {
+            return match
+        }
+
+        return this.notFound()
     }
 
     private fun patch(request: FrameworkRequest): FrameworkResponse {
@@ -57,6 +72,13 @@ class Server(private val resolver: DependencyInjectionResolver){
             }
         }
     }
+
+//    private fun delete(request: FrameworkRequest): FrameworkResponse {
+//        return when (request.pathStart()) {
+//            "advertisements" -> resolver.deleteAdvertisementController().execute(request, mapOf("advertisementId" to request.getIdPath()))
+//            else -> this.notFound()
+//        }
+//    }
 
     private fun notFound(): FrameworkResponse {
         return FrameworkResponse(FrameworkResponse.STATUS_NOT_FOUND, mapOf())

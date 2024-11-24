@@ -1,8 +1,13 @@
 package common.ui.http
 
+import framework.FrameworkRequest
 import framework.FrameworkResponse
 
 abstract class CommonController {
+
+    open fun execute(request: FrameworkRequest, pathValues: Map<String, String> = emptyMap()): FrameworkResponse {
+        return processNotFoundCommand(Exception("Not found"))
+    }
 
     protected fun processGenericException(exception: Throwable): FrameworkResponse {
         return FrameworkResponse(
@@ -57,6 +62,17 @@ abstract class CommonController {
                 "errors" to message,
                 "code" to FrameworkResponse.STATUS_NOT_FOUND.toString(),
                 "message" to message,
+            ),
+        )
+    }
+
+    protected fun processForbiddenException(): FrameworkResponse {
+        return FrameworkResponse(
+            FrameworkResponse.STATUS_UNAUTHORIZED,
+            mapOf(
+                "errors" to "Forbidden",
+                "code" to FrameworkResponse.STATUS_UNAUTHORIZED.toString(),
+                "message" to "Forbidden",
             ),
         )
     }
