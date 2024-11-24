@@ -9,7 +9,7 @@ use Demo\App\Framework\Database\SqliteConnection;
 final class SqliteSecurityUserRepository implements SecurityUserRepository
 {
     private DatabaseConnection $dbConnection;
-    public function __construct(SqliteConnection $connection)
+    public function __construct(DatabaseConnection $connection)
     {
         $this->dbConnection = $connection;
     }
