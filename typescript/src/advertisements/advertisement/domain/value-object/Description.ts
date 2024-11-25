@@ -1,5 +1,5 @@
-import {DescriptionEmptyException} from "../exceptions/DescriptionEmptyException";
-import {DescriptionTooLongException} from "../exceptions/DescriptionTooLongException";
+import {DescriptionEmptyException} from "../../../shared/exceptions/DescriptionEmptyException";
+import {DescriptionTooLongException} from "../../../shared/exceptions/DescriptionTooLongException";
 
 export class Description {
 

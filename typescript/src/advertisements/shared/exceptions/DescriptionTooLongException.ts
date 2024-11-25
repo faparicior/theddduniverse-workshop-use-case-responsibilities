@@ -1,4 +1,4 @@
-import {DomainException} from "../../../../common/domain/DomainException";
+import {DomainException} from "../../../common/domain/DomainException";
 import {sprintf} from "sprintf-js";
 
 export class DescriptionTooLongException extends DomainException {

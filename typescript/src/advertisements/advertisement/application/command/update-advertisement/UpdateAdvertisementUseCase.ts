@@ -1,6 +1,6 @@
 import { AdvertisementRepository } from "../../../domain/AdvertisementRepository"
 import { UpdateAdvertisementCommand } from "./UpdateAdvertisementCommand"
-import {Password} from "../../../../shared/value-object/Password";
+import {Password} from "../../../../shared/domain/value-object/Password";
 import {Description} from "../../../domain/value-object/Description";
 import {AdvertisementId} from "../../../domain/value-object/AdvertisementId";
 import {InvalidPasswordException} from "../../exceptions/InvalidPasswordException";

@@ -1,4 +1,4 @@
-import {DomainException} from "../../../../common/domain/DomainException";
+import {DomainException} from "../../../common/domain/DomainException";
 
 export class DescriptionEmptyException extends DomainException {
   private static _message: string = 'Description empty';

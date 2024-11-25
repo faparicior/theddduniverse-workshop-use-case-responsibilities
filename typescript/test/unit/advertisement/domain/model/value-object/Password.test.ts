@@ -1,4 +1,4 @@
-import {Password} from "../../../../../../src/advertisements/shared/value-object/Password";
+import {Password} from "../../../../../../src/advertisements/shared/domain/value-object/Password";
 
 
 describe("Advertisement password", () => {

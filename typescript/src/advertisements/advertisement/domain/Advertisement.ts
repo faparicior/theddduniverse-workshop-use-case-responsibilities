@@ -1,12 +1,12 @@
-import {Password} from "../../shared/value-object/Password";
+import {Password} from "../../shared/domain/value-object/Password";
 import {Description} from "./value-object/Description";
 import {AdvertisementId} from "./value-object/AdvertisementId";
 import {AdvertisementDate} from "./value-object/AdvertisementDate";
 import {AdvertisementApprovalStatus} from "./value-object/AdvertisementApprovalStatus";
 import {AdvertisementStatus} from "./value-object/AdvertisementStatusHelper";
-import {Email} from "../../shared/value-object/Email";
-import {UserId} from "../../shared/value-object/UserId";
-import {CivicCenterId} from "../../shared/value-object/CivicCenterId";
+import {Email} from "../../shared/domain/value-object/Email";
+import {UserId} from "../../shared/domain/value-object/UserId";
+import {CivicCenterId} from "../../shared/domain/value-object/CivicCenterId";
 
 export class Advertisement {
   private _status: AdvertisementStatus;
