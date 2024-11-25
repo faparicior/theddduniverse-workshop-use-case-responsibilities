@@ -1,11 +1,11 @@
-import { AdvertisementRepository } from "../../domain/AdvertisementRepository";
-import { Advertisement } from "../../domain/Advertisement";
+import { AdvertisementRepository } from "../../../domain/AdvertisementRepository";
+import { Advertisement } from "../../../domain/Advertisement";
 import { PublishAdvertisementCommand } from "./PublishAdvertisementCommand";
-import {Password} from "../../../shared/value-object/Password";
-import {AdvertisementId} from "../../domain/value-object/AdvertisementId";
-import {Description} from "../../domain/value-object/Description";
-import {AdvertisementDate} from "../../domain/value-object/AdvertisementDate";
-import {AdvertisementAlreadyExistsException} from "../../domain/exceptions/AdvertisementAlreadyExistsException";
+import {Password} from "../../../../shared/value-object/Password";
+import {AdvertisementId} from "../../../domain/value-object/AdvertisementId";
+import {Description} from "../../../domain/value-object/Description";
+import {AdvertisementDate} from "../../../domain/value-object/AdvertisementDate";
+import {AdvertisementAlreadyExistsException} from "../../../domain/exceptions/AdvertisementAlreadyExistsException";
 
 export class PublishAdvertisementUseCase {
 

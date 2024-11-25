@@ -1,7 +1,7 @@
 import { FrameworkRequest } from '../../../../framework/FrameworkRequest';
 import { FrameworkResponse } from '../../../../framework/FrameworkResponse';
-import {RenewAdvertisementUseCase} from "../../application/renew-advertisement/RenewAdvertisementUseCase";
-import {RenewAdvertisementCommand} from "../../application/renew-advertisement/RenewAdvertisementCommand";
+import {RenewAdvertisementUseCase} from "../../application/command/renew-advertisement/RenewAdvertisementUseCase";
+import {RenewAdvertisementCommand} from "../../application/command/renew-advertisement/RenewAdvertisementCommand";
 import {CommonController} from "../../../../common/ui/CommonController";
 import {BoundedContextException} from "../../../../common/exceptions/BoundedContextException";
 

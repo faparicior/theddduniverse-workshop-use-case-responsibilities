@@ -1,7 +1,7 @@
 import { FrameworkRequest } from '../../../../framework/FrameworkRequest';
 import { FrameworkResponse } from '../../../../framework/FrameworkResponse';
-import { PublishAdvertisementCommand } from '../../application/publish-advertisement/PublishAdvertisementCommand';
-import { PublishAdvertisementUseCase } from '../../application/publish-advertisement/PublishAdvertisementUseCase';
+import { PublishAdvertisementCommand } from '../../application/command/publish-advertisement/PublishAdvertisementCommand';
+import { PublishAdvertisementUseCase } from '../../application/command/publish-advertisement/PublishAdvertisementUseCase';
 import {CommonController} from "../../../../common/ui/CommonController";
 import {BoundedContextException} from "../../../../common/exceptions/BoundedContextException";
 

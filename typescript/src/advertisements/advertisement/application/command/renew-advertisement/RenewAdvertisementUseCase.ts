@@ -1,9 +1,9 @@
-import { AdvertisementRepository } from "../../domain/AdvertisementRepository"
+import { AdvertisementRepository } from "../../../domain/AdvertisementRepository"
 import { RenewAdvertisementCommand } from "./RenewAdvertisementCommand"
-import {Password} from "../../../shared/value-object/Password";
-import {AdvertisementId} from "../../domain/value-object/AdvertisementId";
-import {InvalidPasswordException} from "../exceptions/InvalidPasswordException";
-import {AdvertisementNotFoundException} from "../../domain/exceptions/AdvertisementNotFoundException";
+import {Password} from "../../../../shared/value-object/Password";
+import {AdvertisementId} from "../../../domain/value-object/AdvertisementId";
+import {InvalidPasswordException} from "../../exceptions/InvalidPasswordException";
+import {AdvertisementNotFoundException} from "../../../domain/exceptions/AdvertisementNotFoundException";
 
 export class RenewAdvertisementUseCase {
 
