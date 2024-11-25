@@ -1,9 +1,9 @@
-export enum AdvertisementStatus {
-    ENABLED = 'enabled',
-    DISABLED = 'disabled'
-}
+export class AdvertisementStatus {
+    private constructor(private readonly status: string) {}
 
-export class AdvertisementStatusHelper {
+    public static readonly ENABLED = new AdvertisementStatus('enabled');
+    public static readonly DISABLED = new AdvertisementStatus('disabled');
+
     public static fromString(status: string): AdvertisementStatus {
         switch (status) {
             case 'enabled':
@@ -15,7 +15,7 @@ export class AdvertisementStatusHelper {
         }
     }
 
-    public static value(status: AdvertisementStatus): string {
-        return status;
+    public value(): string {
+        return this.status;
     }
 }

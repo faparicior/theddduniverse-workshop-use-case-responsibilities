@@ -1,9 +1,9 @@
-export enum AdvertisementApprovalStatus {
-    PENDING_FOR_APPROVAL = 'pending_for_approval',
-    APPROVED = 'approved'
-}
+export class AdvertisementApprovalStatus {
+    private constructor(private readonly status: string) {}
 
-export class AdvertisementApprovalStatusHelper {
+    public static readonly PENDING_FOR_APPROVAL = new AdvertisementApprovalStatus('pending_for_approval');
+    public static readonly APPROVED = new AdvertisementApprovalStatus('approved');
+
     public static fromString(status: string): AdvertisementApprovalStatus {
         switch (status) {
             case 'pending_for_approval':
@@ -15,7 +15,7 @@ export class AdvertisementApprovalStatusHelper {
         }
     }
 
-    public static value(status: AdvertisementApprovalStatus): string {
-        return status;
+    public value(): string {
+        return this.status;
     }
 }

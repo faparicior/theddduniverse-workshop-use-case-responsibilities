@@ -1,7 +1,7 @@
 import { AdvertisementRepository } from '../../domain/AdvertisementRepository';
 import { Advertisement } from '../../domain/Advertisement';
 import { DatabaseConnection } from '../../../../framework/database/DatabaseConnection';
-import {Password} from "../../domain/value-object/Password";
+import {Password} from "../../../shared/value-object/Password";
 import {AdvertisementDate} from "../../domain/value-object/AdvertisementDate";
 import {Description} from "../../domain/value-object/Description";
 import {AdvertisementId} from "../../domain/value-object/AdvertisementId";

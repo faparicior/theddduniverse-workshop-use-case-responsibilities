@@ -1,4 +1,4 @@
-import {Email} from "../../../../../../src/advertisements/advertisement/domain/value-object/Email";
+import {Email} from "../../../../../../src/advertisements/shared/value-object/Email";
 
 
 describe("Advertisement password", () => {
