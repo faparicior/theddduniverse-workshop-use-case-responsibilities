@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Tests\Demo\App\Unit\Advertisements\User\Domain;
 
-use Demo\App\Advertisements\Shared\ValueObjects\Email;
-use Demo\App\Advertisements\Shared\ValueObjects\UserId;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\Email;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\InvalidUserException;
 use Demo\App\Advertisements\User\Domain\SupervisorUser;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;

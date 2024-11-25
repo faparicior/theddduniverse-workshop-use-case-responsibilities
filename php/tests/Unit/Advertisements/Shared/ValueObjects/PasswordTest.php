@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\Demo\App\Unit\Advertisements\Shared\ValueObjects;
 
-use Demo\App\Advertisements\Shared\ValueObjects\Password;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\Password;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Demo\App\Advertisements\User\Domain;
 
-use Demo\App\Advertisements\Shared\ValueObjects\UserId;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\UserId;
 
 interface UserRepository
 {

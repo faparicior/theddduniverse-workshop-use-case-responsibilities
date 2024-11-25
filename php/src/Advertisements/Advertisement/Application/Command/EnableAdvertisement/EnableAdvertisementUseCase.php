@@ -3,12 +3,10 @@ declare(strict_types=1);
 
 namespace Demo\App\Advertisements\Advertisement\Application\Command\EnableAdvertisement;
 
-use Demo\App\Advertisements\Advertisement\Application\Command\DisableAdvertisement\DisableAdvertisementCommand;
-use Demo\App\Advertisements\Advertisement\Application\Exceptions\InvalidPasswordException;
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementNotFoundException;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
-use Demo\App\Advertisements\Shared\ValueObjects\UserId;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\AdminWithIncorrectCivicCenterException;
 use Demo\App\Advertisements\User\Domain\Exceptions\MemberDoesNotExistsException;
 use Demo\App\Advertisements\User\Domain\Exceptions\UserNotFoundException;

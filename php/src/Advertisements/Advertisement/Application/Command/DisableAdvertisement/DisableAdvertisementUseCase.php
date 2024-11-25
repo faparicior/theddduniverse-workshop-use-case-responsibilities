@@ -6,7 +6,7 @@ namespace Demo\App\Advertisements\Advertisement\Application\Command\DisableAdver
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementNotFoundException;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
-use Demo\App\Advertisements\Shared\ValueObjects\UserId;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\UserNotFoundException;
 use Demo\App\Advertisements\User\Domain\UserRepository;
 use Exception;

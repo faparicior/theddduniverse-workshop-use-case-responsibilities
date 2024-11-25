@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Demo\App\Advertisements\Shared\ValueObjects;
+namespace Demo\App\Advertisements\Shared\Domain\ValueObjects;
 
-use Demo\App\Advertisements\Shared\Exceptions\InvalidUniqueIdentifierException;
+use Demo\App\Advertisements\Shared\Domain\Exceptions\InvalidUniqueIdentifierException;
 
-final readonly class CivicCenterId
+final readonly class UserId
 {
     /**
      * @throws InvalidUniqueIdentifierException
@@ -20,11 +20,6 @@ final readonly class CivicCenterId
     public function value(): string
     {
         return $this->value;
-    }
-
-    public function equals(CivicCenterId $id): bool
-    {
-        return $this->value === $id->value;
     }
 
     private function validate(string $value): bool

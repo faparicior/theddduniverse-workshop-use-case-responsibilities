@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Demo\App\Advertisements\Shared\ValueObjects;
+namespace Demo\App\Advertisements\Shared\Domain\ValueObjects;
 
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\InvalidEmailException;
 

@@ -9,10 +9,10 @@ use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementAlready
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementDate;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\Description;
-use Demo\App\Advertisements\Shared\ValueObjects\CivicCenterId;
-use Demo\App\Advertisements\Shared\ValueObjects\Email;
-use Demo\App\Advertisements\Shared\ValueObjects\Password;
-use Demo\App\Advertisements\Shared\ValueObjects\UserId;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\CivicCenterId;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\Email;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\Password;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\UserNotFoundException;
 use Demo\App\Advertisements\User\Domain\UserRepository;
 use Exception;

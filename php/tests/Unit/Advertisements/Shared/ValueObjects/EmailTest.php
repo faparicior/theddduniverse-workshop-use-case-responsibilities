@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Tests\Demo\App\Unit\Advertisements\Shared\ValueObjects;
 
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\InvalidEmailException;
-use Demo\App\Advertisements\Shared\ValueObjects\Email;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\Email;
 use PHPUnit\Framework\TestCase;
 
 class EmailTest extends TestCase

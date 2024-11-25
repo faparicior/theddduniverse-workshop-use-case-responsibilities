@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Demo\App\Advertisements\User\Application\Command\SignUpMember;
 
-use Demo\App\Advertisements\Shared\ValueObjects\CivicCenterId;
-use Demo\App\Advertisements\Shared\ValueObjects\Email;
-use Demo\App\Advertisements\Shared\ValueObjects\Password;
-use Demo\App\Advertisements\Shared\ValueObjects\UserId;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\CivicCenterId;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\Email;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\Password;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\AdminWithIncorrectCivicCenterException;
 use Demo\App\Advertisements\User\Domain\Exceptions\MemberAlreadyExistsException;
 use Demo\App\Advertisements\User\Domain\Exceptions\UserNotFoundException;

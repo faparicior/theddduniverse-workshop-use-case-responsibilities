@@ -7,7 +7,7 @@ use Demo\App\Advertisements\Advertisement\Application\Exceptions\InvalidPassword
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementNotFoundException;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
-use Demo\App\Advertisements\Shared\ValueObjects\Password;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\Password;
 use Exception;
 
 final class RenewAdvertisementUseCase

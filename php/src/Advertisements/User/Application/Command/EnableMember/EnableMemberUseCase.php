@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Demo\App\Advertisements\User\Application\Command\EnableMember;
 
-use Demo\App\Advertisements\Shared\ValueObjects\UserId;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\AdminWithIncorrectCivicCenterException;
 use Demo\App\Advertisements\User\Domain\Exceptions\MemberDoesNotExistsException;
 use Demo\App\Advertisements\User\Domain\Exceptions\UserNotFoundException;

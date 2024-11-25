@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Demo\App\Advertisements\Advertisement\Domain\ValueObjects;
 
-use Demo\App\Advertisements\Shared\Exceptions\InvalidUniqueIdentifierException;
+use Demo\App\Advertisements\Shared\Domain\Exceptions\InvalidUniqueIdentifierException;
 
 final readonly class AdvertisementId
 {

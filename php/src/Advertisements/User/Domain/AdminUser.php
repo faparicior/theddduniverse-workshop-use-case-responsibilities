@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Demo\App\Advertisements\User\Domain;
 
-use Demo\App\Advertisements\Shared\ValueObjects\CivicCenterId;
-use Demo\App\Advertisements\Shared\ValueObjects\Email;
-use Demo\App\Advertisements\Shared\ValueObjects\UserId;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\CivicCenterId;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\Email;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\InvalidUserException;
 use Demo\App\Advertisements\User\Domain\ValueObjects\Role;
 use Demo\App\Advertisements\User\Domain\ValueObjects\UserStatus;

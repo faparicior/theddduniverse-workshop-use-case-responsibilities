@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Tests\Demo\App\Unit\Advertisements\CivicCenter\ValueObjects;
 
-use Demo\App\Advertisements\Shared\Exceptions\InvalidUniqueIdentifierException;
-use Demo\App\Advertisements\Shared\ValueObjects\CivicCenterId;
+use Demo\App\Advertisements\Shared\Domain\Exceptions\InvalidUniqueIdentifierException;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\CivicCenterId;
 use PHPUnit\Framework\TestCase;
 
 class CivicCenterIdTest extends TestCase

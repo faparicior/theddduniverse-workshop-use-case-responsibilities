@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Demo\App\Advertisements\Shared\Exceptions;
+namespace Demo\App\Advertisements\Shared\Domain\Exceptions;
 
 use Demo\App\Common\Domain\DomainException;
 
