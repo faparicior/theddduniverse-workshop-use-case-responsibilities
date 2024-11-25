@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Demo\App\Framework\SecurityUser;
 
 use Demo\App\Framework\Database\DatabaseConnection;
-use Demo\App\Framework\Database\SqliteConnection;
 
 final class SqliteSecurityUserRepository implements SecurityUserRepository
 {
