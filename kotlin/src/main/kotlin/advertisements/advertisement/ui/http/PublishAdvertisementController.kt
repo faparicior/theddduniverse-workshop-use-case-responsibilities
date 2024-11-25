@@ -13,18 +13,18 @@ class PublishAdvertisementController(
     private val securityService: FrameworkSecurityService,
 ): CommonController(){
 
-    public override fun execute(request: FrameworkRequest, pathValues: Map<String, String>): FrameworkResponse {
+    override fun execute(request: FrameworkRequest, pathValues: Map<String, String>): FrameworkResponse {
         try {
             val user = securityService.getSecurityUserFromRequest(request)
 
-            if (user?.role != "ADMIN") {
+            if (user?.role != "member") {
                 return processForbiddenException()
             }
 
             useCase.execute(
                 PublishAdvertisementCommand(
-                    request.content["securityUserId"]!!,
-                    request.content["securityUserRole"]!!,
+                    user.id,
+                    user.role,
                     request.content["id"]!!,
                     request.content["description"]!!,
                     request.content["email"]!!,

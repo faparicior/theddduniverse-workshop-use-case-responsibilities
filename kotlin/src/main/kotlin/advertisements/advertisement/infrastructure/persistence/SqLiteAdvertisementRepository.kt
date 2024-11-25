@@ -40,7 +40,7 @@ class SqLiteAdvertisementRepository(private val connection: DatabaseConnection):
             Password.fromEncryptedPassword(result.getString("password")),
             AdvertisementDate(LocalDateTime.parse(result.getString("advertisement_date"))),
             CivicCenterId.create(result.getString("civic_center_id")),
-            UserId(result.getString("member_id"))
+            UserId(result.getString("user_id"))
         )
     }
 

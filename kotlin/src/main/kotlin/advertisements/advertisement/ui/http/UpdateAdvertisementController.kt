@@ -14,11 +14,11 @@ class UpdateAdvertisementController(
     private val securityService: FrameworkSecurityService,
 ): CommonController(){
 
-    fun execute(request: FrameworkRequest): FrameworkResponse {
+    override fun execute(request: FrameworkRequest, pathValues: Map<String, String>): FrameworkResponse {
         try {
             val user = securityService.getSecurityUserFromRequest(request)
 
-            if (user?.role != "ADMIN") {
+            if (user?.role != "member") {
                 return processForbiddenException()
             }
 

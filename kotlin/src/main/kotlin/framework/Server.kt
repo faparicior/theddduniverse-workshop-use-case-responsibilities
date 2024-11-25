@@ -38,7 +38,7 @@ class Server(private val resolver: DependencyInjectionResolver){
 
     private fun put(request: FrameworkRequest): FrameworkResponse {
         var match = when (request.pathStart()) {
-            "advertisements" -> resolver.updateAdvertisementController().execute(request, mapOf("advertisementId" to request.getIdPath()))
+            "advertisement" -> resolver.updateAdvertisementController().execute(request, mapOf("advertisementId" to request.getIdPath()))
             else -> null
         }
 

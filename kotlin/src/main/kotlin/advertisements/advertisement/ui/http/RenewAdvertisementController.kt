@@ -7,10 +7,14 @@ import common.exceptions.BoundedContextException
 import common.ui.http.CommonController
 import framework.FrameworkRequest
 import framework.FrameworkResponse
+import framework.securityuser.FrameworkSecurityService
 
-class RenewAdvertisementController(private val useCase: RenewAdvertisementUseCase): CommonController() {
+class RenewAdvertisementController(
+    private val useCase: RenewAdvertisementUseCase,
+    private val securityService: FrameworkSecurityService,
+): CommonController() {
 
-    fun execute(request: FrameworkRequest): FrameworkResponse {
+    override fun execute(request: FrameworkRequest, pathValues: Map<String, String>): FrameworkResponse {
         try {
             useCase.execute(
                 RenewAdvertisementCommand(

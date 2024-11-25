@@ -39,8 +39,9 @@ class DependencyInjectionResolver {
     fun renewAdvertisementController(): RenewAdvertisementController {
         return RenewAdvertisementController(
             RenewAdvertisementUseCase(
-                this.advertisementRepository()
-            )
+                this.advertisementRepository(),
+            ),
+            this.securityService(),
         )
     }
 

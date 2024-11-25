@@ -1,5 +1,6 @@
 package e2e
 
+import e2e.AdvertisementTest.Companion
 import framework.DependencyInjectionResolver
 import framework.FrameworkRequest
 import framework.FrameworkResponse
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.security.MessageDigest
+import java.time.LocalDateTime
 
 
 class AdvertisementArgon2PasswordUpdateFeatureTest {
@@ -19,6 +21,8 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
         private const val ID = "6fa00b21-2930-483e-b610-d6b0e5b19b29"
         private const val PASSWORD = "myPassword"
         private const val MEMBER_ID = "e95a8999-cb23-4fa2-9923-e3015ef30411"
+
+        private const val CIVIC_CENTER_ID = "0d5a994b-1603-4c87-accc-581a59e4457c";
     }
 
     private lateinit var connection: DatabaseConnection
@@ -27,6 +31,7 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
     fun init() {
         this.connection = DependencyInjectionResolver().connection()
         this.connection.execute("DELETE FROM advertisements")
+        this.connection.execute("DELETE FROM users")
     }
 
     ////////////////////////////////////////////////////////////
@@ -35,46 +40,21 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
 
     @Test
     fun `should publish an advertisement with Argon2 password`() {
+        withMemberUser("enabled") {
 
-        val server = Server(DependencyInjectionResolver())
-
-        val result = server.route(FrameworkRequest(
-                FrameworkRequest.METHOD_POST,
-                "advertisement",
-                mapOf(
-                    "id" to ID,
-                    "description" to DESCRIPTION,
-                    "password" to PASSWORD,
-                ),
-                mapOf(
-                    "userSession" to MEMBER_ID
-                )
-            )
-        )
-
-        Assertions.assertEquals(FrameworkResponse.STATUS_CREATED, result.statusCode)
-
-        val resultSet = this.connection.query("SELECT * from advertisements;")
-        var password = ""
-
-        if (resultSet.next()) {
-            password = resultSet.getString("password")
-        }
-
-        Assertions.assertTrue(password.startsWith("\$argon2i\$"))
-    }
-
-    @Test
-    fun `should change to Argon2 password updating an advertisement`() {
-        withAnAdvertisementWithMd5Password {
             val server = Server(DependencyInjectionResolver())
 
-            val result = server.route(FrameworkRequest(
-                    FrameworkRequest.METHOD_PUT,
-                    "advertisement/${ID}",
+            val result = server.route(
+                FrameworkRequest(
+                    FrameworkRequest.METHOD_POST,
+                    "advertisement",
                     mapOf(
-                        "description" to NEW_DESCRIPTION,
+                        "id" to ID,
+                        "description" to DESCRIPTION,
                         "password" to PASSWORD,
+                        "email" to "email@test.com",
+                        "memberId" to MEMBER_ID,
+                        "civicCenterId" to CIVIC_CENTER_ID
                     ),
                     mapOf(
                         "userSession" to MEMBER_ID
@@ -82,7 +62,7 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
                 )
             )
 
-            Assertions.assertEquals(FrameworkResponse.STATUS_OK, result.statusCode)
+            Assertions.assertEquals(FrameworkResponse.STATUS_CREATED, result.statusCode)
 
             val resultSet = this.connection.query("SELECT * from advertisements;")
             var password = ""
@@ -92,47 +72,93 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
             }
 
             Assertions.assertTrue(password.startsWith("\$argon2i\$"))
+        }
+    }
+
+    @Test
+    fun `should change to Argon2 password updating an advertisement`() {
+        withMemberUser("enabled") {
+            withAnAdvertisementWithMd5Password {
+                val server = Server(DependencyInjectionResolver())
+
+                val result = server.route(FrameworkRequest(
+                        FrameworkRequest.METHOD_PUT,
+                        "advertisement/${ID}",
+                        mapOf(
+                            "id" to ID,
+                            "description" to NEW_DESCRIPTION,
+                            "password" to PASSWORD,
+                            "email" to "email@test.com",
+                            "memberId" to MEMBER_ID,
+                            "civicCenterId" to CIVIC_CENTER_ID
+                        ),
+                        mapOf(
+                            "userSession" to MEMBER_ID
+                        )
+                    )
+                )
+
+                Assertions.assertEquals(FrameworkResponse.STATUS_OK, result.statusCode)
+
+                val resultSet = this.connection.query("SELECT * from advertisements;")
+                var password = ""
+
+                if (resultSet.next()) {
+                    password = resultSet.getString("password")
+                }
+
+                Assertions.assertTrue(password.startsWith("\$argon2i\$"))
+            }
         }
     }
 
     @Test
     fun `should change to Argon2 password renewing an advertisement`() {
-        withAnAdvertisementWithMd5Password {
-            val server = Server(DependencyInjectionResolver())
+        withMemberUser("enabled") {
+            withAnAdvertisementWithMd5Password {
+                val server = Server(DependencyInjectionResolver())
 
-            val result = server.route(FrameworkRequest(
-                    FrameworkRequest.METHOD_PATCH,
-                    "advertisement/${ID}",
-                    mapOf(
-                        "password" to PASSWORD,
-                    ),
-                    mapOf(
-                        "userSession" to MEMBER_ID
+                val result = server.route(
+                    FrameworkRequest(
+                        FrameworkRequest.METHOD_PATCH,
+                        "advertisement/${ID}",
+                        mapOf(
+                            "password" to PASSWORD,
+                        ),
+                        mapOf(
+                            "userSession" to MEMBER_ID
+                        )
                     )
                 )
-            )
 
-            Assertions.assertEquals(FrameworkResponse.STATUS_OK, result.statusCode)
+                Assertions.assertEquals(FrameworkResponse.STATUS_OK, result.statusCode)
 
-            val resultSet = this.connection.query("SELECT * from advertisements;")
-            var password = ""
+                val resultSet = this.connection.query("SELECT * from advertisements;")
+                var password = ""
 
-            if (resultSet.next()) {
-                password = resultSet.getString("password")
+                if (resultSet.next()) {
+                    password = resultSet.getString("password")
+                }
+
+                Assertions.assertTrue(password.startsWith("\$argon2i\$"))
             }
-
-            Assertions.assertTrue(password.startsWith("\$argon2i\$"))
         }
     }
 
     private fun withAnAdvertisementWithMd5Password(block: () -> Unit) {
+        val password = PASSWORD.md5()
+        val creationDate = LocalDateTime.parse(ADVERTISEMENT_CREATION_DATE).toString()
+        val status = "active"
+        val approvalStatus = "approved"
         this.connection.execute(
             """
-            INSERT INTO advertisements (id, description, password, advertisement_date)
-            VALUES ('$ID', '$DESCRIPTION', '${PASSWORD.md5()}', '$ADVERTISEMENT_CREATION_DATE');
-            """.trimIndent()
+            INSERT INTO advertisements (
+                id, description, email, password, advertisement_date, status, approval_status, user_id, civic_center_id
+            ) VALUES (
+                '${ID}', '${DESCRIPTION}', 'email@test.com', '$password', '$creationDate', '$status', '$approvalStatus', '${MEMBER_ID}', '${CIVIC_CENTER_ID}'
+            )
+            """
         )
-
         block()
     }
 
@@ -141,5 +167,24 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
         val digest = md.digest(this.toByteArray())
         val hexString = digest.joinToString("") { "%02x".format(it) }
         return hexString
+    }
+
+    private fun withMemberUser(status: String, block: () -> Unit) {
+        this.connection.execute(
+            """
+            INSERT INTO users (id, email, password, role, member_number, civic_center_id, status)
+            VALUES (
+                '${MEMBER_ID}', 
+                'member@test.com', 
+                '${"myPassword".md5()}', 
+                'member', 
+                '123456', 
+                '$CIVIC_CENTER_ID', 
+                '$status'
+            )
+            """.trimIndent()
+        )
+
+        block()
     }
 }

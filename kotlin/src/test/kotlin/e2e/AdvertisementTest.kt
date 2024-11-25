@@ -36,46 +36,12 @@ class AdvertisementTest {
     fun init() {
         this.connection = DependencyInjectionResolver().connection()
         this.connection.execute("DELETE FROM advertisements")
+        this.connection.execute("DELETE FROM users")
     }
 
     @Test
     fun `should publish an advertisement as member`() {
-        val server = Server(DependencyInjectionResolver())
-
-        val result = server.route(
-            FrameworkRequest(
-                FrameworkRequest.METHOD_POST,
-                "advertisement",
-                mapOf(
-                    "id" to ID,
-                    "description" to DESCRIPTION,
-                    "password" to PASSWORD,
-                    "email" to "email@test.com",
-                    "memberId" to MEMBER_ID,
-                    "civicCenterId" to CIVIC_CENTER_ID
-                ),
-                mapOf(
-                    "userSession" to MEMBER_ID
-                )
-            )
-        )
-
-        Assertions.assertEquals(FrameworkResponse.STATUS_CREATED, result.statusCode)
-        Assertions.assertEquals(successCommandResponse(HTTP_CREATED), result.content)
-
-        val resultSet = this.connection.query("SELECT * from advertisements;")
-        var description = ""
-
-        if (resultSet.next()) {
-            description = resultSet.getString("description")
-        }
-
-        Assertions.assertEquals(DESCRIPTION, description)
-    }
-
-    @Test
-    fun `should fail publishing an advertisement with same id`() {
-        withAnAdvertisementCreated {
+        withMemberUser("enabled") {
             val server = Server(DependencyInjectionResolver())
 
             val result = server.route(
@@ -96,198 +62,257 @@ class AdvertisementTest {
                 )
             )
 
-            Assertions.assertEquals(FrameworkResponse.STATUS_BAD_REQUEST, result.statusCode)
+            Assertions.assertEquals(FrameworkResponse.STATUS_CREATED, result.statusCode)
+            Assertions.assertEquals(successCommandResponse(HTTP_CREATED), result.content)
+
+            val resultSet = this.connection.query("SELECT * from advertisements;")
+            var description = ""
+
+            if (resultSet.next()) {
+                description = resultSet.getString("description")
+            }
+
+            Assertions.assertEquals(DESCRIPTION, description)
+        }
+    }
+
+    @Test
+    fun `should fail publishing an advertisement with same id`() {
+        withMemberUser("enabled") {
+            withAnAdvertisementCreated {
+                val server = Server(DependencyInjectionResolver())
+
+                val result = server.route(
+                    FrameworkRequest(
+                        FrameworkRequest.METHOD_POST,
+                        "advertisement",
+                        mapOf(
+                            "id" to ID,
+                            "description" to DESCRIPTION,
+                            "password" to PASSWORD,
+                            "email" to "email@test.com",
+                            "memberId" to MEMBER_ID,
+                            "civicCenterId" to CIVIC_CENTER_ID
+                        ),
+                        mapOf(
+                            "userSession" to MEMBER_ID
+                        )
+                    )
+                )
+
+                Assertions.assertEquals(FrameworkResponse.STATUS_BAD_REQUEST, result.statusCode)
+                Assertions.assertEquals(
+                    errorCommandResponse(
+                        FrameworkResponse.STATUS_BAD_REQUEST.toString(),
+                        "Advertisement with id %s already exists".format(ID)
+                    ),
+                    result.content
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `should update an advertisement`() {
+        withMemberUser("enabled") {
+            withAnAdvertisementCreated {
+                val server = Server(DependencyInjectionResolver())
+
+                val result = server.route(
+                    FrameworkRequest(
+                        FrameworkRequest.METHOD_PUT,
+                        "advertisement/$ID",
+                        mapOf(
+                            "id" to ID,
+                            "description" to NEW_DESCRIPTION,
+                            "password" to PASSWORD,
+                            "email" to "email@test.com",
+                            "memberId" to MEMBER_ID,
+                            "civicCenterId" to CIVIC_CENTER_ID
+                        ),
+                        mapOf(
+                            "userSession" to MEMBER_ID
+                        )
+                    )
+                )
+
+                Assertions.assertEquals(FrameworkResponse.STATUS_OK, result.statusCode)
+                Assertions.assertEquals(this.successCommandResponse(HTTP_OK), result.content)
+
+                val resultSet = this.connection.query("SELECT * from advertisements;")
+                var description = ""
+                var date: LocalDateTime? = null
+
+                if (resultSet.next()) {
+                    description = resultSet.getString("description")
+                    date = LocalDateTime.parse(resultSet.getString("advertisement_date"))
+                }
+
+                Assertions.assertEquals(NEW_DESCRIPTION, description)
+                Assertions.assertNotNull(date)
+                Assertions.assertTrue(date!!.isAfter(LocalDateTime.parse(ADVERTISEMENT_CREATION_DATE)))
+            }
+        }
+    }
+
+    @Test
+    fun `should renew an advertisement`() {
+        withMemberUser("enabled") {
+            withAnAdvertisementCreated {
+                val server = Server(DependencyInjectionResolver())
+
+                val result = server.route(
+                    FrameworkRequest(
+                        FrameworkRequest.METHOD_PATCH,
+                        "advertisement/$ID",
+                        mapOf(
+                            "password" to PASSWORD,
+                        ),
+                        mapOf()
+                    )
+                )
+
+                Assertions.assertEquals(FrameworkResponse.STATUS_OK, result.statusCode)
+                Assertions.assertEquals(this.successCommandResponse(HTTP_OK), result.content)
+
+                val resultSet = this.connection.query("SELECT * from advertisements;")
+                var date: LocalDateTime? = null
+
+                if (resultSet.next()) {
+                    date = LocalDateTime.parse(resultSet.getString("advertisement_date"))
+                }
+
+                Assertions.assertNotNull(date)
+                Assertions.assertTrue(date!!.isAfter(LocalDateTime.parse(ADVERTISEMENT_CREATION_DATE)))
+            }
+        }
+    }
+
+    @Test
+    fun `should not update an advertisement with incorrect password`() {
+        withMemberUser("enabled") {
+            withAnAdvertisementCreated {
+                val server = Server(DependencyInjectionResolver())
+
+                val result = server.route(
+                    FrameworkRequest(
+                        FrameworkRequest.METHOD_PUT,
+                        "advertisement/$ID",
+                        mapOf(
+                            "id" to ID,
+                            "description" to NEW_DESCRIPTION,
+                            "password" to INCORRECT_PASSWORD,
+                            "email" to "email@test.com",
+                            "memberId" to MEMBER_ID,
+                            "civicCenterId" to CIVIC_CENTER_ID
+                        ),
+                        mapOf(
+                            "userSession" to MEMBER_ID
+                        )
+                    )
+                )
+
+                Assertions.assertEquals(FrameworkResponse.STATUS_BAD_REQUEST, result.statusCode)
+                Assertions.assertEquals(invalidPasswordCommandResponse(), result.content)
+
+                val resultSet = this.connection.query("SELECT * from advertisements;")
+                var description = ""
+                var date: LocalDateTime? = null
+
+                if (resultSet.next()) {
+                    description = resultSet.getString("description")
+                    date = LocalDateTime.parse(resultSet.getString("advertisement_date"))
+                }
+
+                Assertions.assertEquals(DESCRIPTION, description)
+                Assertions.assertTrue(date!!.isEqual(LocalDateTime.parse(ADVERTISEMENT_CREATION_DATE)))
+            }
+        }
+    }
+
+    @Test
+    fun `should not renew an advertisement with incorrect password`() {
+        withMemberUser("enabled") {
+            withAnAdvertisementCreated {
+                val server = Server(DependencyInjectionResolver())
+
+                val result = server.route(
+                    FrameworkRequest(
+                        FrameworkRequest.METHOD_PATCH,
+                        "advertisement/$ID",
+                        mapOf(
+                            "password" to INCORRECT_PASSWORD,
+                        ),
+                        mapOf()
+                    )
+                )
+
+
+                Assertions.assertEquals(FrameworkResponse.STATUS_BAD_REQUEST, result.statusCode)
+                Assertions.assertEquals(invalidPasswordCommandResponse(), result.content)
+                val resultSet = this.connection.query("SELECT * from advertisements;")
+                var date: LocalDateTime? = null
+
+                if (resultSet.next()) {
+                    date = LocalDateTime.parse(resultSet.getString("advertisement_date"))
+                }
+
+                Assertions.assertTrue(date!!.isEqual(LocalDateTime.parse(ADVERTISEMENT_CREATION_DATE)))
+            }
+        }
+    }
+
+    @Test
+    fun `should fail renewing non existent advertisement`() {
+        withMemberUser("enabled") {
+            val server = Server(DependencyInjectionResolver())
+
+            val result = server.route(
+                FrameworkRequest(
+                    FrameworkRequest.METHOD_PATCH,
+                    "advertisement/$NON_EXISTENT_ADVERTISEMENT_ID",
+                    mapOf(
+                        "password" to PASSWORD,
+                    ),
+                    mapOf()
+                )
+            )
+
+            Assertions.assertEquals(FrameworkResponse.STATUS_NOT_FOUND, result.statusCode)
             Assertions.assertEquals(
-                errorCommandResponse(
-                    FrameworkResponse.STATUS_BAD_REQUEST.toString(),
-                    "Advertisement with id %s already exists".format(ID)
-                ),
+                notfoundCommandResponse("Advertisement not found with Id $NON_EXISTENT_ADVERTISEMENT_ID"),
                 result.content
             )
         }
     }
 
     @Test
-    fun `should update an advertisement`() {
-        withAnAdvertisementCreated {
-            val server = Server(DependencyInjectionResolver())
-
-            val result = server.route(
-                FrameworkRequest(
-                    FrameworkRequest.METHOD_PUT,
-                    "advertisement/$ID",
-                    mapOf(
-                        "id" to ID,
-                        "description" to NEW_DESCRIPTION,
-                        "password" to PASSWORD,
-                        "email" to "email@test.com",
-                        "memberId" to MEMBER_ID,
-                        "civicCenterId" to CIVIC_CENTER_ID
-                    ),
-                    mapOf(
-                        "userSession" to MEMBER_ID
-                    )
-                )
-            )
-
-            Assertions.assertEquals(FrameworkResponse.STATUS_OK, result.statusCode)
-            Assertions.assertEquals(this.successCommandResponse(HTTP_OK), result.content)
-
-            val resultSet = this.connection.query("SELECT * from advertisements;")
-            var description = ""
-            var date: LocalDateTime? = null
-
-            if (resultSet.next()) {
-                description = resultSet.getString("description")
-                date = LocalDateTime.parse(resultSet.getString("advertisement_date"))
-            }
-
-            Assertions.assertEquals(NEW_DESCRIPTION, description)
-            Assertions.assertNotNull(date)
-            Assertions.assertTrue(date!!.isAfter(LocalDateTime.parse(ADVERTISEMENT_CREATION_DATE)))
-        }
-    }
-
-    @Test
-    fun `should renew an advertisement`() {
-        withAnAdvertisementCreated {
-            val server = Server(DependencyInjectionResolver())
-
-            val result = server.route(
-                FrameworkRequest(
-                    FrameworkRequest.METHOD_PATCH,
-                    "advertisement/$ID",
-                    mapOf(
-                        "password" to PASSWORD,
-                    ),
-                    mapOf()
-                )
-            )
-
-            Assertions.assertEquals(FrameworkResponse.STATUS_OK, result.statusCode)
-            Assertions.assertEquals(this.successCommandResponse(HTTP_OK), result.content)
-
-            val resultSet = this.connection.query("SELECT * from advertisements;")
-            var date: LocalDateTime? = null
-
-            if (resultSet.next()) {
-                date = LocalDateTime.parse(resultSet.getString("advertisement_date"))
-            }
-
-            Assertions.assertNotNull(date)
-            Assertions.assertTrue(date!!.isAfter(LocalDateTime.parse(ADVERTISEMENT_CREATION_DATE)))
-        }
-    }
-
-    @Test
-    fun `should not update an advertisement with incorrect password`() {
-
-        withAnAdvertisementCreated {
-            val server = Server(DependencyInjectionResolver())
-
-            val result = server.route(
-                FrameworkRequest(
-                    FrameworkRequest.METHOD_PUT,
-                    "advertisement/$ID",
-                    mapOf(
-                        "id" to ID,
-                        "description" to NEW_DESCRIPTION,
-                        "password" to INCORRECT_PASSWORD,
-                        "email" to "email@test.com",
-                        "memberId" to MEMBER_ID,
-                        "civicCenterId" to CIVIC_CENTER_ID
-                    ),
-                    mapOf(
-                        "userSession" to MEMBER_ID
-                    )
-                )
-            )
-
-            Assertions.assertEquals(FrameworkResponse.STATUS_BAD_REQUEST, result.statusCode)
-            Assertions.assertEquals(invalidPasswordCommandResponse(), result.content)
-
-            val resultSet = this.connection.query("SELECT * from advertisements;")
-            var description = ""
-            var date: LocalDateTime? = null
-
-            if (resultSet.next()) {
-                description = resultSet.getString("description")
-                date = LocalDateTime.parse(resultSet.getString("advertisement_date"))
-            }
-
-            Assertions.assertEquals(DESCRIPTION, description)
-            Assertions.assertTrue(date!!.isEqual(LocalDateTime.parse(ADVERTISEMENT_CREATION_DATE)))
-        }
-    }
-
-    @Test
-    fun `should not renew an advertisement with incorrect password`() {
-        withAnAdvertisementCreated {
-            val server = Server(DependencyInjectionResolver())
-
-            val result = server.route(
-                FrameworkRequest(
-                    FrameworkRequest.METHOD_PATCH,
-                    "advertisement/$ID",
-                    mapOf(
-                        "password" to INCORRECT_PASSWORD,
-                    ),
-                    mapOf()
-                )
-            )
-
-
-            Assertions.assertEquals(FrameworkResponse.STATUS_BAD_REQUEST, result.statusCode)
-            Assertions.assertEquals(invalidPasswordCommandResponse(), result.content)
-            val resultSet = this.connection.query("SELECT * from advertisements;")
-            var date: LocalDateTime? = null
-
-            if (resultSet.next()) {
-                date = LocalDateTime.parse(resultSet.getString("advertisement_date"))
-            }
-
-            Assertions.assertTrue(date!!.isEqual(LocalDateTime.parse(ADVERTISEMENT_CREATION_DATE)))
-        }
-    }
-
-    @Test
-    fun `should fail renewing non existent advertisement`() {
-        val server = Server(DependencyInjectionResolver())
-
-        val result = server.route(FrameworkRequest(
-            FrameworkRequest.METHOD_PATCH,
-            "advertisement/$NON_EXISTENT_ADVERTISEMENT_ID",
-            mapOf(
-                "password" to PASSWORD,
-            ),
-            mapOf()
-        )
-        )
-
-        Assertions.assertEquals(FrameworkResponse.STATUS_NOT_FOUND, result.statusCode)
-        Assertions.assertEquals(notfoundCommandResponse("Advertisement not found with Id $NON_EXISTENT_ADVERTISEMENT_ID"), result.content)
-    }
-
-    @Test
     fun `should fail updating non existent advertisement`() {
-        val server = Server(DependencyInjectionResolver())
+        withMemberUser("enabled") {
 
-        val result = server.route(FrameworkRequest(
-            FrameworkRequest.METHOD_PUT,
-            "advertisement/$NON_EXISTENT_ADVERTISEMENT_ID",
-            mapOf(
-                "description" to DESCRIPTION,
-                "email" to "email@test.com",
-                "password" to PASSWORD,
-            ),
-            mapOf(
-                "userSession" to MEMBER_ID
+            val server = Server(DependencyInjectionResolver())
+
+            val result = server.route(
+                FrameworkRequest(
+                    FrameworkRequest.METHOD_PUT,
+                    "advertisement/$NON_EXISTENT_ADVERTISEMENT_ID",
+                    mapOf(
+                        "description" to DESCRIPTION,
+                        "email" to "email@test.com",
+                        "password" to PASSWORD,
+                    ),
+                    mapOf(
+                        "userSession" to MEMBER_ID
+                    )
+                )
             )
-        )
-        )
 
-        Assertions.assertEquals(FrameworkResponse.STATUS_NOT_FOUND, result.statusCode)
-        Assertions.assertEquals(notfoundCommandResponse("Advertisement not found with Id $NON_EXISTENT_ADVERTISEMENT_ID"), result.content)
+            Assertions.assertEquals(FrameworkResponse.STATUS_NOT_FOUND, result.statusCode)
+            Assertions.assertEquals(
+                notfoundCommandResponse("Advertisement not found with Id $NON_EXISTENT_ADVERTISEMENT_ID"),
+                result.content
+            )
+        }
     }
 
     private fun successCommandResponse(code: String = "200"): Map<String, String> {
@@ -335,6 +360,25 @@ class AdvertisementTest {
                 '$ID', '$DESCRIPTION', 'email@test.com', '$password', '$creationDate', '$status', '$approvalStatus', '$MEMBER_ID', '$CIVIC_CENTER_ID'
             )
             """
+        )
+
+        block()
+    }
+
+    private fun withMemberUser(status: String, block: () -> Unit) {
+        this.connection.execute(
+            """
+            INSERT INTO users (id, email, password, role, member_number, civic_center_id, status)
+            VALUES (
+                '$MEMBER_ID', 
+                'member@test.com', 
+                '${"myPassword".md5()}', 
+                'member', 
+                '123456', 
+                '$CIVIC_CENTER_ID', 
+                '$status'
+            )
+            """.trimIndent()
         )
 
         block()
