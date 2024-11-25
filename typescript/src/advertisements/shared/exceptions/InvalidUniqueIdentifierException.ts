@@ -1,4 +1,4 @@
-import {DomainException} from "../../../../common/domain/DomainException";
+import {DomainException} from "../../../common/domain/DomainException";
 
 export class InvalidUniqueIdentifierException extends DomainException {
   private static _message: string = "Invalid unique identifier format for ";

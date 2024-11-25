@@ -1,4 +1,4 @@
-import {InvalidUniqueIdentifierException} from "../exceptions/InvalidUniqueIdentifierException";
+import {InvalidUniqueIdentifierException} from "../../../shared/exceptions/InvalidUniqueIdentifierException";
 
 export class AdvertisementId {
 
