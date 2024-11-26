@@ -5,7 +5,7 @@ import { SecurityUser } from './SecurityUser';
 export class FrameworkSecurityService {
     constructor(private securityUserRepository: SecurityUserRepository) {}
 
-    public getSecurityUserFromRequest(request: FrameworkRequest): SecurityUser | null {
-        return this.securityUserRepository.findUserById(request.headers()['userSession']);
+    public async getSecurityUserFromRequest(request: FrameworkRequest): Promise<SecurityUser | null> {
+        return await this.securityUserRepository.findUserById(request.headers['userSession']);
     }
 }

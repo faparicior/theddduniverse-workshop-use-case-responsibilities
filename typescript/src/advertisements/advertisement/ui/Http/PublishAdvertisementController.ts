@@ -4,6 +4,7 @@ import { PublishAdvertisementCommand } from '../../application/command/publish-a
 import { PublishAdvertisementUseCase } from '../../application/command/publish-advertisement/PublishAdvertisementUseCase';
 import {CommonController} from "../../../../common/ui/CommonController";
 import {BoundedContextException} from "../../../../common/exceptions/BoundedContextException";
+import {FrameworkSecurityService} from "../../../../framework/security-user/FrameworkSecurityService";
 
 type AddAdvertisementRequest = FrameworkRequest & {
   body: {
@@ -16,18 +17,29 @@ type AddAdvertisementRequest = FrameworkRequest & {
 export class PublishAdvertisementController extends CommonController {
 
   constructor(
-    private publishAdvertisementUseCase: PublishAdvertisementUseCase
-  ) {
+    private publishAdvertisementUseCase: PublishAdvertisementUseCase,
+    private frameworkSecurityService: FrameworkSecurityService,
+) {
     super();
   }
   async execute(req: AddAdvertisementRequest): Promise<FrameworkResponse> {
 
     try {
+      let user = await this.frameworkSecurityService.getSecurityUserFromRequest(req)
+
+      if (user === null || user.role() !== 'member') {
+        return this.processUnauthorizedResponse();
+      }
+
       const command = new PublishAdvertisementCommand(
-          req.body.id,
-          req.body.description,
-          req.body.email,
-          req.body.password
+        user.id(),
+        user.role(),
+        req.body.id,
+        req.body.description,
+        req.body.email,
+        req.body.password,
+        req.body.memberNumber,
+        req.body.civicCenterId,
       )
 
       await this.publishAdvertisementUseCase.execute(command)

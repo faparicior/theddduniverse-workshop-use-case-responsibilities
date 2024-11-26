@@ -31,8 +31,4 @@ export class FrameworkRequest {
 
     return [path, param];
   }
-
-  public getHeaders(): any[] {
-    return this.headers;
-  }
 }

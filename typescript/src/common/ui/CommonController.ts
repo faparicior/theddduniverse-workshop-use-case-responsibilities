@@ -48,4 +48,14 @@ export class CommonController {
                 message: error.message
             })
     }
+
+    protected processUnauthorizedResponse(): FrameworkResponse {
+        return new FrameworkResponse(
+            401,
+            {
+                errors: 'Unauthorized',
+                code: 401,
+                message: 'Unauthorized'
+            })
+    }
 }

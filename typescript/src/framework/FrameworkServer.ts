@@ -8,6 +8,8 @@ import { UpdateAdvertisementUseCase } from "../advertisements/advertisement/appl
 import { UpdateAdvertisementController } from "../advertisements/advertisement/ui/Http/UpdateAdvertisementController";
 import {RenewAdvertisementController} from "../advertisements/advertisement/ui/Http/RenewAdvertisementController";
 import {RenewAdvertisementUseCase} from "../advertisements/advertisement/application/command/renew-advertisement/RenewAdvertisementUseCase";
+import {FrameworkSecurityService} from "./security-user/FrameworkSecurityService";
+import {SqliteSecurityUserRepository} from "./security-user/SqliteSecurityUserRepository";
 
 export class FrameworkServer {
 
@@ -22,7 +24,12 @@ export class FrameworkServer {
     const advertisementRepository = new SqliteAdvertisementRepository(connection);
     const publishAdvertisementUseCase = new PublishAdvertisementUseCase(advertisementRepository);
     const updateAdvertisementUseCase = new UpdateAdvertisementUseCase(advertisementRepository);
-    const publishAdvertisementController = new PublishAdvertisementController(publishAdvertisementUseCase)
+    const publishAdvertisementController = new PublishAdvertisementController(
+      publishAdvertisementUseCase,
+      new FrameworkSecurityService(
+          new SqliteSecurityUserRepository(connection)
+      )
+    );
     const updateAdvertisementController = new UpdateAdvertisementController(updateAdvertisementUseCase)
     const renewAdvertisementUseCase = new RenewAdvertisementUseCase(advertisementRepository);
     const renewAdvertisementController = new RenewAdvertisementController(renewAdvertisementUseCase)

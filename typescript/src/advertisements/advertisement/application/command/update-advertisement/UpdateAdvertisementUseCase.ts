@@ -5,6 +5,7 @@ import {Description} from "../../../domain/value-object/Description";
 import {AdvertisementId} from "../../../domain/value-object/AdvertisementId";
 import {InvalidPasswordException} from "../../exceptions/InvalidPasswordException";
 import {AdvertisementNotFoundException} from "../../../domain/exceptions/AdvertisementNotFoundException";
+import {Email} from "../../../../shared/domain/value-object/Email";
 
 export class UpdateAdvertisementUseCase {
 
@@ -29,6 +30,7 @@ export class UpdateAdvertisementUseCase {
 
     advertisement.update(
         new Description(command.description),
+        new Email(command.email),
         await Password.fromPlainPassword(command.password)
     )
 

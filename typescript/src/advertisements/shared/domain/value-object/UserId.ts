@@ -1,15 +1,15 @@
 export class UserId {
-    private readonly value: string;
+    private readonly _value: string;
 
     constructor(value: string) {
         if (!this.validate(value)) {
             throw new InvalidUniqueIdentifierException(`Invalid ID: ${value}`);
         }
-        this.value = value;
+        this._value = value;
     }
 
-    public getValue(): string {
-        return this.value;
+    public value(): string {
+        return this._value;
     }
 
     private validate(value: string): boolean {

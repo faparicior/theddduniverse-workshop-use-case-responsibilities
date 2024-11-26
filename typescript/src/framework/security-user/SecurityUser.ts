@@ -3,30 +3,30 @@ export class SecurityUser {
     public static readonly STATUS_INACTIVE = 'inactive';
 
     constructor(
-        private id: string,
-        private email: string,
-        private password: string,
-        private role: string,
-        private status: string,
+        private _id: string,
+        private _email: string,
+        private _password: string,
+        private _role: string,
+        private _status: string,
     ) {}
 
-    public getId(): string {
-        return this.id;
+    public id(): string {
+        return this._id;
     }
 
-    public getEmail(): string {
-        return this.email;
+    public email(): string {
+        return this._email;
     }
 
-    public getPassword(): string {
-        return this.password;
+    public password(): string {
+        return this._password;
     }
 
-    public getRole(): string {
-        return this.role;
+    public role(): string {
+        return this._role;
     }
 
-    public getStatus(): string {
-        return this.status;
+    public status(): string {
+        return this._status;
     }
 }

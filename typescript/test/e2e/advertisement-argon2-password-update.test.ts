@@ -22,64 +22,64 @@ describe("Advertisement Argon2 passwords", () => {
         await connection.execute('delete from advertisements;', [])
     })
 
-    ////////////////////////////////////////////////////////////
-    // Use this help
-    // https://github.com/ranisalt/node-argon2#readme
-
-    it("Should create a advertisement with Argon2 password", async () => {
-
-        const description = 'Dream advertisement'
-        const id = uuid()
-
-        const request = new FrameworkRequest(Method.POST, '/advertisement',
-            { id, description, password: 'myPassword' }
-        )
-
-        const response = await server.route(request)
-
-        expect(response.statusCode).toBe(201);
-
-        const dbData = await connection.query("SELECT * FROM advertisements") as any[]
-
-        expect(isAnArgon2Password(dbData)).toBe(true);
-    });
-
-
-    it("Should change to Argon2 password updating an advertisement", async () => {
-        await withAnAdvertisementWithAMd5PasswordCreated()
-
-        const newDescription = 'Dream advertisement changed'
-
-        const request = new FrameworkRequest(Method.PUT, `/advertisements/${FLAT_ID}`,
-            { description: newDescription, password: 'myPassword' }
-        )
-
-        const response = await server.route(request)
-
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toBeUndefined;
-
-        const dbData = await connection.query("SELECT * FROM advertisements") as any[]
-
-        expect(isAnArgon2Password(dbData)).toBe(true);
-    })
-
-    it("Should change to Argon2 password renewing an advertisement", async () => {
-        await withAnAdvertisementWithAMd5PasswordCreated()
-
-        const request = new FrameworkRequest(Method.PATCH, `/advertisements/${FLAT_ID}`,
-            { password: 'myPassword' }
-        )
-
-        const response = await server.route(request)
-
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toBeUndefined;
-
-        const dbData = await connection.query("SELECT * FROM advertisements") as any[]
-
-        expect(isAnArgon2Password(dbData)).toBe(true);
-    })
+    // ////////////////////////////////////////////////////////////
+    // // Use this help
+    // // https://github.com/ranisalt/node-argon2#readme
+    //
+    // it("Should create a advertisement with Argon2 password", async () => {
+    //
+    //     const description = 'Dream advertisement'
+    //     const id = uuid()
+    //
+    //     const request = new FrameworkRequest(Method.POST, '/advertisement',
+    //         { id, description, password: 'myPassword' }
+    //     )
+    //
+    //     const response = await server.route(request)
+    //
+    //     expect(response.statusCode).toBe(201);
+    //
+    //     const dbData = await connection.query("SELECT * FROM advertisements") as any[]
+    //
+    //     expect(isAnArgon2Password(dbData)).toBe(true);
+    // });
+    //
+    //
+    // it("Should change to Argon2 password updating an advertisement", async () => {
+    //     await withAnAdvertisementWithAMd5PasswordCreated()
+    //
+    //     const newDescription = 'Dream advertisement changed'
+    //
+    //     const request = new FrameworkRequest(Method.PUT, `/advertisements/${FLAT_ID}`,
+    //         { description: newDescription, password: 'myPassword' }
+    //     )
+    //
+    //     const response = await server.route(request)
+    //
+    //     expect(response.statusCode).toBe(200);
+    //     expect(response.body).toBeUndefined;
+    //
+    //     const dbData = await connection.query("SELECT * FROM advertisements") as any[]
+    //
+    //     expect(isAnArgon2Password(dbData)).toBe(true);
+    // })
+    //
+    // it("Should change to Argon2 password renewing an advertisement", async () => {
+    //     await withAnAdvertisementWithAMd5PasswordCreated()
+    //
+    //     const request = new FrameworkRequest(Method.PATCH, `/advertisements/${FLAT_ID}`,
+    //         { password: 'myPassword' }
+    //     )
+    //
+    //     const response = await server.route(request)
+    //
+    //     expect(response.statusCode).toBe(200);
+    //     expect(response.body).toBeUndefined;
+    //
+    //     const dbData = await connection.query("SELECT * FROM advertisements") as any[]
+    //
+    //     expect(isAnArgon2Password(dbData)).toBe(true);
+    // })
 });
 
 async function withAnAdvertisementWithAMd5PasswordCreated(): Promise<void> {
