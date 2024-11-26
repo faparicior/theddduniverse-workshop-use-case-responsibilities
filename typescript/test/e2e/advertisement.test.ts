@@ -63,40 +63,64 @@ describe("Advertisement", () => {
         expect(dbData[0].advertisement_date).toBeDefined
     })
 
-    // it("Should fail publishing an advertisement with an existing id", async () => {
-    //     const request = new FrameworkRequest(Method.POST, '/advertisement',
-    //         { id: ID, description: DESCRIPTION, email: EMAIL, password: PASSWORD }
-    //     )
-    //
-    //     const response = await server.route(request)
-    //     expect(response.statusCode).toBe(201)
-    //
-    //     const response2 = await server.route(request)
-    //     expect(response2.statusCode).toBe(400)
-    //     expect(response2.body).toEqual(errorCommandResponse(400, sprintf('Advertisement with Id %s already exists', ID)))
-    // })
-    //
-    // it("Should change an advertisement", async () => {
-    //     await withAnAdvertisementCreated()
-    //
-    //     const request = new FrameworkRequest(Method.PUT, `/advertisements/${ID}`,
-    //         { description: NEW_DESCRIPTION, email: EMAIL, password: PASSWORD }
-    //     )
-    //
-    //     const response = await server.route(request)
-    //
-    //     expect(response.statusCode).toBe(200)
-    //     expect(response.body).toEqual(successResponse(200))
-    //
-    //     const dbData = await connection.query("SELECT * FROM advertisements") as any[]
-    //
-    //     expect(dbData.length).toBe(1)
-    //     expect(dbData[0].description).toBe(NEW_DESCRIPTION)
-    //     const newDate = new Date(dbData[0].advertisement_date)
-    //     const diff = getHourDifference(newDate)
-    //     expect(diff).toBeLessThan(1)
-    // })
-    //
+    it("Should fail publishing an advertisement with an existing id", async () => {
+
+        await withMemberUser('active')
+
+        const request = new FrameworkRequest(
+            Method.POST,
+            '/advertisement',
+            {
+                id: ID,
+                description: DESCRIPTION,
+                email: EMAIL,
+                password: PASSWORD,
+                civicCenterId: CIVIC_CENTER_ID,
+                memberNumber: MEMBER_ID
+            },
+            {
+                userSession: MEMBER_ID
+            }
+        )
+
+        const response = await server.route(request)
+        expect(response.statusCode).toBe(201)
+
+        const response2 = await server.route(request)
+        expect(response2.statusCode).toBe(400)
+        expect(response2.body).toEqual(errorCommandResponse(400, sprintf('Advertisement with Id %s already exists', ID)))
+    })
+
+    it("Should change an advertisement", async () => {
+        await withAnAdvertisementCreated()
+
+        const request = new FrameworkRequest(
+            Method.PUT,
+            '/advertisement/${ID}',
+            {
+                description: NEW_DESCRIPTION,
+                email: EMAIL,
+                password: PASSWORD,
+            },
+            {
+                userSession: MEMBER_ID
+            }
+        )
+
+        const response = await server.route(request)
+
+        expect(response.statusCode).toBe(200)
+        expect(response.body).toEqual(successResponse(200))
+
+        const dbData = await connection.query("SELECT * FROM advertisements") as any[]
+
+        expect(dbData.length).toBe(1)
+        expect(dbData[0].description).toBe(NEW_DESCRIPTION)
+        const newDate = new Date(dbData[0].advertisement_date)
+        const diff = getHourDifference(newDate)
+        expect(diff).toBeLessThan(1)
+    })
+
     // it("Should fail changing an non existent advertisement", async () => {
     //     const request = new FrameworkRequest(Method.PUT, `/advertisements/${ID}`,
     //         { description: NEW_DESCRIPTION, email: EMAIL, password: PASSWORD }
