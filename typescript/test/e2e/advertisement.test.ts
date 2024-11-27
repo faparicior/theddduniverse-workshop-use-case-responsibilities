@@ -144,37 +144,39 @@ describe("Advertisement", () => {
         expect(response.body).toEqual(errorCommandResponse(404, sprintf('Advertisement not found with Id: %s', ID)))
     })
 
-    // it("Should renew an advertisement", async () => {
-    //     await withAnAdvertisementCreated()
-    //
-    //     const request = new FrameworkRequest(Method.PATCH, `/advertisements/${ID}`,
-    //         { password: PASSWORD }
-    //     )
-    //
-    //     const response = await server.route(request)
-    //
-    //     expect(response.statusCode).toBe(200)
-    //     expect(response.body).toEqual(successResponse(200))
-    //
-    //     const dbData = await connection.query("SELECT * FROM advertisements") as any[]
-    //
-    //     expect(dbData.length).toBe(1)
-    //     const newDate = new Date(dbData[0].advertisement_date)
-    //     const diff = getHourDifference(newDate)
-    //     expect(diff).toBeLessThan(1)
-    // })
-    //
-    // it("Should fail renewing an non existent advertisement", async () => {
-    //     const request = new FrameworkRequest(Method.PATCH, `/advertisements/${ID}`,
-    //         { password: PASSWORD }
-    //     )
-    //
-    //     const response = await server.route(request)
-    //
-    //     expect(response.statusCode).toBe(404)
-    //     expect(response.body).toEqual(errorCommandResponse(404, sprintf('Advertisement not found with Id: %s', ID)))
-    // })
-    //
+    it("Should renew an advertisement", async () => {
+        await withAnAdvertisementCreated()
+
+        const request = new FrameworkRequest(Method.PATCH, `/advertisement/${ID}`,
+            { password: PASSWORD },
+            {}
+        )
+
+        const response = await server.route(request)
+
+        expect(response.statusCode).toBe(200)
+        expect(response.body).toEqual(successResponse(200))
+
+        const dbData = await connection.query("SELECT * FROM advertisements") as any[]
+
+        expect(dbData.length).toBe(1)
+        const newDate = new Date(dbData[0].advertisement_date)
+        const diff = getHourDifference(newDate)
+        expect(diff).toBeLessThan(1)
+    })
+
+    it("Should fail renewing an non existent advertisement", async () => {
+        const request = new FrameworkRequest(Method.PATCH, `/advertisement/${ID}`,
+            { password: PASSWORD },
+            {}
+        )
+
+        const response = await server.route(request)
+
+        expect(response.statusCode).toBe(404)
+        expect(response.body).toEqual(errorCommandResponse(404, sprintf('Advertisement not found with Id: %s', ID)))
+    })
+
     // it("Should not change an advertisement with incorrect password", async () => {
     //     await withAnAdvertisementCreated()
     //
