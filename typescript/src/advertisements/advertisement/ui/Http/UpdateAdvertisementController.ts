@@ -4,6 +4,7 @@ import { UpdateAdvertisementCommand } from '../../application/command/update-adv
 import { UpdateAdvertisementUseCase } from '../../application/command/update-advertisement/UpdateAdvertisementUseCase';
 import {CommonController} from "../../../../common/ui/CommonController";
 import {BoundedContextException} from "../../../../common/exceptions/BoundedContextException";
+import {FrameworkSecurityService} from "../../../../framework/security-user/FrameworkSecurityService";
 
 type AddAdvertisementRequest = FrameworkRequest & {
   body: {
@@ -16,13 +17,22 @@ type AddAdvertisementRequest = FrameworkRequest & {
 export class UpdateAdvertisementController extends CommonController {
 
   constructor(
-    private updateAdvertisementUseCase: UpdateAdvertisementUseCase
+    private updateAdvertisementUseCase: UpdateAdvertisementUseCase,
+    private frameworkSecurityService: FrameworkSecurityService,
   ) {
     super();
   }
   async execute(req: AddAdvertisementRequest): Promise<FrameworkResponse> {
     try {
+      let user = await this.frameworkSecurityService.getSecurityUserFromRequest(req)
+
+      if (user === null || user.role() !== 'member') {
+        return this.processUnauthorizedResponse();
+      }
+
       const command = new UpdateAdvertisementCommand(
+          user.id(),
+          user.role(),
           req.param,
           req.body.description,
           req.body.email,

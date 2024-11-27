@@ -3,7 +3,7 @@ export class Role {
     public static readonly ADMIN = new Role('admin');
     public static readonly MEMBER = new Role('member');
 
-    private constructor(private readonly value: string) {}
+    private constructor(private readonly _value: string) {}
 
     public static fromString(role: string): Role {
         switch (role) {
@@ -18,8 +18,8 @@ export class Role {
         }
     }
 
-    public getValue(): string {
-        return this.value;
+    public value(): string {
+        return this._value;
     }
 
     public isAdmin(): boolean {

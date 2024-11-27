@@ -5,32 +5,32 @@ import {Role} from "./value-object/Role";
 import {UserStatus} from "./value-object/UserStatus";
 
 export abstract class UserBase {
-    protected password: Password | null = null;
+    protected _password: Password | null = null;
 
     protected constructor(
-        protected readonly id: UserId,
-        protected email: Email,
-        protected role: Role,
-        protected status: UserStatus
+        protected readonly _id: UserId,
+        protected _email: Email,
+        protected _role: Role,
+        protected _status: UserStatus
     ) {}
 
-    public getId(): UserId {
-        return this.id;
+    public id(): UserId {
+        return this._id;
     }
 
-    public getEmail(): Email {
-        return this.email;
+    public email(): Email {
+        return this._email;
     }
 
-    public getPassword(): Password | null {
-        return this.password;
+    public password(): Password | null {
+        return this._password;
     }
 
-    public getRole(): Role {
-        return this.role;
+    public role(): Role {
+        return this._role;
     }
 
-    public getStatus(): UserStatus {
-        return this.status;
+    public status(): UserStatus {
+        return this._status;
     }
 }

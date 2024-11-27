@@ -10,6 +10,7 @@ import {RenewAdvertisementController} from "../advertisements/advertisement/ui/H
 import {RenewAdvertisementUseCase} from "../advertisements/advertisement/application/command/renew-advertisement/RenewAdvertisementUseCase";
 import {FrameworkSecurityService} from "./security-user/FrameworkSecurityService";
 import {SqliteSecurityUserRepository} from "./security-user/SqliteSecurityUserRepository";
+import {SqliteUserRepository} from "../advertisements/user/infrastructure/persistence/SqliteUserRepository";
 
 export class FrameworkServer {
 
@@ -22,15 +23,21 @@ export class FrameworkServer {
   static async start(): Promise<FrameworkServer> {
     const connection = await SqliteConnectionFactory.createClient();
     const advertisementRepository = new SqliteAdvertisementRepository(connection);
-    const publishAdvertisementUseCase = new PublishAdvertisementUseCase(advertisementRepository);
-    const updateAdvertisementUseCase = new UpdateAdvertisementUseCase(advertisementRepository);
+    const userRepository = new SqliteUserRepository(connection);
+    const publishAdvertisementUseCase = new PublishAdvertisementUseCase(advertisementRepository, userRepository);
+    const updateAdvertisementUseCase = new UpdateAdvertisementUseCase(advertisementRepository, userRepository);
     const publishAdvertisementController = new PublishAdvertisementController(
       publishAdvertisementUseCase,
       new FrameworkSecurityService(
           new SqliteSecurityUserRepository(connection)
       )
     );
-    const updateAdvertisementController = new UpdateAdvertisementController(updateAdvertisementUseCase)
+    const updateAdvertisementController = new UpdateAdvertisementController(
+        updateAdvertisementUseCase,
+        new FrameworkSecurityService(
+            new SqliteSecurityUserRepository(connection)
+        )
+    )
     const renewAdvertisementUseCase = new RenewAdvertisementUseCase(advertisementRepository);
     const renewAdvertisementController = new RenewAdvertisementController(renewAdvertisementUseCase)
 
@@ -48,9 +55,9 @@ export class FrameworkServer {
     switch (route) {
       case "POST:/advertisement":
         return await this.publishAdvertisementController.execute(request)
-      case "PUT:/advertisements":
+      case "PUT:/advertisement":
         return await this.updatedAdvertisementController.execute(request)
-      case "PATCH:/advertisements":
+      case "PATCH:/advertisement":
         return await this.renewAdvertisementController.execute(request)
       default:
         return Promise.resolve(new FrameworkResponse(404, { message: "Not Found" }))

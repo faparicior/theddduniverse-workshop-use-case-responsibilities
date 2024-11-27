@@ -2,7 +2,7 @@ export class UserStatus {
     public static readonly ENABLED = new UserStatus('enabled');
     public static readonly DISABLED = new UserStatus('disabled');
 
-    private constructor(private readonly value: string) {}
+    private constructor(private readonly _value: string) {}
 
     public static fromString(status: string): UserStatus {
         switch (status) {
@@ -15,8 +15,8 @@ export class UserStatus {
         }
     }
 
-    public getValue(): string {
-        return this.value;
+    public value(): string {
+        return this._value;
     }
 
     public isEnabled(): boolean {

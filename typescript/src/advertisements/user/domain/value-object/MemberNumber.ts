@@ -1,11 +1,11 @@
 export class MemberNumber {
-    private readonly value: string;
+    private readonly _value: string;
 
     constructor(value: string) {
-        this.value = value;
+        this._value = value;
     }
 
-    public getValue(): string {
-        return this.value;
+    public value(): string {
+        return this._value;
     }
 }

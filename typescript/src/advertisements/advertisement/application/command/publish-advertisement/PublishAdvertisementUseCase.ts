@@ -9,16 +9,25 @@ import {AdvertisementAlreadyExistsException} from "../../../domain/exceptions/Ad
 import {Email} from "../../../../shared/domain/value-object/Email";
 import {UserId} from "../../../../shared/domain/value-object/UserId";
 import {CivicCenterId} from "../../../../shared/domain/value-object/CivicCenterId";
+import {UserNotFoundException} from "../../../../user/domain/exceptions/UserNotFoundException";
+import {UserRepository} from "../../../../user/domain/UserRepository";
 
 export class PublishAdvertisementUseCase {
 
   constructor(
-    private advertisementRepository: AdvertisementRepository
+    private advertisementRepository: AdvertisementRepository,
+    private userRepository: UserRepository
   ) {
 
   }
 
   async execute(command: PublishAdvertisementCommand): Promise<void> {
+
+    const memberUser = await this.userRepository.findMemberById(new UserId(command.securityUserId));
+    if (!memberUser) {
+      throw UserNotFoundException.asMember();
+    }
+
     const advertisementId = new AdvertisementId(command.id)
 
     if(await this.advertisementRepository.findById(advertisementId)) {

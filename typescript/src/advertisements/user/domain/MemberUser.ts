@@ -9,8 +9,8 @@ import { Password } from "../../shared/domain/value-object/Password";
 import {CivicCenterId} from "../../shared/domain/value-object/CivicCenterId";
 
 export class MemberUser extends UserBase {
-    private memberNumber: MemberNumber;
-    private civicCenterId: CivicCenterId;
+    private _memberNumber: MemberNumber;
+    private _civicCenterId: CivicCenterId;
 
     /** @throws InvalidUserException */
     protected constructor(id: UserId, email: Email, role: Role, memberNumber: MemberNumber, civicCenterId: CivicCenterId, status: UserStatus) {
@@ -19,23 +19,23 @@ export class MemberUser extends UserBase {
         }
 
         super(id, email, role, status);
-        this.memberNumber = memberNumber;
-        this.civicCenterId = civicCenterId;
+        this._memberNumber = memberNumber;
+        this._civicCenterId = civicCenterId;
     }
 
     /** @throws InvalidUserException */
     public static signUp(id: UserId, email: Email, password: Password, role: Role, memberNumber: MemberNumber, civicCenterId: CivicCenterId): MemberUser {
         const member = new MemberUser(id, email, role, memberNumber, civicCenterId, UserStatus.ENABLED);
-        member.password = password;
+        member._password = password;
         return member;
     }
 
     public disable(): void {
-        this.status = UserStatus.DISABLED;
+        this._status = UserStatus.DISABLED;
     }
 
     public enable(): void {
-        this.status = UserStatus.ENABLED;
+        this._status = UserStatus.ENABLED;
     }
 
     /** @throws InvalidUserException */
@@ -43,11 +43,11 @@ export class MemberUser extends UserBase {
         return new MemberUser(id, email, role, memberNumber, civicCenterId, status);
     }
 
-    public getMemberNumber(): MemberNumber {
-        return this.memberNumber;
+    public memberNumber(): MemberNumber {
+        return this._memberNumber;
     }
 
-    public getCivicCenterId(): CivicCenterId {
-        return this.civicCenterId;
+    public civicCenterId(): CivicCenterId {
+        return this._civicCenterId;
     }
 }

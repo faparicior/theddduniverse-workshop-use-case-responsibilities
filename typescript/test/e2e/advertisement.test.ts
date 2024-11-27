@@ -31,7 +31,7 @@ describe("Advertisement", () => {
 
     it("Should publish an advertisement", async () => {
 
-        await withMemberUser('active')
+        await withMemberUser('enabled')
 
         const request = new FrameworkRequest(
             Method.POST,
@@ -65,7 +65,7 @@ describe("Advertisement", () => {
 
     it("Should fail publishing an advertisement with an existing id", async () => {
 
-        await withMemberUser('active')
+        await withMemberUser('enabled')
 
         const request = new FrameworkRequest(
             Method.POST,
@@ -92,11 +92,12 @@ describe("Advertisement", () => {
     })
 
     it("Should change an advertisement", async () => {
-        await withAnAdvertisementCreated()
+        await withMemberUser('enabled')
+        await withAnAdvertisementCreated('enabled', 'approved')
 
         const request = new FrameworkRequest(
             Method.PUT,
-            '/advertisement/${ID}',
+            `/advertisement/${ID}`,
             {
                 description: NEW_DESCRIPTION,
                 email: EMAIL,
@@ -121,17 +122,28 @@ describe("Advertisement", () => {
         expect(diff).toBeLessThan(1)
     })
 
-    // it("Should fail changing an non existent advertisement", async () => {
-    //     const request = new FrameworkRequest(Method.PUT, `/advertisements/${ID}`,
-    //         { description: NEW_DESCRIPTION, email: EMAIL, password: PASSWORD }
-    //     )
-    //
-    //     const response = await server.route(request)
-    //
-    //     expect(response.statusCode).toBe(404)
-    //     expect(response.body).toEqual(errorCommandResponse(404, sprintf('Advertisement not found with Id: %s', ID)))
-    // })
-    //
+    it("Should fail changing an non existent advertisement", async () => {
+        await withMemberUser('enabled')
+
+        const request = new FrameworkRequest(
+            Method.PUT,
+            `/advertisement/${ID}`,
+            {
+                description: NEW_DESCRIPTION,
+                email: EMAIL,
+                password: PASSWORD,
+            },
+            {
+                userSession: MEMBER_ID
+            }
+        )
+
+        const response = await server.route(request)
+
+        expect(response.statusCode).toBe(404)
+        expect(response.body).toEqual(errorCommandResponse(404, sprintf('Advertisement not found with Id: %s', ID)))
+    })
+
     // it("Should renew an advertisement", async () => {
     //     await withAnAdvertisementCreated()
     //
@@ -223,14 +235,19 @@ function successResponse(code: number = 200) {
     }
 }
 
-async function withAnAdvertisementCreated(): Promise<void> {
+async function withAnAdvertisementCreated(status: string = 'enabled', approvalStatus: string = 'approved'): Promise<void> {
     await connection.execute(
-        `INSERT INTO advertisements (id, description, password, advertisement_date) VALUES (?, ?, ?, ?)`,
+        `INSERT INTO advertisements (id, description, email, password, advertisement_date, status, approval_status, user_id, civic_center_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             ID,
             DESCRIPTION,
+            EMAIL,
             createHash('md5').update(PASSWORD).digest('hex'),
-            ADVERTISEMENT_CREATION_DATE
+            ADVERTISEMENT_CREATION_DATE,
+            status,
+            approvalStatus,
+            MEMBER_ID,
+            CIVIC_CENTER_ID
         ])
 }
 
