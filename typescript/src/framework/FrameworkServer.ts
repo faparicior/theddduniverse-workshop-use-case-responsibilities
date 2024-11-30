@@ -29,6 +29,14 @@ import {ApproveAdvertisementController} from "../advertisements/advertisement/ui
 import {
   ApproveAdvertisementUseCase
 } from "../advertisements/advertisement/application/command/approve-advertisement/ApproveAdvertisementUseCase";
+import {DisableAdvertisementController} from "../advertisements/advertisement/ui/http/DisableAdvertisementController";
+import {EnableAdvertisementController} from "../advertisements/advertisement/ui/http/EnableAdvertisementController";
+import {
+  DisableAdvertisementUseCase
+} from "../advertisements/advertisement/application/command/disable-advertisement/DisableAdvertisementUseCase";
+import {
+  EnableAdvertisementUseCase
+} from "../advertisements/advertisement/application/command/enable-advertisement/EnableAdvertisementUseCase";
 
 export class FrameworkServer {
 
@@ -39,6 +47,8 @@ export class FrameworkServer {
     private signUpMemberController: SignUpMemberController,
     private deleteAdvertisementController: DeleteAdvertisementController,
     private approveAdvertisementController: ApproveAdvertisementController,
+    private disableAdvertisementController: DisableAdvertisementController,
+    private enableAdvertisementController: EnableAdvertisementController,
   ) { };
 
   static async start(): Promise<FrameworkServer> {
@@ -83,6 +93,20 @@ export class FrameworkServer {
         )
     )
 
+    const disableAdvertisementController = new DisableAdvertisementController(
+        new DisableAdvertisementUseCase(advertisementRepository, userRepository),
+        new FrameworkSecurityService(
+            new SqliteSecurityUserRepository(connection)
+        )
+    )
+
+    const enableAdvertisementController = new EnableAdvertisementController(
+        new EnableAdvertisementUseCase(advertisementRepository, userRepository),
+        new FrameworkSecurityService(
+            new SqliteSecurityUserRepository(connection)
+        )
+    )
+
     return new FrameworkServer(
         publishAdvertisementController,
         updateAdvertisementController,
@@ -90,6 +114,8 @@ export class FrameworkServer {
         signUpMemberController,
         deleteAdvertisementController,
         approveAdvertisementController,
+        disableAdvertisementController,
+        enableAdvertisementController,
     );
   }
 
@@ -144,8 +170,8 @@ export class FrameworkServer {
     const patterns = [
       // { regex: /^member\/([0-9a-fA-F\-]+)\/disable$/, controller: this.disableMemberController, paramName: 'memberId' },
       // { regex: /^member\/([0-9a-fA-F\-]+)\/enable$/, controller: this.enableMemberController(), paramName: 'memberId' },
-      // { regex: /^advertisements\/([0-9a-fA-F\-]+)\/disable$/, controller: this.resolver.disableAdvertisementController(), paramName: 'advertisementId' },
-      // { regex: /^advertisements\/([0-9a-fA-F\-]+)\/enable$/, controller: this.resolver.enableAdvertisementController(), paramName: 'advertisementId' },
+      { regex: /^\/advertisement\/([0-9a-fA-F\-]+)\/disable$/, controller: this.disableAdvertisementController, paramName: 'advertisementId' },
+      { regex: /^\/advertisement\/([0-9a-fA-F\-]+)\/enable$/, controller: this.enableAdvertisementController, paramName: 'advertisementId' },
       { regex: /^\/advertisement\/([0-9a-fA-F\-]+)\/approve$/, controller: this.approveAdvertisementController, paramName: 'advertisementId' },
     ];
 
