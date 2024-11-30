@@ -17,7 +17,7 @@ const INCORRECT_PASSWORD = 'myBadPassword'
 const MEMBER_ID = 'e95a8999-cb23-4fa2-9923-e3015ef30411'
 const CIVIC_CENTER_ID = '0d5a994b-1603-4c87-accc-581a59e4457c'
 
-describe("Advertisement", () => {
+describe("Advertisement as member", () => {
     beforeAll(async () => {
         connection = await SqliteConnectionFactory.createClient()
         server = await FrameworkServer.start()
@@ -29,7 +29,7 @@ describe("Advertisement", () => {
         await connection.execute('delete from users', [])
     })
 
-    it("Should publish an advertisement", async () => {
+    it("Should publish an advertisement as member", async () => {
 
         await withMemberUser('enabled')
 
@@ -63,7 +63,7 @@ describe("Advertisement", () => {
         expect(dbData[0].advertisement_date).toBeDefined
     })
 
-    it("Should fail publishing an advertisement with an existing id", async () => {
+    it("Should fail publishing an advertisement as member with an existing id", async () => {
 
         await withMemberUser('enabled')
 
@@ -91,7 +91,7 @@ describe("Advertisement", () => {
         expect(response2.body).toEqual(errorCommandResponse(400, sprintf('Advertisement with Id %s already exists', ID)))
     })
 
-    it("Should change an advertisement", async () => {
+    it("Should change an advertisement as member", async () => {
         await withMemberUser('enabled')
         await withAnAdvertisementCreated('enabled', 'approved')
 
@@ -122,7 +122,7 @@ describe("Advertisement", () => {
         expect(diff).toBeLessThan(1)
     })
 
-    it("Should fail changing an non existent advertisement", async () => {
+    it("Should fail changing an non existent advertisement as member", async () => {
         await withMemberUser('enabled')
 
         const request = new FrameworkRequest(
@@ -177,48 +177,65 @@ describe("Advertisement", () => {
         expect(response.body).toEqual(errorCommandResponse(404, sprintf('Advertisement not found with Id: %s', ID)))
     })
 
-    // it("Should not change an advertisement with incorrect password", async () => {
-    //     await withAnAdvertisementCreated()
-    //
-    //     const request = new FrameworkRequest(Method.PUT, `/advertisements/${ID}`,
-    //         { description: NEW_DESCRIPTION, email: EMAIL, password: INCORRECT_PASSWORD }
-    //     )
-    //
-    //     const response = await server.route(request)
-    //
-    //     expect(response.statusCode).toBe(400)
-    //     expect(response.body).toEqual(errorCommandResponse(400, 'Invalid password'))
-    //
-    //     const dbData = await connection.query("SELECT * FROM advertisements") as any[]
-    //
-    //     expect(dbData.length).toBe(1)
-    //     expect(dbData[0].description).toBe(DESCRIPTION)
-    //     const newDate = new Date(dbData[0].advertisement_date)
-    //     const diff = getHourDifference(newDate)
-    //     expect(diff).toBeGreaterThan(1)
-    // })
-    //
-    // it("Should not renew an advertisement with incorrect password", async () => {
-    //     await withAnAdvertisementCreated()
-    //
-    //     const request = new FrameworkRequest(Method.PATCH, `/advertisements/${ID}`,
-    //         { password: INCORRECT_PASSWORD }
-    //     )
-    //
-    //     const response = await server.route(request)
-    //
-    //     expect(response.statusCode).toBe(400)
-    //     expect(response.body).toEqual(errorCommandResponse(400, 'Invalid password'))
-    //
-    //     const dbData = await connection.query("SELECT * FROM advertisements") as any[]
-    //
-    //     expect(dbData.length).toBe(1)
-    //     expect(dbData[0].description).toBe(DESCRIPTION)
-    //     const newDate = new Date(dbData[0].advertisement_date)
-    //     const diff = getHourDifference(newDate)
-    //     expect(diff).toBeGreaterThan(1)
-    // })
+    it("Should not change an advertisement with incorrect password", async () => {
+        await withMemberUser('enabled')
+        await withAnAdvertisementCreated()
 
+        const request = new FrameworkRequest(
+            Method.PUT,
+            `/advertisement/${ID}`,
+            {
+                description: NEW_DESCRIPTION,
+                email: EMAIL,
+                password: INCORRECT_PASSWORD,
+            },
+            {
+                userSession: MEMBER_ID
+            }
+        )
+
+        const response = await server.route(request)
+
+        expect(response.statusCode).toBe(400)
+        expect(response.body).toEqual(errorCommandResponse(400, 'Invalid password'))
+
+        const dbData = await connection.query("SELECT * FROM advertisements") as any[]
+
+        expect(dbData.length).toBe(1)
+        expect(dbData[0].description).toBe(DESCRIPTION)
+        const newDate = new Date(dbData[0].advertisement_date)
+        const diff = getHourDifference(newDate)
+        expect(diff).toBeGreaterThan(1)
+    })
+
+    it("Should not renew an advertisement with incorrect password", async () => {
+        await withMemberUser('enabled')
+        await withAnAdvertisementCreated()
+
+        const request = new FrameworkRequest(
+            Method.PATCH,
+            `/advertisement/${ID}`,
+            {
+                password: INCORRECT_PASSWORD,
+            },
+            {
+                userSession: MEMBER_ID
+            }
+        )
+
+        const response = await server.route(request)
+
+        expect(response.statusCode).toBe(400)
+        expect(response.body).toEqual(errorCommandResponse(400, 'Invalid password'))
+
+        const dbData = await connection.query("SELECT * FROM advertisements") as any[]
+
+        expect(dbData.length).toBe(1)
+        expect(dbData[0].description).toBe(DESCRIPTION)
+        const newDate = new Date(dbData[0].advertisement_date)
+        const diff = getHourDifference(newDate)
+        expect(diff).toBeGreaterThan(1)
+    })
 })
 
 function errorCommandResponse(code: number = 400, message: string = '') {
