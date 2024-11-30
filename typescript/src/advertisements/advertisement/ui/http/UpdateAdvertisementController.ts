@@ -22,7 +22,7 @@ export class UpdateAdvertisementController extends CommonController {
   ) {
     super();
   }
-  async execute(req: AddAdvertisementRequest): Promise<FrameworkResponse> {
+  async execute(req: AddAdvertisementRequest, params: Record<string, any> = {}): Promise<FrameworkResponse> {
     try {
       let user = await this.frameworkSecurityService.getSecurityUserFromRequest(req)
 
@@ -33,7 +33,7 @@ export class UpdateAdvertisementController extends CommonController {
       const command = new UpdateAdvertisementCommand(
           user.id(),
           user.role(),
-          req.param,
+          params.advertisementId,
           req.body.description,
           req.body.email,
           req.body.password

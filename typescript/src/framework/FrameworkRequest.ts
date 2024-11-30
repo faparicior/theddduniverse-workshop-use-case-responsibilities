@@ -16,19 +16,17 @@ export class FrameworkRequest {
   constructor(method: Method, fullPath: string, body: any, headers: any
   ) {
     this.method = method;
-    const [path, param] = this.splitPathAndId(fullPath)
-    this.path = path
-    this.param = param
+    this.path = fullPath
+    this.param =
     this.body = body
     this.headers = headers
   }
 
-  private splitPathAndId(input: string): [string, string] {
-    const parts = input.split('/');
+  public pathStart(): string {
+    return this.path.substring(0, this.path.lastIndexOf('/'));
+  }
 
-    const path = parts[1];
-    const param = parts[2];
-
-    return [path, param];
+  public getIdPath(): string {
+    return this.path.substring(this.path.lastIndexOf('/') + 1);
   }
 }

@@ -20,10 +20,10 @@ export class RenewAdvertisementController extends CommonController {
   ) {
     super();
   }
-  async execute(req: AddAdvertisementRequest): Promise<FrameworkResponse> {
+  async execute(req: AddAdvertisementRequest, params: Record<string, any> = {}): Promise<FrameworkResponse> {
     try {
       const command = new RenewAdvertisementCommand(
-          req.param,
+          params.advertisementId,
           req.body.password
       )
 

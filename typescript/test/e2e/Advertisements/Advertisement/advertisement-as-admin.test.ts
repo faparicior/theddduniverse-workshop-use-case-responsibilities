@@ -1,7 +1,7 @@
-import { FrameworkRequest, Method } from "../../src/framework/FrameworkRequest"
-import { FrameworkServer } from "../../src/framework/FrameworkServer"
-import { SqliteConnectionFactory } from "../../src/framework/database/SqliteConnectionFactory"
-import { DatabaseConnection } from "../../src/framework/database/DatabaseConnection"
+import { FrameworkRequest, Method } from "../../../../src/framework/FrameworkRequest"
+import { FrameworkServer } from "../../../../src/framework/FrameworkServer"
+import { SqliteConnectionFactory } from "../../../../src/framework/database/SqliteConnectionFactory"
+import { DatabaseConnection } from "../../../../src/framework/database/DatabaseConnection"
 import { createHash } from "node:crypto"
 import {sprintf} from "sprintf-js";
 

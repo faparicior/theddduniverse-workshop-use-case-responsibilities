@@ -7,7 +7,7 @@ import { InvalidUserException } from "./exceptions/InvalidUserException";
 import { CivicCenterId } from "../../shared/domain/value-object/CivicCenterId";
 
 export class AdminUser extends UserBase {
-    private civicCenterId: CivicCenterId;
+    private _civicCenterId: CivicCenterId;
 
     /** @throws InvalidUserException */
     protected constructor(id: UserId, email: Email, role: Role, civicCenterId: CivicCenterId, status: UserStatus) {
@@ -16,7 +16,7 @@ export class AdminUser extends UserBase {
         }
 
         super(id, email, role, status);
-        this.civicCenterId = civicCenterId;
+        this._civicCenterId = civicCenterId;
     }
 
     /** @throws InvalidUserException */
@@ -24,7 +24,7 @@ export class AdminUser extends UserBase {
         return new AdminUser(id, email, role, civicCenterId, status);
     }
 
-    public getCivicCenterId(): CivicCenterId {
-        return this.civicCenterId;
+    public civicCenterId(): CivicCenterId {
+        return this._civicCenterId;
     }
 }
