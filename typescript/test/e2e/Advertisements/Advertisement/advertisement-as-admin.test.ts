@@ -14,6 +14,7 @@ const EMAIL = 'test@test.com'
 const PASSWORD = 'myPassword'
 const NEW_DESCRIPTION = 'Dream advertisement changed'
 const INCORRECT_PASSWORD = 'myBadPassword'
+const ADMIN_ID = '91b5fa8c-6212-4c0f-862f-4dc1cb0472c4'
 const MEMBER_ID = 'e95a8999-cb23-4fa2-9923-e3015ef30411'
 const CIVIC_CENTER_ID = '0d5a994b-1603-4c87-accc-581a59e4457c'
 
@@ -65,25 +66,17 @@ async function withAnAdvertisementCreated(status: string = 'enabled', approvalSt
         ])
 }
 
-async function withMemberUser(status: string): Promise<void> {
+async function withAdminUser(status: string): Promise<void> {
     await connection.execute(
         `INSERT INTO users (id, email, password, role, member_number, civic_center_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
-            MEMBER_ID,
-            'member@test.com',
+            ADMIN_ID,
+            'admin@test.com',
             createHash('md5').update('myPassword').digest('hex'),
-            'member',
+            'admin',
             '123456',
             CIVIC_CENTER_ID,
             status
         ]
     );
-}
-
-function getHourDifference(date: Date): number {
-
-    const currentDate = new Date()
-    const differenceInMs = currentDate.getTime() - date.getTime()
-    const differenceInHours = differenceInMs / (1000 * 60 * 60)
-    return differenceInHours
 }

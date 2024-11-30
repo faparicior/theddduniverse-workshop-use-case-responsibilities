@@ -30,7 +30,6 @@ describe("Advertisement as member", () => {
     })
 
     it("Should publish an advertisement as member", async () => {
-
         await withMemberUser('enabled')
 
         const request = new FrameworkRequest(
@@ -64,7 +63,6 @@ describe("Advertisement as member", () => {
     })
 
     it("Should fail publishing an advertisement as member with an existing id", async () => {
-
         await withMemberUser('enabled')
 
         const request = new FrameworkRequest(
@@ -175,6 +173,24 @@ describe("Advertisement as member", () => {
 
         expect(response.statusCode).toBe(404)
         expect(response.body).toEqual(errorCommandResponse(404, sprintf('Advertisement not found with Id: %s', ID)))
+    })
+
+    it("Should delete an advertisement", async () => {
+        await withMemberUser('enabled')
+        await withAnAdvertisementCreated()
+
+        const request = new FrameworkRequest(Method.DELETE, `/advertisement/${ID}`,
+            {},
+            { 'userSession': MEMBER_ID }
+        )
+
+        const response = await server.route(request)
+
+        expect(response.statusCode).toBe(200)
+
+        const dbData = await connection.query("SELECT * FROM advertisements") as any[]
+
+        expect(dbData.length).toBe(1)
     })
 
     it("Should not change an advertisement with incorrect password", async () => {

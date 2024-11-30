@@ -34,12 +34,6 @@ final class DeleteAdvertisementUseCase
             throw MemberDoesNotExistsException::build();
         }
 
-        $activeAdvertisements = $this->advertisementRepository->activeAdvertisementsByMember($member);
-
-        if ($activeAdvertisements->value() >= 3) {
-            throw new Exception('Member has 3 active advertisements');
-        }
-
         $this->advertisementRepository->delete($advertisement);
     }
 }

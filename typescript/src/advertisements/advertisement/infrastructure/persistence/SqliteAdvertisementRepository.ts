@@ -51,4 +51,8 @@ export class SqliteAdvertisementRepository implements AdvertisementRepository {
       advertisement.memberId().value(),
     ]);
   }
+
+  delete(advertisement: Advertisement): Promise<void> {
+      return this.connection.execute(`DELETE FROM advertisements WHERE id = ?`, [advertisement.id().value()])
+  }
 }

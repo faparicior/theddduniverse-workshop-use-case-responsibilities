@@ -21,6 +21,10 @@ import {SqliteSecurityUserRepository} from "./security-user/SqliteSecurityUserRe
 import {SqliteUserRepository} from "../advertisements/user/infrastructure/persistence/SqliteUserRepository";
 import {SignUpMemberController} from "../advertisements/user/ui/http/SignUpMemberController";
 import {SignUpMemberUseCase} from "../advertisements/user/application/command/sign-up-member/SignUpMemberUseCase";
+import {DeleteAdvertisementController} from "../advertisements/advertisement/ui/http/DeleteAdvertisementController";
+import {
+  DeleteAdvertisementUseCase
+} from "../advertisements/advertisement/application/command/delete-advertisement/DeleteAdvertisementUseCase";
 
 export class FrameworkServer {
 
@@ -28,7 +32,8 @@ export class FrameworkServer {
     private publishAdvertisementController: PublishAdvertisementController,
     private updateAdvertisementController: UpdateAdvertisementController,
     private renewAdvertisementController: RenewAdvertisementController,
-    private signUpMemberController: SignUpMemberController
+    private signUpMemberController: SignUpMemberController,
+    private deleteAdvertisementController: DeleteAdvertisementController,
   ) { };
 
   static async start(): Promise<FrameworkServer> {
@@ -59,11 +64,19 @@ export class FrameworkServer {
         )
     )
 
+    const deleteAdvertisementController = new DeleteAdvertisementController(
+        new DeleteAdvertisementUseCase(advertisementRepository, userRepository),
+        new FrameworkSecurityService(
+            new SqliteSecurityUserRepository(connection)
+        )
+    )
+
     return new FrameworkServer(
         publishAdvertisementController,
         updateAdvertisementController,
         renewAdvertisementController,
         signUpMemberController,
+        deleteAdvertisementController,
     );
   }
 
@@ -149,8 +162,8 @@ export class FrameworkServer {
 
   public async delete(request: FrameworkRequest): Promise<FrameworkResponse> {
     switch (request.pathStart()) {
-      // case 'advertisements':
-      //   return await this.deleteAdvertisementController.execute(request, { advertisementId: request.getIdPath() });
+      case '/advertisement':
+        return await this.deleteAdvertisementController.execute(request, { advertisementId: request.getIdPath() });
       default:
         return this.notFound(request);
     }

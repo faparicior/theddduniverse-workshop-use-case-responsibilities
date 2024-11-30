@@ -4,6 +4,9 @@ import {RenewAdvertisementUseCase} from "../../application/command/renew-adverti
 import {RenewAdvertisementCommand} from "../../application/command/renew-advertisement/RenewAdvertisementCommand";
 import {CommonController} from "../../../../common/ui/CommonController";
 import {BoundedContextException} from "../../../../common/exceptions/BoundedContextException";
+import {DeleteAdvertisementUseCase} from "../../application/command/delete-advertisement/DeleteAdvertisementUseCase";
+import {DeleteAdvertisementCommand} from "../../application/command/delete-advertisement/DeleteAdvertisementCommand";
+import {FrameworkSecurityService} from "../../../../framework/security-user/FrameworkSecurityService";
 
 type AddAdvertisementRequest = FrameworkRequest & {
   body: {
@@ -13,22 +16,29 @@ type AddAdvertisementRequest = FrameworkRequest & {
   };
 };
 
-export class RenewAdvertisementController extends CommonController {
+export class DeleteAdvertisementController extends CommonController {
 
   constructor(
-    private renewAdvertisementUseCase: RenewAdvertisementUseCase
+    private deleteAdvertisementUseCase: DeleteAdvertisementUseCase,
+    private frameworkSecurityService: FrameworkSecurityService,
   ) {
     super();
   }
   async execute(req: AddAdvertisementRequest, params: Record<string, any> = {}): Promise<FrameworkResponse> {
     try {
-      const command = new RenewAdvertisementCommand(
+      let user = await this.frameworkSecurityService.getSecurityUserFromRequest(req)
 
-          params.advertisementId,
-          req.body.password
+      if (user === null || user.role() !== 'member') {
+        return this.processUnauthorizedResponse();
+      }
+
+      const command = new DeleteAdvertisementCommand(
+        user.id(),
+        user.role(),
+        params.advertisementId,
       )
 
-      await this.renewAdvertisementUseCase.execute(command)
+      await this.deleteAdvertisementUseCase.execute(command)
 
       return this.processSuccessfulCommand()
     } catch (error: any) {
