@@ -32,6 +32,25 @@ describe("Advertisement as admin", () => {
 
     // TODO: Implement test
 
+    it("Should approve an advertisement as admin", async () => {
+        await withAdminUser()
+        await withMemberUser('enabled')
+        await withAnAdvertisementCreated('disabled', 'pending_for_approval')
+
+        const request = new FrameworkRequest(Method.PUT, `/advertisement/${ID}/approve`,
+            {},
+            { 'userSession': ADMIN_ID }
+        )
+
+        const response = await server.route(request)
+
+        expect(response.statusCode).toBe(200)
+
+        const dbData = await connection.query("SELECT * FROM advertisements") as any[]
+
+        expect(dbData.length).toBe(1)
+        expect(dbData[0].approval_status).toBe('approved')
+    })
 })
 
 function errorCommandResponse(code: number = 400, message: string = '') {
@@ -66,7 +85,22 @@ async function withAnAdvertisementCreated(status: string = 'enabled', approvalSt
         ])
 }
 
-async function withAdminUser(status: string): Promise<void> {
+async function withMemberUser(status: string): Promise<void> {
+    await connection.execute(
+        `INSERT INTO users (id, email, password, role, member_number, civic_center_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+            MEMBER_ID,
+            'member@test.com',
+            createHash('md5').update('myPassword').digest('hex'),
+            'member',
+            '123456',
+            CIVIC_CENTER_ID,
+            status
+        ]
+    );
+}
+
+async function withAdminUser(): Promise<void> {
     await connection.execute(
         `INSERT INTO users (id, email, password, role, member_number, civic_center_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
@@ -74,9 +108,9 @@ async function withAdminUser(status: string): Promise<void> {
             'admin@test.com',
             createHash('md5').update('myPassword').digest('hex'),
             'admin',
-            '123456',
+            '',
             CIVIC_CENTER_ID,
-            status
+            'enabled'
         ]
     );
 }

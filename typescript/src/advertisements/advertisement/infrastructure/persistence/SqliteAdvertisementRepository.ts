@@ -41,7 +41,7 @@ export class SqliteAdvertisementRepository implements AdvertisementRepository {
       `INSERT INTO advertisements (id, description, email, password, advertisement_date, civic_center_id, user_id, status, approval_status) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
       ON CONFLICT(id) DO UPDATE 
-      SET description = excluded.description, password = excluded.password, advertisement_date = excluded.advertisement_date`, [
+      SET description = excluded.description, password = excluded.password, advertisement_date = excluded.advertisement_date, civic_center_id = excluded.civic_center_id, user_id = excluded.user_id, status = excluded.status, approval_status = excluded.approval_status`, [
       advertisement.id().value(),
       advertisement.description().value(),
       advertisement.email().value(),
@@ -49,6 +49,8 @@ export class SqliteAdvertisementRepository implements AdvertisementRepository {
       advertisement.date().value().toISOString(),
       advertisement.civicCenterId().value(),
       advertisement.memberId().value(),
+      advertisement.status().value(),
+      advertisement.approvalStatus().value(),
     ]);
   }
 

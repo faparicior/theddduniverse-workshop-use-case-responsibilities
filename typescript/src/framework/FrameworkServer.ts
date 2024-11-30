@@ -25,6 +25,10 @@ import {DeleteAdvertisementController} from "../advertisements/advertisement/ui/
 import {
   DeleteAdvertisementUseCase
 } from "../advertisements/advertisement/application/command/delete-advertisement/DeleteAdvertisementUseCase";
+import {ApproveAdvertisementController} from "../advertisements/advertisement/ui/http/ApproveAdvertisementController";
+import {
+  ApproveAdvertisementUseCase
+} from "../advertisements/advertisement/application/command/approve-advertisement/ApproveAdvertisementUseCase";
 
 export class FrameworkServer {
 
@@ -34,6 +38,7 @@ export class FrameworkServer {
     private renewAdvertisementController: RenewAdvertisementController,
     private signUpMemberController: SignUpMemberController,
     private deleteAdvertisementController: DeleteAdvertisementController,
+    private approveAdvertisementController: ApproveAdvertisementController,
   ) { };
 
   static async start(): Promise<FrameworkServer> {
@@ -71,12 +76,20 @@ export class FrameworkServer {
         )
     )
 
+    const approveAdvertisementController = new ApproveAdvertisementController(
+        new ApproveAdvertisementUseCase(advertisementRepository, userRepository),
+        new FrameworkSecurityService(
+            new SqliteSecurityUserRepository(connection)
+        )
+    )
+
     return new FrameworkServer(
         publishAdvertisementController,
         updateAdvertisementController,
         renewAdvertisementController,
         signUpMemberController,
         deleteAdvertisementController,
+        approveAdvertisementController,
     );
   }
 
@@ -128,25 +141,25 @@ export class FrameworkServer {
     }
 
     const path = request.path;
-    // const patterns = [
+    const patterns = [
       // { regex: /^member\/([0-9a-fA-F\-]+)\/disable$/, controller: this.disableMemberController, paramName: 'memberId' },
       // { regex: /^member\/([0-9a-fA-F\-]+)\/enable$/, controller: this.enableMemberController(), paramName: 'memberId' },
       // { regex: /^advertisements\/([0-9a-fA-F\-]+)\/disable$/, controller: this.resolver.disableAdvertisementController(), paramName: 'advertisementId' },
       // { regex: /^advertisements\/([0-9a-fA-F\-]+)\/enable$/, controller: this.resolver.enableAdvertisementController(), paramName: 'advertisementId' },
-      // { regex: /^advertisements\/([0-9a-fA-F\-]+)\/approve$/, controller: this.resolver.approveAdvertisementController(), paramName: 'advertisementId' },
-    // ];
+      { regex: /^\/advertisement\/([0-9a-fA-F\-]+)\/approve$/, controller: this.approveAdvertisementController, paramName: 'advertisementId' },
+    ];
 
-    // for (const pattern of patterns) {
-    //   const matches = path.match(pattern.regex);
-    //   if (matches) {
-    //     match = await pattern.controller.request(request, { [pattern.paramName]: matches[1] });
-    //     break;
-    //   }
-    // }
-    //
-    // if (match instanceof FrameworkResponse) {
-    //   return match;
-    // }
+    for (const pattern of patterns) {
+      const matches = path.match(pattern.regex);
+      if (matches) {
+        match = await pattern.controller.execute(request, { [pattern.paramName]: matches[1] });
+        break;
+      }
+    }
+
+    if (match instanceof FrameworkResponse) {
+      return match;
+    }
 
     return this.notFound(request);
   }
