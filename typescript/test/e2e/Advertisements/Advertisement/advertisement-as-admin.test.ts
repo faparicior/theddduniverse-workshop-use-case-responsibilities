@@ -27,7 +27,8 @@ describe("Advertisement as admin", () => {
         await connection.execute('delete from users', [])
     })
 
-    // TODO: Implement test
+    // TODO: Sign up, enable disable member
+
     it("Should approve an advertisement as admin", async () => {
         await withAdminUser()
         await withMemberUser('enabled')
