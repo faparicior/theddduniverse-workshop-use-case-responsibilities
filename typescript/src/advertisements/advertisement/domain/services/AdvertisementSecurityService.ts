@@ -9,7 +9,7 @@ import {Advertisement} from "../Advertisement";
 import {MemberUser} from "../../../user/domain/MemberUser";
 
 
-export class SecurityService {
+export class AdvertisementSecurityService {
     constructor(private userRepository: UserRepository) {}
 
     public async verifyAdminUserCanManageAdvertisement(securityUserId: UserId, advertisement: Advertisement): Promise<void> {

@@ -9,14 +9,14 @@ import {UserNotFoundException} from "../../../../user/domain/exceptions/UserNotF
 import {
   AdminWithIncorrectCivicCenterException
 } from "../../../../user/domain/exceptions/AdminWithIncorrectCivicCenterException";
-import {SecurityService} from "../../../domain/services/SecurityService";
+import {AdvertisementSecurityService} from "../../../domain/services/AdvertisementSecurityService";
 
 export class ApproveAdvertisementUseCase {
 
   constructor(
     private advertisementRepository: AdvertisementRepository,
     private userRepository: UserRepository,
-    private securityService: SecurityService,
+    private securityService: AdvertisementSecurityService,
   ) {
 
   }

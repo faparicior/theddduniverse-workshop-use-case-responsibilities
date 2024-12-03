@@ -5,13 +5,13 @@ import {DeleteAdvertisementCommand} from "./DeleteAdvertisementCommand";
 import {UserRepository} from "../../../../user/domain/UserRepository";
 import {MemberDoesNotExistsException} from "../../../../user/domain/exceptions/MemberDoesNotExistsException";
 import {UserId} from "../../../../shared/domain/value-object/UserId";
-import {SecurityService} from "../../../domain/services/SecurityService";
+import {AdvertisementSecurityService} from "../../../domain/services/AdvertisementSecurityService";
 
 export class DeleteAdvertisementUseCase {
 
   constructor(
     private advertisementRepository: AdvertisementRepository,
-    private securityService: SecurityService,
+    private securityService: AdvertisementSecurityService,
   ) {
 
   }

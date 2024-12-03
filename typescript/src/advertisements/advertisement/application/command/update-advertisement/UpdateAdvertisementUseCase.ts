@@ -10,13 +10,13 @@ import {AdvertisementAlreadyExistsException} from "../../../domain/exceptions/Ad
 import {UserRepository} from "../../../../user/domain/UserRepository";
 import {UserId} from "../../../../shared/domain/value-object/UserId";
 import {UserNotFoundException} from "../../../../user/domain/exceptions/UserNotFoundException";
-import {SecurityService} from "../../../domain/services/SecurityService";
+import {AdvertisementSecurityService} from "../../../domain/services/AdvertisementSecurityService";
 
 export class UpdateAdvertisementUseCase {
 
   constructor(
     private advertisementRepository: AdvertisementRepository,
-    private securityService: SecurityService
+    private securityService: AdvertisementSecurityService
   ) {
 
   }

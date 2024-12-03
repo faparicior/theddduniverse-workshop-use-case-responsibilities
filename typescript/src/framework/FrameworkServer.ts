@@ -41,7 +41,7 @@ import {DisableMemberController} from "../advertisements/user/ui/http/DisableMem
 import {DisableMemberUseCase} from "../advertisements/user/application/command/disable-member/DisableMemberUseCase";
 import {EnableMemberController} from "../advertisements/user/ui/http/EnableMemberController";
 import {EnableMemberUseCase} from "../advertisements/user/application/command/enable-member/EnableMemberUseCase";
-import {SecurityService} from "../advertisements/advertisement/domain/services/SecurityService";
+import {AdvertisementSecurityService} from "../advertisements/advertisement/domain/services/AdvertisementSecurityService";
 
 export class FrameworkServer {
 
@@ -62,7 +62,7 @@ export class FrameworkServer {
     const connection = await SqliteConnectionFactory.createClient();
     const advertisementRepository = new SqliteAdvertisementRepository(connection);
     const userRepository = new SqliteUserRepository(connection);
-    const securityService = new SecurityService(userRepository);
+    const securityService = new AdvertisementSecurityService(userRepository);
     const publishAdvertisementUseCase = new PublishAdvertisementUseCase(advertisementRepository, userRepository);
     const updateAdvertisementUseCase = new UpdateAdvertisementUseCase(advertisementRepository, securityService);
     const publishAdvertisementController = new PublishAdvertisementController(

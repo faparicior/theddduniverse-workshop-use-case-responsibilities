@@ -9,13 +9,13 @@ import {
   AdminWithIncorrectCivicCenterException
 } from "../../../../user/domain/exceptions/AdminWithIncorrectCivicCenterException";
 import {DisableAdvertisementCommand} from "./DisableAdvertisementCommand";
-import {SecurityService} from "../../../domain/services/SecurityService";
+import {AdvertisementSecurityService} from "../../../domain/services/AdvertisementSecurityService";
 
 export class DisableAdvertisementUseCase {
 
   constructor(
     private advertisementRepository: AdvertisementRepository,
-    private securityService: SecurityService
+    private securityService: AdvertisementSecurityService
   ) {
 
   }

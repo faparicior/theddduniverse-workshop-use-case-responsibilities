@@ -6,14 +6,14 @@ import {
     AdminWithIncorrectCivicCenterException
 } from "../../../domain/exceptions/AdminWithIncorrectCivicCenterException";
 import {MemberAlreadyExistsException} from "../../../domain/exceptions/MemberAlreadyExistsException";
-import {SecurityService} from "../../../../advertisement/domain/services/SecurityService";
+import {AdvertisementSecurityService} from "../../../../advertisement/domain/services/AdvertisementSecurityService";
 
 
 export class EnableMemberUseCase {
 
     constructor(
         private userRepository: UserRepository,
-        private securityService: SecurityService,
+        private securityService: AdvertisementSecurityService,
     ) {
 
     }
