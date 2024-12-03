@@ -8,6 +8,7 @@ import {AdvertisementId} from "../../domain/value-object/AdvertisementId";
 import {Email} from "../../../shared/domain/value-object/Email";
 import {CivicCenterId} from "../../../shared/domain/value-object/CivicCenterId";
 import {UserId} from "../../../shared/domain/value-object/UserId";
+import {ActiveAdvertisements} from "../../domain/value-object/ActiveAdvertisements";
 
 export class SqliteAdvertisementRepository implements AdvertisementRepository {
 
@@ -54,7 +55,16 @@ export class SqliteAdvertisementRepository implements AdvertisementRepository {
     ]);
   }
 
-  delete(advertisement: Advertisement): Promise<void> {
+  async delete(advertisement: Advertisement): Promise<void> {
       return this.connection.execute(`DELETE FROM advertisements WHERE id = ?`, [advertisement.id().value()])
+  }
+
+  async activeAdvertisementsByMemberId(memberId: UserId): Promise<ActiveAdvertisements> {
+    const result = await this.connection.query(`SELECT COUNT(*) as count
+                                                FROM advertisements
+                                                WHERE user_id = ?
+                                                  AND status = 'enabled'`, [memberId.value()])
+    const row = result[0] as { count: number };
+    return ActiveAdvertisements.fromInt(row.count);
   }
 }

@@ -1,5 +1,7 @@
 import { Advertisement } from "./Advertisement";
 import {AdvertisementId} from "./value-object/AdvertisementId";
+import {UserId} from "../../shared/domain/value-object/UserId";
+import {ActiveAdvertisements} from "./value-object/ActiveAdvertisements";
 
 export interface AdvertisementRepository {
 
@@ -8,4 +10,6 @@ export interface AdvertisementRepository {
   findById(id: AdvertisementId): Promise<Advertisement | null>;
 
   delete(advertisement: Advertisement): Promise<void>;
+
+  activeAdvertisementsByMemberId(memberId: UserId): Promise<ActiveAdvertisements>;
 }

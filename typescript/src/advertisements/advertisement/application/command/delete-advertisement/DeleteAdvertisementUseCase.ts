@@ -2,8 +2,6 @@ import { AdvertisementRepository } from "../../../domain/AdvertisementRepository
 import {AdvertisementId} from "../../../domain/value-object/AdvertisementId";
 import {AdvertisementNotFoundException} from "../../../domain/exceptions/AdvertisementNotFoundException";
 import {DeleteAdvertisementCommand} from "./DeleteAdvertisementCommand";
-import {UserRepository} from "../../../../user/domain/UserRepository";
-import {MemberDoesNotExistsException} from "../../../../user/domain/exceptions/MemberDoesNotExistsException";
 import {UserId} from "../../../../shared/domain/value-object/UserId";
 import {AdvertisementSecurityService} from "../../../domain/services/AdvertisementSecurityService";
 
@@ -25,8 +23,8 @@ export class DeleteAdvertisementUseCase {
       throw AdvertisementNotFoundException.withId(advertisementId.value())
     }
 
-    await this.securityService.verifyAdminUserCanManageAdvertisement(new UserId(command.securityUserId), advertisement)
+    await this.securityService.verifyMemberUserCanManageAdvertisement(new UserId(command.securityUserId), advertisement)
 
-    await this.advertisementRepository.save(advertisement)
+    await this.advertisementRepository.delete(advertisement)
   }
 }

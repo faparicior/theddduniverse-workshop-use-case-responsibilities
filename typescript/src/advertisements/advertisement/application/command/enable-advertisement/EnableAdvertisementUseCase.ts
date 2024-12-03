@@ -4,10 +4,6 @@ import {AdvertisementNotFoundException} from "../../../domain/exceptions/Adverti
 import {UserRepository} from "../../../../user/domain/UserRepository";
 import {MemberDoesNotExistsException} from "../../../../user/domain/exceptions/MemberDoesNotExistsException";
 import {UserId} from "../../../../shared/domain/value-object/UserId";
-import {UserNotFoundException} from "../../../../user/domain/exceptions/UserNotFoundException";
-import {
-  AdminWithIncorrectCivicCenterException
-} from "../../../../user/domain/exceptions/AdminWithIncorrectCivicCenterException";
 import {EnableAdvertisementCommand} from "./EnableAdvertisementCommand";
 import {AdvertisementSecurityService} from "../../../domain/services/AdvertisementSecurityService";
 
@@ -34,6 +30,12 @@ export class EnableAdvertisementUseCase {
     const member = await this.userRepository.findMemberById(advertisement.memberId())
     if (!member) {
       throw MemberDoesNotExistsException.build()
+    }
+
+    const activeAdvertisements = await this.advertisementRepository.activeAdvertisementsByMemberId(member.id());
+
+    if (activeAdvertisements.value() >= 3) {
+      throw new Error('Member has 3 active advertisements');
     }
 
     advertisement.enable()

@@ -22,8 +22,8 @@ export class PublishAdvertisementUseCase {
   }
 
   async execute(command: PublishAdvertisementCommand): Promise<void> {
-    const memberUser = await this.userRepository.findMemberById(new UserId(command.securityUserId));
-    if (!memberUser) {
+    const member = await this.userRepository.findMemberById(new UserId(command.securityUserId));
+    if (!member) {
       throw UserNotFoundException.asMember();
     }
 
@@ -31,6 +31,12 @@ export class PublishAdvertisementUseCase {
 
     if(await this.advertisementRepository.findById(advertisementId)) {
       throw AdvertisementAlreadyExistsException.withId(advertisementId.value())
+    }
+
+    const activeAdvertisements = await this.advertisementRepository.activeAdvertisementsByMemberId(member.id());
+
+    if (activeAdvertisements.value() >= 3) {
+      throw new Error('Member has 3 active advertisements');
     }
 
     const advertisement = new Advertisement(

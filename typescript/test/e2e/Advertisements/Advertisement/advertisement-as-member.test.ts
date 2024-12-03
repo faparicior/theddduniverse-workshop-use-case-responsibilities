@@ -190,7 +190,7 @@ describe("Advertisement as member", () => {
 
         const dbData = await connection.query("SELECT * FROM advertisements") as any[]
 
-        expect(dbData.length).toBe(1)
+        expect(dbData.length).toBe(0)
     })
 
     it("Should not change an advertisement with incorrect password", async () => {
