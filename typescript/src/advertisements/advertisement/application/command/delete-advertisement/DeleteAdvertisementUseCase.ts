@@ -5,12 +5,13 @@ import {DeleteAdvertisementCommand} from "./DeleteAdvertisementCommand";
 import {UserRepository} from "../../../../user/domain/UserRepository";
 import {MemberDoesNotExistsException} from "../../../../user/domain/exceptions/MemberDoesNotExistsException";
 import {UserId} from "../../../../shared/domain/value-object/UserId";
+import {SecurityService} from "../../../domain/services/SecurityService";
 
 export class DeleteAdvertisementUseCase {
 
   constructor(
     private advertisementRepository: AdvertisementRepository,
-    private userRepository: UserRepository,
+    private securityService: SecurityService,
   ) {
 
   }
@@ -24,10 +25,7 @@ export class DeleteAdvertisementUseCase {
       throw AdvertisementNotFoundException.withId(advertisementId.value())
     }
 
-    const user = await this.userRepository.findMemberById(new UserId(command.securityUserId))
-    if (!user) {
-      throw MemberDoesNotExistsException.build()
-    }
+    await this.securityService.verifyAdminUserCanManageAdvertisement(new UserId(command.securityUserId), advertisement)
 
     await this.advertisementRepository.save(advertisement)
   }

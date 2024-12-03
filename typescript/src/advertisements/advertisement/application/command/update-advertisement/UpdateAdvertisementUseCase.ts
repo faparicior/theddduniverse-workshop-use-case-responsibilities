@@ -10,28 +10,26 @@ import {AdvertisementAlreadyExistsException} from "../../../domain/exceptions/Ad
 import {UserRepository} from "../../../../user/domain/UserRepository";
 import {UserId} from "../../../../shared/domain/value-object/UserId";
 import {UserNotFoundException} from "../../../../user/domain/exceptions/UserNotFoundException";
+import {SecurityService} from "../../../domain/services/SecurityService";
 
 export class UpdateAdvertisementUseCase {
 
   constructor(
     private advertisementRepository: AdvertisementRepository,
-    private userRepository: UserRepository,
+    private securityService: SecurityService
   ) {
 
   }
 
   async execute(command: UpdateAdvertisementCommand): Promise<void> {
-    const memberUser = await this.userRepository.findMemberById(new UserId(command.securityUserId));
-    if (!memberUser) {
-      throw UserNotFoundException.asMember();
-    }
-
     const advertisementId = new AdvertisementId(command.id)
     const advertisement = await this.advertisementRepository.findById(advertisementId)
 
     if (!advertisement) {
       throw AdvertisementNotFoundException.withId(advertisementId.value())
     }
+
+    await this.securityService.verifyMemberUserCanManageAdvertisement(new UserId(command.securityUserId), advertisement)
 
     if (!await advertisement.password().isValid(command.password)) {
       throw InvalidPasswordException.build()

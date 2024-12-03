@@ -9,22 +9,19 @@ import {UserNotFoundException} from "../../../../user/domain/exceptions/UserNotF
 import {
   AdminWithIncorrectCivicCenterException
 } from "../../../../user/domain/exceptions/AdminWithIncorrectCivicCenterException";
+import {SecurityService} from "../../../domain/services/SecurityService";
 
 export class ApproveAdvertisementUseCase {
 
   constructor(
     private advertisementRepository: AdvertisementRepository,
     private userRepository: UserRepository,
+    private securityService: SecurityService,
   ) {
 
   }
 
   async execute(command: ApproveAdvertisementCommand): Promise<void> {
-    const admin = await this.userRepository.findAdminById(new UserId(command.securityUserId))
-    if (!admin) {
-      throw UserNotFoundException.asAdmin()
-    }
-
     const advertisementId = new AdvertisementId(command.advertisementId)
     const advertisement = await this.advertisementRepository.findById(advertisementId)
 
@@ -32,13 +29,11 @@ export class ApproveAdvertisementUseCase {
       throw AdvertisementNotFoundException.withId(advertisementId.value())
     }
 
+    await this.securityService.verifyAdminUserCanManageAdvertisement(new UserId(command.securityUserId), advertisement)
+
     const member = await this.userRepository.findMemberById(advertisement.memberId())
     if (!member) {
       throw MemberDoesNotExistsException.build()
-    }
-
-    if (!admin.civicCenterId().equals(member.civicCenterId())) {
-      throw AdminWithIncorrectCivicCenterException.differentCivicCenterFromMember()
     }
 
     advertisement.approve()

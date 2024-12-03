@@ -6,30 +6,25 @@ import {
     AdminWithIncorrectCivicCenterException
 } from "../../../domain/exceptions/AdminWithIncorrectCivicCenterException";
 import {MemberAlreadyExistsException} from "../../../domain/exceptions/MemberAlreadyExistsException";
+import {SecurityService} from "../../../../advertisement/domain/services/SecurityService";
 
 
 export class DisableMemberUseCase {
 
     constructor(
         private userRepository: UserRepository,
+        private securityService: SecurityService,
     ) {
 
     }
 
     async execute(command: DisableMemberCommand): Promise<void> {
-        const adminUser = await this.userRepository.findAdminById(new UserId(command.securityUserId));
-        if (!adminUser) {
-            throw UserNotFoundException.asAdmin();
-        }
-
         const member = await this.userRepository.findMemberById(new UserId(command.memberId))
         if (!member) {
             throw MemberAlreadyExistsException.build();
         }
 
-        if (!adminUser.civicCenterId().equals(member.civicCenterId())) {
-            throw AdminWithIncorrectCivicCenterException.differentCivicCenterFromMember();
-        }
+        await this.securityService.verifyAdminUserCanManageMemberUser(new UserId(command.securityUserId), member)
 
         member.disable();
 

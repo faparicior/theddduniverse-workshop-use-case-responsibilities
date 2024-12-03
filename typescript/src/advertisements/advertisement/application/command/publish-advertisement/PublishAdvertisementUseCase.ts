@@ -22,7 +22,6 @@ export class PublishAdvertisementUseCase {
   }
 
   async execute(command: PublishAdvertisementCommand): Promise<void> {
-
     const memberUser = await this.userRepository.findMemberById(new UserId(command.securityUserId));
     if (!memberUser) {
       throw UserNotFoundException.asMember();

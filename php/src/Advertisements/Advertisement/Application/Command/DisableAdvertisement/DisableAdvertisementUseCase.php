@@ -28,19 +28,10 @@ final class DisableAdvertisementUseCase
             throw AdvertisementNotFoundException::withId($command->advertisementId);
         }
 
-        if ('admin' === $command->securityUserRole) {
-            $this->securityService->verifyAdminUserCanManageAdvertisement(
-                new UserId($command->securityUserId),
-                $advertisement,
-            );
-        }
-
-        if ('user' === $command->securityUserRole) {
-            $this->securityService->verifyMemberUserCanManageAdvertisement(
-                new UserId($command->securityUserId),
-                $advertisement,
-            );
-        }
+        $this->securityService->verifyAdminUserCanManageAdvertisement(
+            new UserId($command->securityUserId),
+            $advertisement,
+        );
 
         $advertisement->disable();
 

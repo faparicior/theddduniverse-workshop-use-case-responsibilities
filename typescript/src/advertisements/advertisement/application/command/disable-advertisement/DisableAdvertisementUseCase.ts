@@ -9,21 +9,18 @@ import {
   AdminWithIncorrectCivicCenterException
 } from "../../../../user/domain/exceptions/AdminWithIncorrectCivicCenterException";
 import {DisableAdvertisementCommand} from "./DisableAdvertisementCommand";
+import {SecurityService} from "../../../domain/services/SecurityService";
 
 export class DisableAdvertisementUseCase {
 
   constructor(
     private advertisementRepository: AdvertisementRepository,
-    private userRepository: UserRepository,
+    private securityService: SecurityService
   ) {
 
   }
 
   async execute(command: DisableAdvertisementCommand): Promise<void> {
-    const admin = await this.userRepository.findAdminById(new UserId(command.securityUserId))
-    if (!admin) {
-      throw UserNotFoundException.asAdmin()
-    }
 
     const advertisementId = new AdvertisementId(command.advertisementId)
     const advertisement = await this.advertisementRepository.findById(advertisementId)
@@ -32,14 +29,7 @@ export class DisableAdvertisementUseCase {
       throw AdvertisementNotFoundException.withId(advertisementId.value())
     }
 
-    const member = await this.userRepository.findMemberById(advertisement.memberId())
-    if (!member) {
-      throw MemberDoesNotExistsException.build()
-    }
-
-    if (!admin.civicCenterId().equals(member.civicCenterId())) {
-      throw AdminWithIncorrectCivicCenterException.differentCivicCenterFromMember()
-    }
+    await this.securityService.verifyAdminUserCanManageAdvertisement(new UserId(command.securityUserId), advertisement)
 
     advertisement.disable()
 

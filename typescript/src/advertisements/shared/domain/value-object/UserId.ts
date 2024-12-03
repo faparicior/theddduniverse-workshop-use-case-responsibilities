@@ -1,3 +1,5 @@
+import {InvalidUniqueIdentifierException} from "./CivicCenterId";
+
 export class UserId {
     private readonly _value: string;
 
@@ -16,15 +18,8 @@ export class UserId {
         const uuidRegex = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;
         return uuidRegex.test(value);
     }
-}
 
-export class InvalidUniqueIdentifierException extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "InvalidUniqueIdentifierException";
-    }
-
-    public static withId(id: string): InvalidUniqueIdentifierException {
-        return new InvalidUniqueIdentifierException(`Invalid ID: ${id}`);
+    public equals(userId: UserId): boolean {
+        return this._value === userId._value;
     }
 }
