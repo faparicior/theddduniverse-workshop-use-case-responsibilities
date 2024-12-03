@@ -6,6 +6,7 @@ import {MemberDoesNotExistsException} from "../../../../user/domain/exceptions/M
 import {UserId} from "../../../../shared/domain/value-object/UserId";
 import {ApproveAdvertisementCommand} from "./ApproveAdvertisementCommand";
 import {SecurityService} from "../../../domain/services/SecurityService";
+import {TransactionManager} from "../../../../../framework/database/TransactionManager";
 
 export class ApproveAdvertisementUseCase {
 
@@ -13,27 +14,36 @@ export class ApproveAdvertisementUseCase {
     private advertisementRepository: AdvertisementRepository,
     private userRepository: UserRepository,
     private securityService: SecurityService,
+    private transactionManager: TransactionManager,
   ) {
 
   }
 
   async execute(command: ApproveAdvertisementCommand): Promise<void> {
-    const advertisementId = new AdvertisementId(command.advertisementId)
-    const advertisement = await this.advertisementRepository.findById(advertisementId)
+    this.transactionManager.beginTransaction()
 
-    if (!advertisement) {
-      throw AdvertisementNotFoundException.withId(advertisementId.value())
+    try {
+      const advertisementId = new AdvertisementId(command.advertisementId)
+      const advertisement = await this.advertisementRepository.findById(advertisementId)
+
+      if (!advertisement) {
+        throw AdvertisementNotFoundException.withId(advertisementId.value())
+      }
+
+      await this.securityService.verifyAdminUserCanManageAdvertisement(new UserId(command.securityUserId), advertisement)
+
+      const member = await this.userRepository.findMemberById(advertisement.memberId())
+      if (!member) {
+        throw MemberDoesNotExistsException.build()
+      }
+
+      advertisement.approve()
+
+      await this.advertisementRepository.save(advertisement)
+      await this.transactionManager.commit();
+    } catch (error) {
+      await this.transactionManager.rollback();
+      throw error
     }
-
-    await this.securityService.verifyAdminUserCanManageAdvertisement(new UserId(command.securityUserId), advertisement)
-
-    const member = await this.userRepository.findMemberById(advertisement.memberId())
-    if (!member) {
-      throw MemberDoesNotExistsException.build()
-    }
-
-    advertisement.approve()
-
-    await this.advertisementRepository.save(advertisement)
   }
 }

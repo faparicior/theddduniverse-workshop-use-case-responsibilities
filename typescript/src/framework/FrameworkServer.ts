@@ -42,6 +42,7 @@ import {DisableMemberUseCase} from "../advertisements/user/application/command/d
 import {EnableMemberController} from "../advertisements/user/ui/http/EnableMemberController";
 import {EnableMemberUseCase} from "../advertisements/user/application/command/enable-member/EnableMemberUseCase";
 import {SecurityService} from "../advertisements/advertisement/domain/services/SecurityService";
+import {SqliteTransactionManager} from "./database/SqliteTransactionManager";
 
 export class FrameworkServer {
 
@@ -63,8 +64,9 @@ export class FrameworkServer {
     const advertisementRepository = new SqliteAdvertisementRepository(connection);
     const userRepository = new SqliteUserRepository(connection);
     const securityService = new SecurityService(userRepository);
-    const publishAdvertisementUseCase = new PublishAdvertisementUseCase(advertisementRepository, userRepository);
-    const updateAdvertisementUseCase = new UpdateAdvertisementUseCase(advertisementRepository, securityService);
+    const transactionManager = new SqliteTransactionManager(connection);
+    const publishAdvertisementUseCase = new PublishAdvertisementUseCase(advertisementRepository, userRepository, transactionManager);
+    const updateAdvertisementUseCase = new UpdateAdvertisementUseCase(advertisementRepository, securityService, transactionManager);
     const publishAdvertisementController = new PublishAdvertisementController(
       publishAdvertisementUseCase,
       new FrameworkSecurityService(
@@ -77,53 +79,53 @@ export class FrameworkServer {
             new SqliteSecurityUserRepository(connection)
         )
     )
-    const renewAdvertisementUseCase = new RenewAdvertisementUseCase(advertisementRepository);
+    const renewAdvertisementUseCase = new RenewAdvertisementUseCase(advertisementRepository, transactionManager);
     const renewAdvertisementController = new RenewAdvertisementController(renewAdvertisementUseCase)
 
     const signUpMemberController = new SignUpMemberController(
-        new SignUpMemberUseCase(userRepository),
+        new SignUpMemberUseCase(userRepository, transactionManager),
         new FrameworkSecurityService(
             new SqliteSecurityUserRepository(connection)
         )
     )
 
     const deleteAdvertisementController = new DeleteAdvertisementController(
-        new DeleteAdvertisementUseCase(advertisementRepository, securityService),
+        new DeleteAdvertisementUseCase(advertisementRepository, securityService, transactionManager),
         new FrameworkSecurityService(
             new SqliteSecurityUserRepository(connection)
         )
     )
 
     const approveAdvertisementController = new ApproveAdvertisementController(
-        new ApproveAdvertisementUseCase(advertisementRepository, userRepository, securityService),
+        new ApproveAdvertisementUseCase(advertisementRepository, userRepository, securityService, transactionManager),
         new FrameworkSecurityService(
             new SqliteSecurityUserRepository(connection)
         )
     )
 
     const disableAdvertisementController = new DisableAdvertisementController(
-        new DisableAdvertisementUseCase(advertisementRepository, securityService),
+        new DisableAdvertisementUseCase(advertisementRepository, securityService, transactionManager),
         new FrameworkSecurityService(
             new SqliteSecurityUserRepository(connection)
         )
     )
 
     const enableAdvertisementController = new EnableAdvertisementController(
-        new EnableAdvertisementUseCase(advertisementRepository, userRepository, securityService),
+        new EnableAdvertisementUseCase(advertisementRepository, userRepository, securityService, transactionManager),
         new FrameworkSecurityService(
             new SqliteSecurityUserRepository(connection)
         )
     )
 
     const disableMemberController = new DisableMemberController(
-        new DisableMemberUseCase(userRepository, securityService),
+        new DisableMemberUseCase(userRepository, securityService, transactionManager),
         new FrameworkSecurityService(
             new SqliteSecurityUserRepository(connection)
         )
     )
 
     const enableMemberController = new EnableMemberController(
-        new EnableMemberUseCase(userRepository, securityService),
+        new EnableMemberUseCase(userRepository, securityService, transactionManager),
         new FrameworkSecurityService(
             new SqliteSecurityUserRepository(connection)
         )

@@ -8,36 +8,46 @@ import {AdvertisementNotFoundException} from "../../../domain/exceptions/Adverti
 import {Email} from "../../../../shared/domain/value-object/Email";
 import {UserId} from "../../../../shared/domain/value-object/UserId";
 import {SecurityService} from "../../../domain/services/SecurityService";
+import {TransactionManager} from "../../../../../framework/database/TransactionManager";
 
 export class UpdateAdvertisementUseCase {
 
   constructor(
     private advertisementRepository: AdvertisementRepository,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private transactionManager: TransactionManager,
   ) {
 
   }
 
   async execute(command: UpdateAdvertisementCommand): Promise<void> {
-    const advertisementId = new AdvertisementId(command.id)
-    const advertisement = await this.advertisementRepository.findById(advertisementId)
+    await this.transactionManager.beginTransaction()
 
-    if (!advertisement) {
-      throw AdvertisementNotFoundException.withId(advertisementId.value())
+    try {
+      const advertisementId = new AdvertisementId(command.id)
+      const advertisement = await this.advertisementRepository.findById(advertisementId)
+
+      if (!advertisement) {
+        throw AdvertisementNotFoundException.withId(advertisementId.value())
+      }
+
+      await this.securityService.verifyMemberUserCanManageAdvertisement(new UserId(command.securityUserId), advertisement)
+
+      if (!await advertisement.password().isValid(command.password)) {
+        throw InvalidPasswordException.build()
+      }
+
+      advertisement.update(
+          new Description(command.description),
+          new Email(command.email),
+          await Password.fromPlainPassword(command.password)
+      )
+
+      await this.advertisementRepository.save(advertisement)
+      await this.transactionManager.commit();
+    } catch (error) {
+      await this.transactionManager.rollback();
+      throw error
     }
-
-    await this.securityService.verifyMemberUserCanManageAdvertisement(new UserId(command.securityUserId), advertisement)
-
-    if (!await advertisement.password().isValid(command.password)) {
-      throw InvalidPasswordException.build()
-    }
-
-    advertisement.update(
-        new Description(command.description),
-        new Email(command.email),
-        await Password.fromPlainPassword(command.password)
-    )
-
-    await this.advertisementRepository.save(advertisement)
   }
 }
