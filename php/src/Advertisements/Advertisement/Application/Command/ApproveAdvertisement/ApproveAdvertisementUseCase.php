@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Demo\App\Advertisements\Advertisement\Application\Command\ApproveAdvertisement;
 
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
-use Demo\App\Advertisements\Advertisement\Domain\Services\SecurityService;
+use Demo\App\Advertisements\Advertisement\Domain\Services\AdvertisementSecurityService;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Framework\Database\TransactionManager;
@@ -13,9 +13,9 @@ use Exception;
 final class ApproveAdvertisementUseCase
 {
     public function __construct(
-        private AdvertisementRepository $advertisementRepository,
-        private SecurityService $securityService,
-        private TransactionManager $transactionManager,
+        private AdvertisementRepository      $advertisementRepository,
+        private AdvertisementSecurityService $securityService,
+        private TransactionManager           $transactionManager,
     ) {}
 
     /**

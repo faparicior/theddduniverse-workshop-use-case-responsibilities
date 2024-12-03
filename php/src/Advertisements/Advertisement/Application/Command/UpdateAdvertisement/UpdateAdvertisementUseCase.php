@@ -5,7 +5,7 @@ namespace Demo\App\Advertisements\Advertisement\Application\Command\UpdateAdvert
 
 use Demo\App\Advertisements\Advertisement\Application\Exceptions\InvalidPasswordException;
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
-use Demo\App\Advertisements\Advertisement\Domain\Services\SecurityService;
+use Demo\App\Advertisements\Advertisement\Domain\Services\AdvertisementSecurityService;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\Description;
 use Demo\App\Advertisements\Shared\ValueObjects\Email;
@@ -17,9 +17,9 @@ use Exception;
 final class UpdateAdvertisementUseCase
 {
     public function __construct(
-        private AdvertisementRepository $advertisementRepository,
-        private SecurityService $securityService,
-        private TransactionManager $transactionManager,
+        private AdvertisementRepository      $advertisementRepository,
+        private AdvertisementSecurityService $securityService,
+        private TransactionManager           $transactionManager,
     ) {}
 
     /**

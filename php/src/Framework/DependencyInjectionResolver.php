@@ -11,7 +11,7 @@ use Demo\App\Advertisements\Advertisement\Application\Command\PublishAdvertiseme
 use Demo\App\Advertisements\Advertisement\Application\Command\RenewAdvertisement\RenewAdvertisementUseCase;
 use Demo\App\Advertisements\Advertisement\Application\Command\UpdateAdvertisement\UpdateAdvertisementUseCase;
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
-use Demo\App\Advertisements\Advertisement\Domain\Services\SecurityService;
+use Demo\App\Advertisements\Advertisement\Domain\Services\AdvertisementSecurityService;
 use Demo\App\Advertisements\Advertisement\Infrastructure\Persistence\SqliteAdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\UI\Http\ApproveAdvertisementController;
 use Demo\App\Advertisements\Advertisement\UI\Http\DeleteAdvertisementController;
@@ -75,9 +75,9 @@ class DependencyInjectionResolver
         return new DeleteAdvertisementController($this->deleteAdvertisementUseCase(), $this->frameworkSecurityService());
     }
 
-    public function securityService(): SecurityService
+    public function securityService(): AdvertisementSecurityService
     {
-        return new SecurityService($this->userRepository());
+        return new AdvertisementSecurityService($this->userRepository());
     }
 
     public function approveAdvertisementController(): ApproveAdvertisementController
