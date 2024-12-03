@@ -5,7 +5,7 @@ namespace Demo\App\Advertisements\Advertisement\Application\Command\EnableAdvert
 
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementNotFoundException;
-use Demo\App\Advertisements\Advertisement\Domain\Services\SecurityService;
+use Demo\App\Advertisements\Advertisement\Domain\Services\AdvertisementSecurityService;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\MemberDoesNotExistsException;
@@ -15,9 +15,9 @@ use Exception;
 final class EnableAdvertisementUseCase
 {
     public function __construct(
-        private AdvertisementRepository $advertisementRepository,
-        private UserRepository $userRepository,
-        private SecurityService $securityService,
+        private AdvertisementRepository      $advertisementRepository,
+        private UserRepository               $userRepository,
+        private AdvertisementSecurityService $securityService,
     ) {}
 
     /**

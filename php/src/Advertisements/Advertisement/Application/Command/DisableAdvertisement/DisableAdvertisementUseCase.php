@@ -5,7 +5,7 @@ namespace Demo\App\Advertisements\Advertisement\Application\Command\DisableAdver
 
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementNotFoundException;
-use Demo\App\Advertisements\Advertisement\Domain\Services\SecurityService;
+use Demo\App\Advertisements\Advertisement\Domain\Services\AdvertisementSecurityService;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
 use Demo\App\Advertisements\Shared\ValueObjects\UserId;
 use Exception;
@@ -13,8 +13,8 @@ use Exception;
 final class DisableAdvertisementUseCase
 {
     public function __construct(
-        private AdvertisementRepository $advertisementRepository,
-        private SecurityService $securityService,
+        private AdvertisementRepository      $advertisementRepository,
+        private AdvertisementSecurityService $securityService,
     ) {}
 
     /**

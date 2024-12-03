@@ -10,7 +10,7 @@ use Demo\App\Advertisements\User\Domain\Exceptions\UnauthorizedUserException;
 use Demo\App\Advertisements\User\Domain\Exceptions\UserNotFoundException;
 use Demo\App\Advertisements\User\Domain\UserRepository;
 
-class SecurityService
+class AdvertisementSecurityService
 {
     public function __construct(
         private UserRepository $userRepository,
