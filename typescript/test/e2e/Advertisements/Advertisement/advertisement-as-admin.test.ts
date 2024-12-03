@@ -88,6 +88,69 @@ describe("Advertisement as admin", () => {
         expect(dbData.length).toBe(1)
         expect(dbData[0].status).toBe('disabled')
     })
+
+    it("Should signup a member as admin", async () => {
+        await withAdminUser()
+
+        const request = new FrameworkRequest(Method.POST, `/member/signup`,
+            {
+                memberId: MEMBER_ID,
+                email: EMAIL,
+                password: PASSWORD,
+                memberNumber: '123456',
+                civicCenterId: CIVIC_CENTER_ID
+            },
+            { 'userSession': ADMIN_ID }
+        )
+
+        const response = await server.route(request)
+
+        expect(response.statusCode).toBe(201)
+
+        const dbData = await connection.query(`SELECT * FROM users where id = '${MEMBER_ID}'`) as any[]
+
+        expect(dbData.length).toBe(1)
+        expect(dbData[0].member_number).toBe('123456')
+    })
+
+    it("Should disable a member as admin", async () => {
+        await withAdminUser()
+        await withMemberUser('enabled')
+
+        const request = new FrameworkRequest(Method.PUT, `/member/${MEMBER_ID}/disable`,
+            {},
+            { 'userSession': ADMIN_ID }
+        )
+
+        const response = await server.route(request)
+
+        expect(response.statusCode).toBe(200)
+
+        const dbData = await connection.query(`SELECT * FROM users where id = '${MEMBER_ID}'`) as any[]
+
+        expect(dbData.length).toBe(1)
+        expect(dbData[0].status).toBe('disabled')
+    })
+
+    it("Should enable a member as admin", async () => {
+        await withAdminUser()
+        await withMemberUser('disabled')
+
+        const request = new FrameworkRequest(Method.PUT, `/member/${MEMBER_ID}/enable`,
+            {},
+            { 'userSession': ADMIN_ID }
+        )
+
+        const response = await server.route(request)
+
+        expect(response.statusCode).toBe(200)
+
+        const dbData = await connection.query(`SELECT * FROM users where id = '${MEMBER_ID}'`) as any[]
+
+        expect(dbData.length).toBe(1)
+        expect(dbData[0].status).toBe('enabled')
+    })
+
 })
 
 function errorCommandResponse(code: number = 400, message: string = '') {

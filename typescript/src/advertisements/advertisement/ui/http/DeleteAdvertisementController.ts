@@ -1,7 +1,5 @@
 import { FrameworkRequest } from '../../../../framework/FrameworkRequest';
 import { FrameworkResponse } from '../../../../framework/FrameworkResponse';
-import {RenewAdvertisementUseCase} from "../../application/command/renew-advertisement/RenewAdvertisementUseCase";
-import {RenewAdvertisementCommand} from "../../application/command/renew-advertisement/RenewAdvertisementCommand";
 import {CommonController} from "../../../../common/ui/CommonController";
 import {BoundedContextException} from "../../../../common/exceptions/BoundedContextException";
 import {DeleteAdvertisementUseCase} from "../../application/command/delete-advertisement/DeleteAdvertisementUseCase";
@@ -26,7 +24,7 @@ export class DeleteAdvertisementController extends CommonController {
   }
   async execute(req: AddAdvertisementRequest, params: Record<string, any> = {}): Promise<FrameworkResponse> {
     try {
-      let user = await this.frameworkSecurityService.getSecurityUserFromRequest(req)
+      const user = await this.frameworkSecurityService.getSecurityUserFromRequest(req)
 
       if (user === null || user.role() !== 'member') {
         return this.processUnauthorizedResponse();

@@ -25,7 +25,7 @@ export class PublishAdvertisementController extends CommonController {
   async execute(req: AddAdvertisementRequest): Promise<FrameworkResponse> {
 
     try {
-      let user = await this.frameworkSecurityService.getSecurityUserFromRequest(req)
+      const user = await this.frameworkSecurityService.getSecurityUserFromRequest(req)
 
       if (user === null || user.role() !== 'member') {
         return this.processUnauthorizedResponse();

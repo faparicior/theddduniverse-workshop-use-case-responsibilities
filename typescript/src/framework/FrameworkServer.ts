@@ -37,6 +37,10 @@ import {
 import {
   EnableAdvertisementUseCase
 } from "../advertisements/advertisement/application/command/enable-advertisement/EnableAdvertisementUseCase";
+import {DisableMemberController} from "../advertisements/user/ui/http/DisableMemberController";
+import {DisableMemberUseCase} from "../advertisements/user/application/command/disable-member/DisableMemberUseCase";
+import {EnableMemberController} from "../advertisements/user/ui/http/EnableMemberController";
+import {EnableMemberUseCase} from "../advertisements/user/application/command/enable-member/EnableMemberUseCase";
 
 export class FrameworkServer {
 
@@ -49,6 +53,8 @@ export class FrameworkServer {
     private approveAdvertisementController: ApproveAdvertisementController,
     private disableAdvertisementController: DisableAdvertisementController,
     private enableAdvertisementController: EnableAdvertisementController,
+    private disableMemberController: DisableMemberController,
+    private enableMemberController: EnableMemberController,
   ) { };
 
   static async start(): Promise<FrameworkServer> {
@@ -107,6 +113,20 @@ export class FrameworkServer {
         )
     )
 
+    const disableMemberController = new DisableMemberController(
+        new DisableMemberUseCase(userRepository),
+        new FrameworkSecurityService(
+            new SqliteSecurityUserRepository(connection)
+        )
+    )
+
+    const enableMemberController = new EnableMemberController(
+        new EnableMemberUseCase(userRepository),
+        new FrameworkSecurityService(
+            new SqliteSecurityUserRepository(connection)
+        )
+    )
+
     return new FrameworkServer(
         publishAdvertisementController,
         updateAdvertisementController,
@@ -116,6 +136,8 @@ export class FrameworkServer {
         approveAdvertisementController,
         disableAdvertisementController,
         enableAdvertisementController,
+        disableMemberController,
+        enableMemberController,
     );
   }
 
@@ -144,7 +166,7 @@ export class FrameworkServer {
     switch (request.path) {
       case '/advertisement':
         return await this.publishAdvertisementController.execute(request);
-      case 'member/signup':
+      case '/member/signup':
         return await this.signUpMemberController.execute(request);
       default:
         return this.notFound(request);
@@ -168,8 +190,8 @@ export class FrameworkServer {
 
     const path = request.path;
     const patterns = [
-      // { regex: /^member\/([0-9a-fA-F\-]+)\/disable$/, controller: this.disableMemberController, paramName: 'memberId' },
-      // { regex: /^member\/([0-9a-fA-F\-]+)\/enable$/, controller: this.enableMemberController(), paramName: 'memberId' },
+      { regex: /^\/member\/([0-9a-fA-F\-]+)\/disable$/, controller: this.disableMemberController, paramName: 'memberId' },
+      { regex: /^\/member\/([0-9a-fA-F\-]+)\/enable$/, controller: this.enableMemberController, paramName: 'memberId' },
       { regex: /^\/advertisement\/([0-9a-fA-F\-]+)\/disable$/, controller: this.disableAdvertisementController, paramName: 'advertisementId' },
       { regex: /^\/advertisement\/([0-9a-fA-F\-]+)\/enable$/, controller: this.enableAdvertisementController, paramName: 'advertisementId' },
       { regex: /^\/advertisement\/([0-9a-fA-F\-]+)\/approve$/, controller: this.approveAdvertisementController, paramName: 'advertisementId' },

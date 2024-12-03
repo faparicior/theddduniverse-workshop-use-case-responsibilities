@@ -24,7 +24,7 @@ export class DisableAdvertisementController extends CommonController {
   }
   async execute(req: AddAdvertisementRequest, params: Record<string, any> = {}): Promise<FrameworkResponse> {
     try {
-      let user = await this.frameworkSecurityService.getSecurityUserFromRequest(req)
+      const user = await this.frameworkSecurityService.getSecurityUserFromRequest(req)
 
       if (user === null || user.role() !== 'admin') {
         return this.processUnauthorizedResponse();

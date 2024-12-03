@@ -3,8 +3,8 @@ import { FrameworkResponse } from '../../../../framework/FrameworkResponse';
 import {CommonController} from "../../../../common/ui/CommonController";
 import {BoundedContextException} from "../../../../common/exceptions/BoundedContextException";
 import {FrameworkSecurityService} from "../../../../framework/security-user/FrameworkSecurityService";
-import {SignUpMemberUseCase} from "../../application/command/sign-up-member/SignUpMemberUseCase";
-import {SignUpMemberCommand} from "../../application/command/sign-up-member/SignUpMemberCommand";
+import {DisableMemberCommand} from "../../application/command/disable-member/DisableMemberCommand";
+import {DisableMemberUseCase} from "../../application/command/disable-member/DisableMemberUseCase";
 
 type AddAdvertisementRequest = FrameworkRequest & {
   body: {
@@ -14,36 +14,32 @@ type AddAdvertisementRequest = FrameworkRequest & {
   };
 };
 
-export class SignUpMemberController extends CommonController {
+export class DisableMemberController extends CommonController {
 
   constructor(
-    private signUpMemberUseCase: SignUpMemberUseCase,
+    private disableMemberUseCase: DisableMemberUseCase,
     private frameworkSecurityService: FrameworkSecurityService,
 ) {
     super();
   }
-  async execute(req: AddAdvertisementRequest): Promise<FrameworkResponse> {
+  async execute(req: AddAdvertisementRequest, params: Record<string, any> = {}): Promise<FrameworkResponse> {
 
     try {
-      let user = await this.frameworkSecurityService.getSecurityUserFromRequest(req)
+      const user = await this.frameworkSecurityService.getSecurityUserFromRequest(req)
 
       if (user === null || user.role() !== 'admin') {
         return this.processUnauthorizedResponse();
       }
 
-      const command = new SignUpMemberCommand(
+      const command = new DisableMemberCommand(
         user.id(),
         user.role(),
-        req.body.memberId,
-        req.body.email,
-        req.body.password,
-        req.body.memberNumber,
-        req.body.civicCenterId,
+        params.memberId,
       )
 
-      await this.signUpMemberUseCase.execute(command)
+      await this.disableMemberUseCase.execute(command)
 
-      return this.processSuccessfulCreateCommand()
+      return this.processSuccessfulCommand()
     } catch (error: any) {
       switch (true) {
         case error instanceof BoundedContextException:
