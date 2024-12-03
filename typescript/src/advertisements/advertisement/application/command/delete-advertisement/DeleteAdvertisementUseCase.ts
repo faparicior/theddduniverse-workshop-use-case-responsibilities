@@ -29,7 +29,7 @@ export class DeleteAdvertisementUseCase {
 
       await this.securityService.verifyMemberUserCanManageAdvertisement(new UserId(command.securityUserId), advertisement)
 
-      await this.advertisementRepository.save(advertisement)
+      await this.advertisementRepository.delete(advertisement)
       await this.transactionManager.commit();
     } catch (error) {
       await this.transactionManager.rollback();
