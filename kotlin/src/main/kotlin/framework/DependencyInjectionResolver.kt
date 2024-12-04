@@ -1,6 +1,7 @@
 package framework
 
 import advertisements.advertisement.application.command.approveadvertisement.ApproveAdvertisementUseCase
+import advertisements.advertisement.application.command.deleteadvertisement.DeleteAdvertisementUseCase
 import advertisements.advertisement.application.command.disableadvertisement.DisableAdvertisementUseCase
 import advertisements.advertisement.application.command.enableadvertisement.EnableAdvertisementUseCase
 import advertisements.advertisement.application.command.publishadvertisement.PublishAdvertisementUseCase
@@ -104,7 +105,13 @@ class DependencyInjectionResolver {
         return SqliteConnection.getInstance()
     }
 
-    fun deleteAdvertisementController(): Any{
-        TODO("Not yet implemented")
+    fun deleteAdvertisementController(): DeleteAdvertisementController {
+        return DeleteAdvertisementController(
+            DeleteAdvertisementUseCase(
+                this.advertisementRepository(),
+                this.userRepository(),
+            ),
+            this.securityService()
+        )
     }
 }

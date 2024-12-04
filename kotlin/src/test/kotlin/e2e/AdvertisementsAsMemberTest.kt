@@ -47,7 +47,7 @@ class AdvertisementsAsMemberTest {
             val result = server.route(
                 FrameworkRequest(
                     FrameworkRequest.METHOD_POST,
-                    "advertisement",
+                    "advertisements",
                     mapOf(
                         "id" to ID,
                         "description" to DESCRIPTION,
@@ -85,7 +85,7 @@ class AdvertisementsAsMemberTest {
                 val result = server.route(
                     FrameworkRequest(
                         FrameworkRequest.METHOD_POST,
-                        "advertisement",
+                        "advertisements",
                         mapOf(
                             "id" to ID,
                             "description" to DESCRIPTION,
@@ -121,7 +121,7 @@ class AdvertisementsAsMemberTest {
                 val result = server.route(
                     FrameworkRequest(
                         FrameworkRequest.METHOD_PUT,
-                        "advertisement/$ID",
+                        "advertisements/$ID",
                         mapOf(
                             "id" to ID,
                             "description" to NEW_DESCRIPTION,
@@ -156,6 +156,33 @@ class AdvertisementsAsMemberTest {
     }
 
     @Test
+    fun `should delete an advertisement`() {
+        withMemberUser("enabled") {
+            withAnAdvertisementCreated {
+                val server = Server(DependencyInjectionResolver())
+
+                val result = server.route(
+                    FrameworkRequest(
+                        FrameworkRequest.METHOD_DELETE,
+                        "advertisements/$ID",
+                        mapOf(),
+                        mapOf(
+                            "userSession" to MEMBER_ID
+                        )
+                    )
+                )
+
+                Assertions.assertEquals(FrameworkResponse.STATUS_OK, result.statusCode)
+                Assertions.assertEquals(this.successCommandResponse(HTTP_OK), result.content)
+
+                val resultSet = this.connection.query("SELECT * from advertisements;")
+
+                Assertions.assertFalse(resultSet.next())
+            }
+        }
+    }
+
+    @Test
     fun `should renew an advertisement`() {
         withMemberUser("enabled") {
             withAnAdvertisementCreated {
@@ -164,7 +191,7 @@ class AdvertisementsAsMemberTest {
                 val result = server.route(
                     FrameworkRequest(
                         FrameworkRequest.METHOD_PATCH,
-                        "advertisement/$ID",
+                        "advertisements/$ID",
                         mapOf(
                             "password" to PASSWORD,
                         ),
@@ -197,7 +224,7 @@ class AdvertisementsAsMemberTest {
                 val result = server.route(
                     FrameworkRequest(
                         FrameworkRequest.METHOD_PUT,
-                        "advertisement/$ID",
+                        "advertisements/$ID",
                         mapOf(
                             "id" to ID,
                             "description" to NEW_DESCRIPTION,
@@ -239,7 +266,7 @@ class AdvertisementsAsMemberTest {
                 val result = server.route(
                     FrameworkRequest(
                         FrameworkRequest.METHOD_PATCH,
-                        "advertisement/$ID",
+                        "advertisements/$ID",
                         mapOf(
                             "password" to INCORRECT_PASSWORD,
                         ),
@@ -270,7 +297,7 @@ class AdvertisementsAsMemberTest {
             val result = server.route(
                 FrameworkRequest(
                     FrameworkRequest.METHOD_PATCH,
-                    "advertisement/$NON_EXISTENT_ADVERTISEMENT_ID",
+                    "advertisements/$NON_EXISTENT_ADVERTISEMENT_ID",
                     mapOf(
                         "password" to PASSWORD,
                     ),
@@ -295,7 +322,7 @@ class AdvertisementsAsMemberTest {
             val result = server.route(
                 FrameworkRequest(
                     FrameworkRequest.METHOD_PUT,
-                    "advertisement/$NON_EXISTENT_ADVERTISEMENT_ID",
+                    "advertisements/$NON_EXISTENT_ADVERTISEMENT_ID",
                     mapOf(
                         "description" to DESCRIPTION,
                         "email" to "email@test.com",

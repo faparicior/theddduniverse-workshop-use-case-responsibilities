@@ -16,17 +16,17 @@ export class DeleteAdvertisementUseCase {
   }
 
   async execute(command: DeleteAdvertisementCommand): Promise<void> {
+    // TODO: Find the bug in the following code
+    const user = await this.userRepository.findMemberById(new UserId(command.securityUserId))
+    if (!user) {
+      throw MemberDoesNotExistsException.build()
+    }
 
     const advertisementId = new AdvertisementId(command.advertisementId)
     const advertisement = await this.advertisementRepository.findById(advertisementId)
 
     if (!advertisement) {
       throw AdvertisementNotFoundException.withId(advertisementId.value())
-    }
-
-    const user = await this.userRepository.findMemberById(new UserId(command.securityUserId))
-    if (!user) {
-      throw MemberDoesNotExistsException.build()
     }
 
     await this.advertisementRepository.save(advertisement)

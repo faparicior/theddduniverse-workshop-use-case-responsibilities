@@ -22,16 +22,17 @@ final class DeleteAdvertisementUseCase
      */
     public function execute(DeleteAdvertisementCommand $command): void
     {
-        $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->advertisementId));
-
-        if (!$advertisement) {
-            throw AdvertisementNotFoundException::withId($command->advertisementId);
-        }
-
+        // TODO: Find the bug in the following code
         $member = $this->userRepository->findMemberById($advertisement->memberId());
 
         if (null === $member) {
             throw MemberDoesNotExistsException::build();
+        }
+
+        $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->advertisementId));
+
+        if (!$advertisement) {
+            throw AdvertisementNotFoundException::withId($command->advertisementId);
         }
 
         $this->advertisementRepository->delete($advertisement);

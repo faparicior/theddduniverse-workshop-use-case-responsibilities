@@ -15,9 +15,9 @@ class Server(private val resolver: DependencyInjectionResolver){
             FrameworkRequest.METHOD_PATCH -> {
                 this.patch(request)
             }
-//            FrameworkRequest.METHOD_DELETE -> {
-//                this.delete(request)
-//            }
+            FrameworkRequest.METHOD_DELETE -> {
+                this.delete(request)
+            }
             else -> {
                return this.notFound()
             }
@@ -30,7 +30,7 @@ class Server(private val resolver: DependencyInjectionResolver){
 
     private fun post(request: FrameworkRequest): FrameworkResponse {
         return when (request.path) {
-            "advertisement" -> resolver.publishAdvertisementController().execute(request)
+            "advertisements" -> resolver.publishAdvertisementController().execute(request)
 //            "member/signup" -> resolver.signUpMemberController().execute(request)
             else -> this.notFound()
         }
@@ -38,7 +38,7 @@ class Server(private val resolver: DependencyInjectionResolver){
 
     private fun put(request: FrameworkRequest): FrameworkResponse {
         var match = when (request.pathStart()) {
-            "advertisement" -> resolver.updateAdvertisementController().execute(request, mapOf("advertisementId" to request.getIdPath()))
+            "advertisements" -> resolver.updateAdvertisementController().execute(request, mapOf("advertisementId" to request.getIdPath()))
             else -> null
         }
 
@@ -70,7 +70,7 @@ class Server(private val resolver: DependencyInjectionResolver){
 
     private fun patch(request: FrameworkRequest): FrameworkResponse {
         return when (request.pathStart()) {
-            "advertisement" -> {
+            "advertisements" -> {
                 resolver.renewAdvertisementController().execute(request)
             }
             else -> {
@@ -79,12 +79,12 @@ class Server(private val resolver: DependencyInjectionResolver){
         }
     }
 
-//    private fun delete(request: FrameworkRequest): FrameworkResponse {
-//        return when (request.pathStart()) {
-//            "advertisements" -> resolver.deleteAdvertisementController().execute(request, mapOf("advertisementId" to request.getIdPath()))
-//            else -> this.notFound()
-//        }
-//    }
+    private fun delete(request: FrameworkRequest): FrameworkResponse {
+        return when (request.pathStart()) {
+            "advertisements" -> resolver.deleteAdvertisementController().execute(request, mapOf("advertisementId" to request.getIdPath()))
+            else -> this.notFound()
+        }
+    }
 
     private fun notFound(): FrameworkResponse {
         return FrameworkResponse(FrameworkResponse.STATUS_NOT_FOUND, mapOf())
