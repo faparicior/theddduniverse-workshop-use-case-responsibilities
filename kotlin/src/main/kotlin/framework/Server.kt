@@ -55,7 +55,9 @@ class Server(private val resolver: DependencyInjectionResolver){
             Regex("^advertisements/([0-9a-fA-F\\-]+)/enable$").find(request.path) != null -> {
                 resolver.enableAdvertisementController().execute(request, mapOf("advertisementId" to Regex("^advertisements/([0-9a-fA-F\\-]+)/enable$").find(request.path)!!.groupValues[1]))
             }
-//            Regex("^advertisements/([0-9a-fA-F\\-]+)/approve$").find(request.path)?.let { resolver.approveAdvertisementController().execute(request, mapOf("advertisementId" to it.groupValues[1])) } != null -> match
+            Regex("^advertisements/([0-9a-fA-F\\-]+)/approve$").find(request.path) != null -> {
+                resolver.approveAdvertisementController().execute(request, mapOf("advertisementId" to Regex("^advertisements/([0-9a-fA-F\\-]+)/approve$").find(request.path)!!.groupValues[1]))
+            }
             else -> null
         }
 

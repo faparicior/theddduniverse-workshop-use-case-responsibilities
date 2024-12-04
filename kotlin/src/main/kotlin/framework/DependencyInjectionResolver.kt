@@ -1,5 +1,6 @@
 package framework
 
+import advertisements.advertisement.application.command.approveadvertisement.ApproveAdvertisementUseCase
 import advertisements.advertisement.application.command.disableadvertisement.DisableAdvertisementUseCase
 import advertisements.advertisement.application.command.enableadvertisement.EnableAdvertisementUseCase
 import advertisements.advertisement.application.command.publishadvertisement.PublishAdvertisementUseCase
@@ -58,6 +59,16 @@ class DependencyInjectionResolver {
     fun enableAdvertisementController(): EnableAdvertisementController {
        return EnableAdvertisementController(
             EnableAdvertisementUseCase(
+                this.advertisementRepository(),
+                this.userRepository(),
+            ),
+            this.securityService()
+        )
+    }
+
+    fun approveAdvertisementController(): ApproveAdvertisementController {
+        return ApproveAdvertisementController(
+            ApproveAdvertisementUseCase(
                 this.advertisementRepository(),
                 this.userRepository(),
             ),

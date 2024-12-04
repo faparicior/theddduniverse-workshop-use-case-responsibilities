@@ -105,6 +105,40 @@ class AdvertisementsAsAdminTest {
         }
     }
 
+    @Test
+    fun `should approve an advertisement as admin`() {
+        withAdminUser() {
+            withMemberUser {
+                withAnAdvertisementCreated("disabled", "pending_for_approval") {
+                    val server = Server(DependencyInjectionResolver())
+
+                    val result = server.route(
+                        FrameworkRequest(
+                            FrameworkRequest.METHOD_PUT,
+                            "advertisements/$MEMBER_ID/approve",
+                            mapOf(),
+                            mapOf(
+                                "userSession" to ADMIN_ID
+                            )
+                        )
+                    )
+
+                    Assertions.assertEquals(FrameworkResponse.STATUS_OK, result.statusCode)
+                    Assertions.assertEquals(successCommandResponse(HTTP_OK), result.content)
+
+                    val resultSet = this.connection.query("SELECT * from advertisements;")
+                    var status = ""
+
+                    if (resultSet.next()) {
+                        status = resultSet.getString("approval_status")
+                    }
+
+                    Assertions.assertEquals("APPROVED", status)
+                }
+            }
+        }
+    }
+
     private fun successCommandResponse(code: String = "200"): Map<String, String> {
         return mapOf(
             "errors" to "",
@@ -137,10 +171,9 @@ class AdvertisementsAsAdminTest {
         )
     }
 
-    private fun withAnAdvertisementCreated(status: String = "enabled", block: () -> Unit) {
+    private fun withAnAdvertisementCreated(status: String = "enabled", approvalStatus: String = "approved", block: () -> Unit) {
         val password = PASSWORD.md5()
         val creationDate = LocalDateTime.parse(ADVERTISEMENT_CREATION_DATE).toString()
-        val approvalStatus = "approved"
         this.connection.execute(
             """
             INSERT INTO advertisements (

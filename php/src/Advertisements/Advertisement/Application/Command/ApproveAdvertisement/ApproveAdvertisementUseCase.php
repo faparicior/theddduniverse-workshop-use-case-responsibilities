@@ -25,6 +25,7 @@ final class ApproveAdvertisementUseCase
      */
     public function execute(ApproveAdvertisementCommand $command): void
     {
+        // TODO: Different security behaviour compared from other use case
         $adminUser = $this->userRepository->findAdminById(new UserId($command->securityUserId));
         if (!$adminUser) {
             throw UserNotFoundException::asAdmin();
@@ -36,13 +37,7 @@ final class ApproveAdvertisementUseCase
             throw AdvertisementNotFoundException::withId($command->advertisementId);
         }
 
-        $member = $this->userRepository->findMemberById($advertisement->memberId());
-
-        if (null === $member) {
-            throw MemberDoesNotExistsException::build();
-        }
-
-        if (!$adminUser->civicCenterId()->equals($member->civicCenterId())) {
+        if (!$adminUser->civicCenterId()->equals($advertisement->civicCenterId())) {
             throw AdminWithIncorrectCivicCenterException::differentCivicCenterFromMember();
         }
 
