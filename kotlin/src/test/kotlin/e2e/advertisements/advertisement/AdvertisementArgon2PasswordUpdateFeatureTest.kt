@@ -1,4 +1,4 @@
-package e2e
+package e2e.advertisements.advertisement
 
 import framework.DependencyInjectionResolver
 import framework.FrameworkRequest
@@ -46,7 +46,7 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
             val result = server.route(
                 FrameworkRequest(
                     FrameworkRequest.METHOD_POST,
-                    "advertisement",
+                    "advertisements",
                     mapOf(
                         "id" to ID,
                         "description" to DESCRIPTION,
@@ -82,7 +82,7 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
 
                 val result = server.route(FrameworkRequest(
                         FrameworkRequest.METHOD_PUT,
-                        "advertisement/${ID}",
+                        "advertisements/$ID",
                         mapOf(
                             "id" to ID,
                             "description" to NEW_DESCRIPTION,
@@ -120,7 +120,7 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
                 val result = server.route(
                     FrameworkRequest(
                         FrameworkRequest.METHOD_PATCH,
-                        "advertisement/${ID}",
+                        "advertisements/$ID",
                         mapOf(
                             "password" to PASSWORD,
                         ),
@@ -154,7 +154,7 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
             INSERT INTO advertisements (
                 id, description, email, password, advertisement_date, status, approval_status, user_id, civic_center_id
             ) VALUES (
-                '${ID}', '${DESCRIPTION}', 'email@test.com', '$password', '$creationDate', '$status', '$approvalStatus', '${MEMBER_ID}', '${CIVIC_CENTER_ID}'
+                '$ID', '$DESCRIPTION', 'email@test.com', '$password', '$creationDate', '$status', '$approvalStatus', '$MEMBER_ID', '$CIVIC_CENTER_ID'
             )
             """
         )
@@ -173,7 +173,7 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
             """
             INSERT INTO users (id, email, password, role, member_number, civic_center_id, status)
             VALUES (
-                '${MEMBER_ID}', 
+                '$MEMBER_ID', 
                 'member@test.com', 
                 '${"myPassword".md5()}', 
                 'member', 

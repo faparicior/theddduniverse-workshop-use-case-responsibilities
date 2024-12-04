@@ -37,16 +37,7 @@ class Server(private val resolver: DependencyInjectionResolver){
     }
 
     private fun put(request: FrameworkRequest): FrameworkResponse {
-        var match = when (request.pathStart()) {
-            "advertisements" -> resolver.updateAdvertisementController().execute(request, mapOf("advertisementId" to request.getIdPath()))
-            else -> null
-        }
-
-        if (match is FrameworkResponse) {
-            return match
-        }
-
-        match = when {
+        val match = when {
 //            Regex("^member/([0-9a-fA-F\\-]+)/disable$").find(request.path)?.let { resolver.disableMemberController().execute(request, mapOf("memberId" to it.groupValues[1])) } != null -> match
 //            Regex("^member/([0-9a-fA-F\\-]+)/enable$").find(request.path)?.let { resolver.enableMemberController().execute(request, mapOf("memberId" to it.groupValues[1])) } != null -> match
             Regex("^advertisements/([0-9a-fA-F\\-]+)/disable$").find(request.path) != null -> {
@@ -57,6 +48,9 @@ class Server(private val resolver: DependencyInjectionResolver){
             }
             Regex("^advertisements/([0-9a-fA-F\\-]+)/approve$").find(request.path) != null -> {
                 resolver.approveAdvertisementController().execute(request, mapOf("advertisementId" to Regex("^advertisements/([0-9a-fA-F\\-]+)/approve$").find(request.path)!!.groupValues[1]))
+            }
+            Regex("^advertisements/([0-9a-fA-F\\-]+)$").find(request.path) != null -> {
+                resolver.updateAdvertisementController().execute(request, mapOf("advertisementId" to Regex("^advertisements/([0-9a-fA-F\\-]+)$").find(request.path)!!.groupValues[1]))
             }
             else -> null
         }
