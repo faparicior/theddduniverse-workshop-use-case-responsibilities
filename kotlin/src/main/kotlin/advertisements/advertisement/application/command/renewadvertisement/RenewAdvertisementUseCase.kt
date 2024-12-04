@@ -10,6 +10,7 @@ class RenewAdvertisementUseCase(
     private val advertisementRepository: AdvertisementRepository,
 ) {
     fun execute(renewAdvertisementCommand: RenewAdvertisementCommand) {
+        // TODO: Implement user security
         val advertisementId = AdvertisementId(renewAdvertisementCommand.id)
         val advertisement = advertisementRepository.findById(advertisementId)
 

@@ -12,8 +12,6 @@ class PublishAdvertisementUseCase(
     private val advertisementRepository: AdvertisementRepository,
     private val userRepository: UserRepository
 ) {
-
-    @Throws(Exception::class)
     fun execute(command: PublishAdvertisementCommand) {
         //TODO: Different behaviour message compared with other use case
         val memberUser = userRepository.findMemberById(UserId(command.securityUserId))

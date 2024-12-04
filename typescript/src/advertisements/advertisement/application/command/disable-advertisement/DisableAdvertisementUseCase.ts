@@ -20,6 +20,7 @@ export class DisableAdvertisementUseCase {
   }
 
   async execute(command: DisableAdvertisementCommand): Promise<void> {
+    // TODO: Find the bug in the following code
     const admin = await this.userRepository.findAdminById(new UserId(command.securityUserId))
     if (!admin) {
       throw UserNotFoundException.asAdmin()
@@ -30,15 +31,6 @@ export class DisableAdvertisementUseCase {
 
     if (!advertisement) {
       throw AdvertisementNotFoundException.withId(advertisementId.value())
-    }
-
-    const member = await this.userRepository.findMemberById(advertisement.memberId())
-    if (!member) {
-      throw MemberDoesNotExistsException.build()
-    }
-
-    if (!admin.civicCenterId().equals(member.civicCenterId())) {
-      throw AdminWithIncorrectCivicCenterException.differentCivicCenterFromMember()
     }
 
     advertisement.disable()

@@ -20,6 +20,7 @@ export class ApproveAdvertisementUseCase {
   }
 
   async execute(command: ApproveAdvertisementCommand): Promise<void> {
+    // TODO: Different security behaviour compared from other use case
     const admin = await this.userRepository.findAdminById(new UserId(command.securityUserId))
     if (!admin) {
       throw UserNotFoundException.asAdmin()

@@ -20,6 +20,8 @@ export class EnableAdvertisementUseCase {
   }
 
   async execute(command: EnableAdvertisementCommand): Promise<void> {
+    //TODO: Complex behaviour
+    //TODO: Find possible bug
     const admin = await this.userRepository.findAdminById(new UserId(command.securityUserId))
     if (!admin) {
       throw UserNotFoundException.asAdmin()
@@ -40,6 +42,13 @@ export class EnableAdvertisementUseCase {
     if (!admin.civicCenterId().equals(member.civicCenterId())) {
       throw AdminWithIncorrectCivicCenterException.differentCivicCenterFromMember()
     }
+
+    const activeAdvertisements = await this.advertisementRepository.activeAdvertisementsByMember(member)
+
+    if (activeAdvertisements.value() >= 3) {
+      throw Error('Member has reached the maximum number of active advertisements')
+    }
+
 
     advertisement.enable()
 

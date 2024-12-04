@@ -13,7 +13,6 @@ class DisableAdvertisementUseCase(
 ) {
     fun execute(disableAdvertisementCommand: DisableAdvertisementCommand) {
         // TODO: Find the bug in the following code
-
         val adminUser = userRepository.findAdminById(UserId(disableAdvertisementCommand.securityUserId))
 
         if(adminUser == null) {

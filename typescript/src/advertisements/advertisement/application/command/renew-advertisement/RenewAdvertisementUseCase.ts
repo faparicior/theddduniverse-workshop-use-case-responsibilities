@@ -14,9 +14,7 @@ export class RenewAdvertisementUseCase {
   }
 
   async execute(command: RenewAdvertisementCommand): Promise<void> {
-
     // TODO: Implement user security
-
     const advertisementId = new AdvertisementId(command.id)
     const advertisement = await this.advertisementRepository.findById(advertisementId)
 
