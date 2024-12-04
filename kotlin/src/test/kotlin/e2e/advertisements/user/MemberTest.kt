@@ -70,6 +70,66 @@ class MemberTest {
         }
     }
 
+    @Test
+    fun `should disable member as admin`() {
+        withAdminUser() {
+            withMemberUser() {
+                val server = Server(DependencyInjectionResolver())
+
+                val result = server.route(
+                    FrameworkRequest(
+                        FrameworkRequest.METHOD_PUT,
+                        "members/${MEMBER_ID}/disable",
+                        mapOf(),
+                        mapOf(
+                            "userSession" to ADMIN_ID
+                        )
+                    )
+                )
+
+                Assertions.assertEquals(FrameworkResponse.STATUS_OK, result.statusCode)
+                Assertions.assertEquals(successCommandResponse(HTTP_OK), result.content)
+
+                val resultSet = this.connection.query("SELECT * from users where id = '${MEMBER_ID}';")
+
+                val member = resultSet.next()
+
+                Assertions.assertTrue(member)
+                Assertions.assertEquals("disabled", resultSet.getString("status"))
+            }
+        }
+    }
+
+    @Test
+    fun `should enable member as admin`() {
+        withAdminUser() {
+            withMemberUser("disabled") {
+                val server = Server(DependencyInjectionResolver())
+
+                val result = server.route(
+                    FrameworkRequest(
+                        FrameworkRequest.METHOD_PUT,
+                        "members/${MEMBER_ID}/enable",
+                        mapOf(),
+                        mapOf(
+                            "userSession" to ADMIN_ID
+                        )
+                    )
+                )
+
+                Assertions.assertEquals(FrameworkResponse.STATUS_OK, result.statusCode)
+                Assertions.assertEquals(successCommandResponse(HTTP_OK), result.content)
+
+                val resultSet = this.connection.query("SELECT * from users where id = '${MEMBER_ID}';")
+
+                val member = resultSet.next()
+
+                Assertions.assertTrue(member)
+                Assertions.assertEquals("enabled", resultSet.getString("status"))
+            }
+        }
+    }
+
     private fun successCommandResponse(code: String = "200"): Map<String, String> {
         return mapOf(
             "errors" to "",
@@ -137,7 +197,7 @@ class MemberTest {
         block()
     }
 
-    private fun withMemberUser(block: () -> Unit) {
+    private fun withMemberUser(status: String = "enabled", block: () -> Unit) {
         this.connection.execute(
             """
             INSERT INTO users (id, email, password, role, member_number, civic_center_id, status)
@@ -148,7 +208,7 @@ class MemberTest {
                 'member', 
                 '123456', 
                 '$CIVIC_CENTER_ID', 
-                'enabled'
+                '$status'
             )
             """.trimIndent()
         )
