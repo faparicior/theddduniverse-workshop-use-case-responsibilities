@@ -31,7 +31,7 @@ class Server(private val resolver: DependencyInjectionResolver){
     private fun post(request: FrameworkRequest): FrameworkResponse {
         return when (request.path) {
             "advertisements" -> resolver.publishAdvertisementController().execute(request)
-//            "member/signup" -> resolver.signUpMemberController().execute(request)
+            "members/signup" -> resolver.signUpMemberController().execute(request)
             else -> this.notFound()
         }
     }

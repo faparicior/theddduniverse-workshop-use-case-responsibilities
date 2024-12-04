@@ -10,8 +10,10 @@ import advertisements.advertisement.application.command.updateadvertisement.Upda
 import advertisements.advertisement.domain.AdvertisementRepository
 import advertisements.advertisement.infrastructure.persistence.SqLiteAdvertisementRepository
 import advertisements.advertisement.ui.http.*
+import advertisements.user.application.command.signupmember.SignUpMemberUseCase
 import advertisements.user.domain.UserRepository
 import advertisements.user.infrastructure.persistence.SqliteUserRepository
+import advertisements.user.ui.http.SignUpMemberController
 import framework.database.DatabaseConnection
 import framework.database.SqliteConnection
 import framework.securityuser.FrameworkSecurityService
@@ -71,6 +73,15 @@ class DependencyInjectionResolver {
         return ApproveAdvertisementController(
             ApproveAdvertisementUseCase(
                 this.advertisementRepository(),
+                this.userRepository(),
+            ),
+            this.securityService()
+        )
+    }
+
+    fun signUpMemberController(): SignUpMemberController {
+        return SignUpMemberController(
+            SignUpMemberUseCase(
                 this.userRepository(),
             ),
             this.securityService()
