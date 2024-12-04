@@ -29,6 +29,7 @@ final class PublishAdvertisementUseCase
      */
     public function execute(PublishAdvertisementCommand $command): void
     {
+        //TODO: Different behaviour message compared with other use case
         $memberUser = $this->userRepository->findMemberById(new UserId($command->securityUserId));
         if (!$memberUser) {
             throw UserNotFoundException::asMember();

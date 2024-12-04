@@ -17,7 +17,7 @@ class AdvertisementsAsAdminTest {
         private const val ADVERTISEMENT_CREATION_DATE = "2024-03-04T13:23:15"
         private const val DESCRIPTION = "Dream advertisement"
         private const val NEW_DESCRIPTION = "Dream advertisement changed"
-        private const val ID = "6fa00b21-2930-483e-b610-d6b0e5b19b29"
+        private const val MEMBER_ID = "6fa00b21-2930-483e-b610-d6b0e5b19b29"
         private const val NON_EXISTENT_ADVERTISEMENT_ID = "99999999-2930-483e-b610-d6b0e5b19b29"
         private const val PASSWORD = "myPassword"
         private const val INCORRECT_PASSWORD = "myBadPassword"
@@ -41,14 +41,14 @@ class AdvertisementsAsAdminTest {
 
     @Test
     fun `should disable an advertisement as admin`() {
-        withAdminUser("enabled") {
+        withAdminUser() {
             withAnAdvertisementCreated {
                 val server = Server(DependencyInjectionResolver())
 
                 val result = server.route(
                     FrameworkRequest(
                         FrameworkRequest.METHOD_PUT,
-                        "advertisements/$ID/disable",
+                        "advertisements/$MEMBER_ID/disable",
                         mapOf(),
                         mapOf(
                             "userSession" to ADMIN_ID
@@ -67,6 +67,40 @@ class AdvertisementsAsAdminTest {
                 }
 
                 Assertions.assertEquals("DISABLED", status)
+            }
+        }
+    }
+
+    @Test
+    fun `should enable an advertisement as admin`() {
+        withAdminUser() {
+            withMemberUser {
+                withAnAdvertisementCreated("disabled") {
+                    val server = Server(DependencyInjectionResolver())
+
+                    val result = server.route(
+                        FrameworkRequest(
+                            FrameworkRequest.METHOD_PUT,
+                            "advertisements/$MEMBER_ID/enable",
+                            mapOf(),
+                            mapOf(
+                                "userSession" to ADMIN_ID
+                            )
+                        )
+                    )
+
+                    Assertions.assertEquals(FrameworkResponse.STATUS_OK, result.statusCode)
+                    Assertions.assertEquals(successCommandResponse(HTTP_OK), result.content)
+
+                    val resultSet = this.connection.query("SELECT * from advertisements;")
+                    var status = ""
+
+                    if (resultSet.next()) {
+                        status = resultSet.getString("status")
+                    }
+
+                    Assertions.assertEquals("ENABLED", status)
+                }
             }
         }
     }
@@ -103,17 +137,16 @@ class AdvertisementsAsAdminTest {
         )
     }
 
-    private fun withAnAdvertisementCreated(block: () -> Unit) {
+    private fun withAnAdvertisementCreated(status: String = "enabled", block: () -> Unit) {
         val password = PASSWORD.md5()
         val creationDate = LocalDateTime.parse(ADVERTISEMENT_CREATION_DATE).toString()
-        val status = "ENABLED"
         val approvalStatus = "approved"
         this.connection.execute(
             """
             INSERT INTO advertisements (
                 id, description, email, password, advertisement_date, status, approval_status, user_id, civic_center_id
             ) VALUES (
-                '$ID', '$DESCRIPTION', 'email@test.com', '$password', '$creationDate', '$status', '$approvalStatus', '$ADMIN_ID', '$CIVIC_CENTER_ID'
+                '$MEMBER_ID', '$DESCRIPTION', 'email@test.com', '$password', '$creationDate', '$status', '$approvalStatus', '$MEMBER_ID', '$CIVIC_CENTER_ID'
             )
             """
         )
@@ -121,7 +154,7 @@ class AdvertisementsAsAdminTest {
         block()
     }
 
-    private fun withAdminUser(status: String, block: () -> Unit) {
+    private fun withAdminUser(block: () -> Unit) {
         this.connection.execute(
             """
             INSERT INTO users (id, email, password, role, member_number, civic_center_id, status)
@@ -132,7 +165,26 @@ class AdvertisementsAsAdminTest {
                 'admin', 
                 '', 
                 '$CIVIC_CENTER_ID', 
-                '$status'
+                'enabled'
+            )
+            """.trimIndent()
+        )
+
+        block()
+    }
+
+    private fun withMemberUser(block: () -> Unit) {
+        this.connection.execute(
+            """
+            INSERT INTO users (id, email, password, role, member_number, civic_center_id, status)
+            VALUES (
+                '$MEMBER_ID', 
+                'member@test.com', 
+                '${"myPassword".md5()}', 
+                'member', 
+                '123456', 
+                '$CIVIC_CENTER_ID', 
+                'enabled'
             )
             """.trimIndent()
         )

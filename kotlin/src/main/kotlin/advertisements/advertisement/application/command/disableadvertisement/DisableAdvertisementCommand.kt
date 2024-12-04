@@ -1,4 +1,4 @@
-package advertisements.advertisement.application.command.disableAdvertisement
+package advertisements.advertisement.application.command.disableadvertisement
 
 data class DisableAdvertisementCommand(
     val securityUserId: String,

@@ -1,15 +1,13 @@
 package framework
 
-import advertisements.advertisement.application.command.disableAdvertisement.DisableAdvertisementUseCase
-import advertisements.advertisement.application.command.publishAdvertisement.PublishAdvertisementUseCase
-import advertisements.advertisement.application.command.renewAdvertisement.RenewAdvertisementUseCase
-import advertisements.advertisement.application.command.updateAdvertisement.UpdateAdvertisementUseCase
+import advertisements.advertisement.application.command.disableadvertisement.DisableAdvertisementUseCase
+import advertisements.advertisement.application.command.enableadvertisement.EnableAdvertisementUseCase
+import advertisements.advertisement.application.command.publishadvertisement.PublishAdvertisementUseCase
+import advertisements.advertisement.application.command.renewadvertisement.RenewAdvertisementUseCase
+import advertisements.advertisement.application.command.updateadvertisement.UpdateAdvertisementUseCase
 import advertisements.advertisement.domain.AdvertisementRepository
 import advertisements.advertisement.infrastructure.persistence.SqLiteAdvertisementRepository
-import advertisements.advertisement.ui.http.DisableAdvertisementController
-import advertisements.advertisement.ui.http.PublishAdvertisementController
-import advertisements.advertisement.ui.http.RenewAdvertisementController
-import advertisements.advertisement.ui.http.UpdateAdvertisementController
+import advertisements.advertisement.ui.http.*
 import advertisements.user.domain.UserRepository
 import advertisements.user.infrastructure.persistence.SqliteUserRepository
 import framework.database.DatabaseConnection
@@ -50,6 +48,16 @@ class DependencyInjectionResolver {
     fun disableAdvertisementController(): DisableAdvertisementController {
         return DisableAdvertisementController(
             DisableAdvertisementUseCase(
+                this.advertisementRepository(),
+                this.userRepository(),
+            ),
+            this.securityService()
+        )
+    }
+
+    fun enableAdvertisementController(): EnableAdvertisementController {
+       return EnableAdvertisementController(
+            EnableAdvertisementUseCase(
                 this.advertisementRepository(),
                 this.userRepository(),
             ),

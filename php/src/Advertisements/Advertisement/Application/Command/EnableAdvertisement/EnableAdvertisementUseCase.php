@@ -25,12 +25,11 @@ final class EnableAdvertisementUseCase
      */
     public function execute(EnableAdvertisementCommand $command): void
     {
-        $adminUser = null;
-        if ($command->securityUserRole === 'admin') {
-            $adminUser = $this->userRepository->findAdminById(new UserId($command->securityUserId));
-            if (!$adminUser) {
-                throw UserNotFoundException::asAdmin();
-            }
+        //TODO: Complex behaviour
+        //TODO: Find possible bug
+        $adminUser = $this->userRepository->findAdminById(new UserId($command->securityUserId));
+        if (!$adminUser) {
+            throw UserNotFoundException::asAdmin();
         }
 
         $advertisement = $this->advertisementRepository->findById(new AdvertisementId($command->advertisementId));
@@ -45,14 +44,14 @@ final class EnableAdvertisementUseCase
             throw MemberDoesNotExistsException::build();
         }
 
-        if ($adminUser && !$adminUser->civicCenterId()->equals($member->civicCenterId())) {
+        if (!$adminUser->civicCenterId()->equals($member->civicCenterId())) {
             throw AdminWithIncorrectCivicCenterException::differentCivicCenterFromMember();
         }
 
         $activeAdvertisements = $this->advertisementRepository->activeAdvertisementsByMember($member);
 
         if ($activeAdvertisements->value() >= 3) {
-            throw new Exception('Member has 3 active advertisements');
+            throw new Exception('Member has reached the maximum number of active advertisements');
         }
 
         $advertisement->enable();

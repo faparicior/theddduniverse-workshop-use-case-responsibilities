@@ -1,4 +1,4 @@
-package advertisements.advertisement.application.command.updateAdvertisement
+package advertisements.advertisement.application.command.updateadvertisement
 
 import advertisements.advertisement.domain.exceptions.AdvertisementNotFoundException
 import advertisements.advertisement.application.exceptions.PasswordDoesNotMatchException

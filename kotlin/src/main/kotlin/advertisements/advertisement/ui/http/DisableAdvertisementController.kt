@@ -1,7 +1,7 @@
 package advertisements.advertisement.ui.http
 
-import advertisements.advertisement.application.command.disableAdvertisement.DisableAdvertisementCommand
-import advertisements.advertisement.application.command.disableAdvertisement.DisableAdvertisementUseCase
+import advertisements.advertisement.application.command.disableadvertisement.DisableAdvertisementCommand
+import advertisements.advertisement.application.command.disableadvertisement.DisableAdvertisementUseCase
 import common.application.ElementNotFoundException
 import common.exceptions.BoundedContextException
 import common.ui.http.CommonController

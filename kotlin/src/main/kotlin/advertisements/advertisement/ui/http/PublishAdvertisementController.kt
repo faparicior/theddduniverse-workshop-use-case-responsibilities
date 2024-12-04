@@ -1,7 +1,7 @@
 package advertisements.advertisement.ui.http
 
-import advertisements.advertisement.application.command.publishAdvertisement.PublishAdvertisementCommand
-import advertisements.advertisement.application.command.publishAdvertisement.PublishAdvertisementUseCase
+import advertisements.advertisement.application.command.publishadvertisement.PublishAdvertisementCommand
+import advertisements.advertisement.application.command.publishadvertisement.PublishAdvertisementUseCase
 import common.exceptions.BoundedContextException
 import common.ui.http.CommonController
 import framework.FrameworkRequest

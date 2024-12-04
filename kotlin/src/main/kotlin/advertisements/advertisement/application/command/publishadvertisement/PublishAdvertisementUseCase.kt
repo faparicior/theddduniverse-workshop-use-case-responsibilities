@@ -1,4 +1,4 @@
-package advertisements.advertisement.application.command.publishAdvertisement
+package advertisements.advertisement.application.command.publishadvertisement
 
 import advertisements.advertisement.domain.*
 import advertisements.advertisement.domain.exceptions.AdvertisementAlreadyExistsException
@@ -15,6 +15,7 @@ class PublishAdvertisementUseCase(
 
     @Throws(Exception::class)
     fun execute(command: PublishAdvertisementCommand) {
+        //TODO: Different behaviour message compared with other use case
         val memberUser = userRepository.findMemberById(UserId(command.securityUserId))
             ?: throw UserNotFoundException.asMember()
 

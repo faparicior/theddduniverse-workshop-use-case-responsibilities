@@ -1,4 +1,4 @@
-package advertisements.advertisement.application.command.updateAdvertisement
+package advertisements.advertisement.application.command.updateadvertisement
 
 data class UpdateAdvertisementCommand(
     val securityUserId: String,

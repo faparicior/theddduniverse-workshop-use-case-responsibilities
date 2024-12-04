@@ -1,4 +1,4 @@
-package advertisements.advertisement.application.command.disableAdvertisement
+package advertisements.advertisement.application.command.disableadvertisement
 
 import advertisements.advertisement.domain.exceptions.AdvertisementNotFoundException
 import advertisements.advertisement.domain.AdvertisementRepository

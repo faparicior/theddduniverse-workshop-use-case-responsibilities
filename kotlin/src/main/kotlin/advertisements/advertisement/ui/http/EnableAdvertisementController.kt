@@ -1,7 +1,7 @@
 package advertisements.advertisement.ui.http
 
-import advertisements.advertisement.application.command.updateadvertisement.UpdateAdvertisementCommand
-import advertisements.advertisement.application.command.updateadvertisement.UpdateAdvertisementUseCase
+import advertisements.advertisement.application.command.enableadvertisement.EnableAdvertisementCommand
+import advertisements.advertisement.application.command.enableadvertisement.EnableAdvertisementUseCase
 import common.application.ElementNotFoundException
 import common.exceptions.BoundedContextException
 import common.ui.http.CommonController
@@ -9,29 +9,27 @@ import framework.FrameworkRequest
 import framework.FrameworkResponse
 import framework.securityuser.FrameworkSecurityService
 
-class UpdateAdvertisementController(
-    private val useCase: UpdateAdvertisementUseCase,
+class EnableAdvertisementController(
+    private val useCase: EnableAdvertisementUseCase,
     private val securityService: FrameworkSecurityService,
-): CommonController(){
+): CommonController() {
 
     override fun execute(request: FrameworkRequest, pathValues: Map<String, String>): FrameworkResponse {
         try {
-            val user = securityService.getSecurityUserFromRequest(request)
+            val user = securityService.getSecurityUserFromRequest(request)!!
 
-            if (user?.role != "member") {
+            if (user.role != "admin") {
                 return processUnauthorizedResponse()
             }
 
             useCase.execute(
-                UpdateAdvertisementCommand(
+                EnableAdvertisementCommand(
                     user.id,
                     user.role,
-                    request.getIdPath(),
-                    request.content["description"]!!,
-                    request.content["email"]!!,
-                    request.content["password"]!!,
+                    pathValues["advertisementId"]!!,
                 )
             )
+
             return processSuccessfulCommand()
         } catch (e: ElementNotFoundException) {
             return processNotFoundCommand(e)
