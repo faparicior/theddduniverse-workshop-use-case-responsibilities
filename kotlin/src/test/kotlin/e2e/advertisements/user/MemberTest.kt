@@ -9,21 +9,14 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.security.MessageDigest
-import java.time.LocalDateTime
 
 
 class MemberTest {
     companion object {
-        private const val ADVERTISEMENT_CREATION_DATE = "2024-03-04T13:23:15"
-        private const val DESCRIPTION = "Dream advertisement"
-        private const val NEW_DESCRIPTION = "Dream advertisement changed"
         private const val MEMBER_ID = "6fa00b21-2930-483e-b610-d6b0e5b19b29"
-        private const val NON_EXISTENT_ADVERTISEMENT_ID = "99999999-2930-483e-b610-d6b0e5b19b29"
-        private const val PASSWORD = "myPassword"
-        private const val INCORRECT_PASSWORD = "myBadPassword"
 
-        private const val CIVIC_CENTER_ID = "0d5a994b-1603-4c87-accc-581a59e4457c";
-        private const val ADMIN_ID = "e95a8999-cb23-4fa2-9923-e3015ef30411";
+        private const val CIVIC_CENTER_ID = "0d5a994b-1603-4c87-accc-581a59e4457c"
+        private const val ADMIN_ID = "e95a8999-cb23-4fa2-9923-e3015ef30411"
 
         private const val HTTP_CREATED = "201"
         private const val HTTP_OK = "200"
@@ -160,22 +153,6 @@ class MemberTest {
             "code" to HTTP_BAD_REQUEST,
             "message" to "Password does not match"
         )
-    }
-
-    private fun withAnAdvertisementCreated(status: String = "enabled", approvalStatus: String = "approved", block: () -> Unit) {
-        val password = PASSWORD.md5()
-        val creationDate = LocalDateTime.parse(ADVERTISEMENT_CREATION_DATE).toString()
-        this.connection.execute(
-            """
-            INSERT INTO advertisements (
-                id, description, email, password, advertisement_date, status, approval_status, user_id, civic_center_id
-            ) VALUES (
-                '$MEMBER_ID', '$DESCRIPTION', 'email@test.com', '$password', '$creationDate', '$status', '$approvalStatus', '$MEMBER_ID', '$CIVIC_CENTER_ID'
-            )
-            """
-        )
-
-        block()
     }
 
     private fun withAdminUser(block: () -> Unit) {
