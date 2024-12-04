@@ -18,7 +18,7 @@ class PublishAdvertisementController(
             val user = securityService.getSecurityUserFromRequest(request)
 
             if (user?.role != "member") {
-                return processForbiddenException()
+                return processUnauthorizedResponse()
             }
 
             useCase.execute(

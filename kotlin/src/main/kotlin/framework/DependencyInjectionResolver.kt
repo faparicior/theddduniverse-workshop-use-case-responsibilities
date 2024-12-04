@@ -1,10 +1,12 @@
 package framework
 
+import advertisements.advertisement.application.command.disableAdvertisement.DisableAdvertisementUseCase
 import advertisements.advertisement.application.command.publishAdvertisement.PublishAdvertisementUseCase
 import advertisements.advertisement.application.command.renewAdvertisement.RenewAdvertisementUseCase
 import advertisements.advertisement.application.command.updateAdvertisement.UpdateAdvertisementUseCase
 import advertisements.advertisement.domain.AdvertisementRepository
 import advertisements.advertisement.infrastructure.persistence.SqLiteAdvertisementRepository
+import advertisements.advertisement.ui.http.DisableAdvertisementController
 import advertisements.advertisement.ui.http.PublishAdvertisementController
 import advertisements.advertisement.ui.http.RenewAdvertisementController
 import advertisements.advertisement.ui.http.UpdateAdvertisementController
@@ -42,6 +44,16 @@ class DependencyInjectionResolver {
                 this.advertisementRepository(),
             ),
             this.securityService(),
+        )
+    }
+
+    fun disableAdvertisementController(): DisableAdvertisementController {
+        return DisableAdvertisementController(
+            DisableAdvertisementUseCase(
+                this.advertisementRepository(),
+                this.userRepository(),
+            ),
+            this.securityService()
         )
     }
 

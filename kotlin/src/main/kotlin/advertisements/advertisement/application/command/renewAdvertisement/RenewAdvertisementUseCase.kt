@@ -5,7 +5,6 @@ import advertisements.advertisement.application.exceptions.PasswordDoesNotMatchE
 import advertisements.advertisement.domain.AdvertisementRepository
 import advertisements.advertisement.domain.value_object.AdvertisementId
 import advertisements.shared.value_object.Password
-import advertisements.user.domain.UserRepository
 
 class RenewAdvertisementUseCase(
     private val advertisementRepository: AdvertisementRepository,

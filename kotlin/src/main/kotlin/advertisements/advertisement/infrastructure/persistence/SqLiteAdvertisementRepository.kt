@@ -18,9 +18,9 @@ class SqLiteAdvertisementRepository(private val connection: DatabaseConnection):
     override fun save(advertisement: Advertisement) {
         val passwordHash = advertisement.password.value()
         connection.execute(
-            "INSERT INTO advertisements (id, description, password, advertisement_date) VALUES ('" +
-                    "${advertisement.id.value()}', '${advertisement.description.value()}', '$passwordHash', '${advertisement.date.value()}') " +
-                    "ON CONFLICT(id) DO UPDATE SET description = '${advertisement.description.value()}', password = '${passwordHash}', advertisement_date = '${advertisement.date.value()}';"
+            "INSERT INTO advertisements (id, description, email, password, advertisement_date, civic_center_id, user_id, status, approval_status) VALUES ('" +
+                    "${advertisement.id.value()}', '${advertisement.description.value()}', '${advertisement.email.value()}', '$passwordHash', '${advertisement.date.value()}', '${advertisement.civicCenterId.value()}', '${advertisement.memberId.value()}', '${advertisement.status.name}', '${advertisement.approvalStatus.name}') " +
+                    "ON CONFLICT(id) DO UPDATE SET description = '${advertisement.description.value()}', email = '${advertisement.email.value()}', password = '${passwordHash}', advertisement_date = '${advertisement.date.value()}', civic_center_id = '${advertisement.civicCenterId.value()}', user_id = '${advertisement.memberId.value()}', status = '${advertisement.status.name}', approval_status = '${advertisement.approvalStatus.name}';"
         )
     }
 

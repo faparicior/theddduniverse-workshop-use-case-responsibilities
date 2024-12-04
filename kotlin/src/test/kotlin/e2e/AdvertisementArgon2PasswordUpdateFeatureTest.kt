@@ -1,6 +1,5 @@
 package e2e
 
-import e2e.AdvertisementTest.Companion
 import framework.DependencyInjectionResolver
 import framework.FrameworkRequest
 import framework.FrameworkResponse
@@ -22,7 +21,7 @@ class AdvertisementArgon2PasswordUpdateFeatureTest {
         private const val PASSWORD = "myPassword"
         private const val MEMBER_ID = "e95a8999-cb23-4fa2-9923-e3015ef30411"
 
-        private const val CIVIC_CENTER_ID = "0d5a994b-1603-4c87-accc-581a59e4457c";
+        private const val CIVIC_CENTER_ID = "0d5a994b-1603-4c87-accc-581a59e4457c"
     }
 
     private lateinit var connection: DatabaseConnection

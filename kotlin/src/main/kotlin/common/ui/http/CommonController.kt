@@ -66,7 +66,7 @@ abstract class CommonController {
         )
     }
 
-    protected fun processForbiddenException(): FrameworkResponse {
+    protected fun processUnauthorizedResponse(): FrameworkResponse {
         return FrameworkResponse(
             FrameworkResponse.STATUS_UNAUTHORIZED,
             mapOf(

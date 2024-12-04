@@ -12,7 +12,7 @@ import java.security.MessageDigest
 import java.time.LocalDateTime
 
 
-class AdvertisementTest {
+class AdvertisementsAsMemberTest {
     companion object {
         private const val ADVERTISEMENT_CREATION_DATE = "2024-03-04T13:23:15"
         private const val DESCRIPTION = "Dream advertisement"
@@ -22,8 +22,8 @@ class AdvertisementTest {
         private const val PASSWORD = "myPassword"
         private const val INCORRECT_PASSWORD = "myBadPassword"
 
-        private const val CIVIC_CENTER_ID = "0d5a994b-1603-4c87-accc-581a59e4457c";
-        private const val MEMBER_ID = "e95a8999-cb23-4fa2-9923-e3015ef30411";
+        private const val CIVIC_CENTER_ID = "0d5a994b-1603-4c87-accc-581a59e4457c"
+        private const val MEMBER_ID = "e95a8999-cb23-4fa2-9923-e3015ef30411"
 
         private const val HTTP_CREATED = "201"
         private const val HTTP_OK = "200"
