@@ -8,6 +8,8 @@ import {AdvertisementId} from "../../domain/value-object/AdvertisementId";
 import {Email} from "../../../shared/domain/value-object/Email";
 import {CivicCenterId} from "../../../shared/domain/value-object/CivicCenterId";
 import {UserId} from "../../../shared/domain/value-object/UserId";
+import {MemberUser} from "../../../user/domain/MemberUser";
+import {ActiveAdvertisements} from "../../domain/value-object/ActiveAdvertisements";
 
 export class SqliteAdvertisementRepository implements AdvertisementRepository {
 
@@ -33,6 +35,12 @@ export class SqliteAdvertisementRepository implements AdvertisementRepository {
       new CivicCenterId(row.civic_center_id),
       new UserId(row.user_id)
     )
+  }
+
+  async activeAdvertisementsByMember(member: MemberUser): Promise<ActiveAdvertisements> {
+    const result = await this.connection.query(`SELECT * FROM advertisements WHERE user_id = ? AND status = 'active'`, [member.id().value()])
+
+    return ActiveAdvertisements.fromInt(result.length)
   }
 
   async save(advertisement: Advertisement): Promise<void> {
