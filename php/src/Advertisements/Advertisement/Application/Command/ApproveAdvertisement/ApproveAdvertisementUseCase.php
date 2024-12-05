@@ -21,7 +21,6 @@ final class ApproveAdvertisementUseCase
 {
     public function __construct(
         private AdvertisementRepository      $advertisementRepository,
-        private UserRepository               $userRepository,
         private AdvertisementSecurityService $securityService,
     ) {}
 
@@ -40,12 +39,6 @@ final class ApproveAdvertisementUseCase
             new UserId($command->securityUserId),
             $advertisement,
         );
-
-        $member = $this->userRepository->findMemberById($advertisement->memberId());
-
-        if (null === $member) {
-            throw MemberDoesNotExistsException::build();
-        }
 
         $advertisement->approve();
 
