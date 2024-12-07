@@ -6,6 +6,7 @@ namespace Demo\App\Advertisements\Advertisement\Application\Command\DeleteAdvert
 use Demo\App\Advertisements\Advertisement\Domain\AdvertisementRepository;
 use Demo\App\Advertisements\Advertisement\Domain\Exceptions\AdvertisementNotFoundException;
 use Demo\App\Advertisements\Advertisement\Domain\ValueObjects\AdvertisementId;
+use Demo\App\Advertisements\Shared\Domain\ValueObjects\UserId;
 use Demo\App\Advertisements\User\Domain\Exceptions\MemberDoesNotExistsException;
 use Demo\App\Advertisements\User\Domain\UserRepository;
 use Exception;
@@ -23,7 +24,7 @@ final class DeleteAdvertisementUseCase
     public function execute(DeleteAdvertisementCommand $command): void
     {
         // TODO: Find the bug in the following code
-        $member = $this->userRepository->findMemberById($advertisement->memberId());
+        $member = $this->userRepository->findMemberById(new UserId($command->securityUserId));
 
         if (null === $member) {
             throw MemberDoesNotExistsException::build();
