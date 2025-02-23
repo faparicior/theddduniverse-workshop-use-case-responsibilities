@@ -94,7 +94,7 @@ describe("Advertisement as admin", () => {
 
         const request = new FrameworkRequest(Method.POST, `/member/signup`,
             {
-                memberId: MEMBER_ID,
+                id: MEMBER_ID,
                 email: EMAIL,
                 password: PASSWORD,
                 memberNumber: '123456',

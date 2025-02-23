@@ -29,7 +29,7 @@ describe("Member", () => {
 
         const request = new FrameworkRequest(
             Method.POST,
-            'member/signup',
+            '/member/signup',
             {
                 id: MEMBER_ID,
                 email: 'member@test.com',

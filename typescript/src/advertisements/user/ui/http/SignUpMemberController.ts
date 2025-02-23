@@ -34,7 +34,7 @@ export class SignUpMemberController extends CommonController {
       const command = new SignUpMemberCommand(
         user.id(),
         user.role(),
-        req.body.memberId,
+        req.body.id,
         req.body.email,
         req.body.password,
         req.body.memberNumber,
